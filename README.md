@@ -2,25 +2,20 @@
   <br>
   <img src="https://github.com/Ks89/air-conditioner/blob/master/docs/icons/logo512.png?raw=true" alt="ks89/home-anthill" width="220">
   <br>
+home-anthill
   <br>
-Home Anthill
-  <br>
+GUI
 </h1>
 
-<br/>
 
-# GUI
+## :open_book: Documentation :open_book:
 
-Project documentation available [HERE](https://github.com/home-anthill/docs)
+Take a look here [home-anthill/docs](https://github.com/home-anthill/docs)
 
 
 ## :fire: Releases :fire:
 
 - ??/??/2022 - 1.0.0-beta.1 - [HERE](https://github.com/home-anthill/gui/releases)
-- 08/26/2022 - 1.0.0-alpha.4 - [HERE](https://github.com/home-anthill/gui/releases)
-- 05/25/2022 - 1.0.0-alpha.3 - [HERE](https://github.com/home-anthill/gui/releases)
-- 05/18/2022 - 1.0.0-alpha.2 - [HERE](https://github.com/home-anthill/gui/releases)
-- 05/15/2022 - 1.0.0-alpha.1 - [HERE](https://github.com/home-anthill/gui/releases)
 
 
 ## :sparkling_heart: A big thank you to :sparkling_heart:
