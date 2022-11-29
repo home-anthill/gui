@@ -38,7 +38,7 @@ jobs:
         id: github_context_step
         run: |
           echo '${{ toJSON(github) }}'
-          ${{ github.event.repository.name }}
+          echo '${{ github.event.repository.name }}'
 
 #      # Install the cosign tool except on PR
 #      # https://github.com/sigstore/cosign-installer
