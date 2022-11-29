@@ -1,5 +1,5 @@
 {
-  "name": "home-anthill",
+  "name": "home-anthill-gui",
   "version": "1.0.0",
   "homepage": ".",
   "proxy": "http://localhost:8082",
@@ -7,13 +7,13 @@
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
-    "@mui/icons-material": "^5.6.2",
-    "@mui/material": "^5.6.3",
+    "@mui/icons-material": "^5.10.16",
+    "@mui/material": "^5.10.16",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.30.0",
-    "react-icons": "^4.3.1",
+    "react-hook-form": "^7.39.7",
+    "react-icons": "^4.7.1",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^5.0.1",
     "web-vitals": "^3.0.2"
@@ -23,8 +23,8 @@
     "build": "npm run clean && react-scripts build && npm run clean:dest && npm run copy",
     "build:prod": "npm run clean && react-scripts build",
     "clean": "rm -rf build",
-    "clean:dest": "rm -rf ../devices/api-server/public",
-    "copy": "cpr build/ ../devices/api-server/public/",
+    "clean:dest": "rm -rf ../api-server/public",
+    "copy": "cpr build/ ../api-server/public/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
