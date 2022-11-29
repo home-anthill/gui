@@ -15,7 +15,9 @@ on:
 
 env:
   REGISTRY: docker.io
-  # github.repository as <account>/<repo>
+  # github.repository as '<account>/<repo>',
+  # but here I have to use 'ks89/<repo name>', because
+  # on dockerhub.io I have a personal account called 'ks89', and not 'home-anthill'
   IMAGE_NAME: ks89/${{ github.event.repository.name }}
 
 jobs:
@@ -34,11 +36,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Dump GitHub context
-        id: github_context_step
-        run: |
-          echo '${{ toJSON(github) }}'
-          echo '${{ github.event.repository.name }}'
+#      - name: Dump GitHub context
+#        id: github_context_step
+#        run: |
+#          echo '${{ toJSON(github) }}'
+#          echo '${{ github.event.repository.name }}'
 
 #      # Install the cosign tool except on PR
 #      # https://github.com/sigstore/cosign-installer
