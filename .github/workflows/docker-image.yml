@@ -16,7 +16,7 @@ on:
 env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: ks89/${{ github.name }}
+  IMAGE_NAME: ks89/${{ github.repository.name }}
 
 jobs:
   build:
