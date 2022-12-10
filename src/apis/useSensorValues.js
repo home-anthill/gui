@@ -20,8 +20,8 @@ const useSensorValues = (sensor) => {
           let sensorObj = Object.assign({}, sensor);
           sensorObj.features = sensorObj
             .features
-            // order by priority
-            .sort((a, b) => a.priority - b.priority)
+            // order by order
+            .sort((a, b) => a.order - b.order)
             .map(feature => {
               const feat = Object.assign({}, feature);
               const val = sensorValues.find(sensorValue => sensorValue.uuid === feature.uuid);

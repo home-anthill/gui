@@ -37,8 +37,10 @@ const useDevices = () => {
                   // remove duplicated
                   .filter((v1, i, array) => array.findIndex(v2 => (v2 === v1)) === i)
                   // map device id to its full device object
-                  .map(deviceId => devices.find(device => device && device.id === deviceId));
-
+                  .map(deviceId => devices.find(device => device && device.id === deviceId))
+                  // remove undefined devices (it happens when the find above fails.
+                  // the reason is that you have a broken db with bad references across collections
+                  .filter(device => device);
                 // split those devices into 2 different arrays:
                 // - controllers (devices able to receive commands)
                 // - sensors (read-only devices)
