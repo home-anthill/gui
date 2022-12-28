@@ -107,7 +107,7 @@ export function Values(props: ValuesProps) {
             onChange={(e: SelectChangeEvent) => handleTemperatureChange(e)}
           >
             {[17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map(item => (
-              <MenuItem value={item}>{item}</MenuItem>
+              <MenuItem key={`temp-${item}`} value={item}>{item}</MenuItem>
             ))}
           </Select>
         </FormControl>

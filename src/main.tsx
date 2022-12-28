@@ -11,7 +11,7 @@ const root = createRoot(
 root.render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      <App/>
     </Provider>
   </StrictMode>
 );
