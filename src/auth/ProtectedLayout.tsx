@@ -2,7 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import useAuth from '../hooks/useAuth';
 
-export default function RequireAuth(props: any) {
+export default function ProtectedLayout(props: any) {
   const { isLogged } = useAuth();
   const location = useLocation();
 
