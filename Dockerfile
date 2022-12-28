@@ -26,7 +26,7 @@ RUN apk update \
 WORKDIR /ac
 
 COPY --from=builder /ac/run.sh run.sh
-COPY --from=builder /ac/build/ /etc/nginx/html/html
+COPY --from=builder /ac/dist/home-anthill/ /etc/nginx/html/html
 # Scripts to renew let's encrypt certs and to upgrade certbot automatically.
 # Filenames in `/etc/periodic` must follow specific rules: https://askubuntu.com/a/611430
 # For example you cannot use "dot" and "dash" in filenames, so you must remove file extensions
