@@ -1,0 +1,29 @@
+.edit-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 20px;
+
+  > .edit-home-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+}
+
+.edit-home-divider {
+  margin-top: 40px;
+  margin-bottom: 30px;
+  height: 1px;
+  width: 80%;
+  background-color: #ffffff1a;
+}
+
+.room {
+  padding: 14px;
+}
