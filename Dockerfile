@@ -13,7 +13,7 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build:prod
+RUN npm run build
 
 FROM nginx:1.21.6-alpine
 
