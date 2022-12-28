@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 import { getToken } from '../auth/auth-utils';
 
-const token: string | null = getToken('token');
-
 export const commonApi = createApi({
   reducerPath: 'api',
   // keepUnusedDataFor: specifies how long the data should be kept in the cache
@@ -12,6 +10,7 @@ export const commonApi = createApi({
     baseUrl: '/api/',
     prepareHeaders: headers => {
       headers.set('Content-Type', 'application/json');
+      const token: string | null = getToken('token');
       if (token) {
         headers.set('Authorization', 'Bearer ' + token);
       }
