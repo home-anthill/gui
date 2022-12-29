@@ -1,9 +1,11 @@
+import { PropsWithChildren } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import useAuth from '../hooks/useAuth';
 
-export default function ProtectedLayout(props: any) {
-  const { isLogged } = useAuth();
+// Record<string, never> is equivalent to an empty object {}
+export default function ProtectedLayout(props: PropsWithChildren<Record<string, never>>) {
+  const {isLogged} = useAuth();
   const location = useLocation();
 
   if (!isLogged()) {

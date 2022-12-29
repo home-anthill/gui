@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { Card, CardActions, CardContent, Typography, IconButton, Collapse, styled, IconButtonProps } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,14 +10,13 @@ export interface HomeProps {
   home: Home;
   onEdit: (home: Home) => void;
   onDelete: (home: Home) => Promise<void>;
-  children: any;
 }
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
-export function HomeCard(props: HomeProps) {
+export function HomeCard(props: PropsWithChildren<HomeProps>) {
   const [expanded, setExpanded] = useState<boolean>(false);
 
   const ExpandMore = styled((props: ExpandMoreProps) => {

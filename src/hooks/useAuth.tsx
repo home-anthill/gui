@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext, PropsWithChildren } from 'react';
 
 import { AuthContext } from '../auth/AuthContext';
 import { Auth } from '../models/auth';
 import { setToken, removeToken, isLoggedIn } from '../auth/auth-utils';
 
-export const AuthProvider = (props: any) => {
+// Record<string, never> is equivalent to an empty object {}
+export const AuthProvider = (props: PropsWithChildren<Record<string, never>>) => {
   const [tokenState, setTokenState] = useState<string | null>(null)
 
   const login = (token: string) => {
