@@ -17,7 +17,6 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithForceLogout: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
   async (args: string | FetchArgs, api: BaseQueryApi, extraOptions) => {
     const result = await baseQuery(args, api, extraOptions);
-    console.log('baseQueryWithForceLogout - result=', result);
     if (result.error && (result.error.status === 401 || result.error.status === 403)) {
       console.log('baseQueryWithForceLogout - status 401 or 403 - logging out');
       //  1. Redirect user to LOGIN

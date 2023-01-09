@@ -16,19 +16,18 @@ export function EditHome() {
   const {homes, updateHome} = useHomes();
   const {deleteRoom, addRoom, updateRoom} = useRooms();
 
-  const home: Home | undefined = homes.find((home: Home) => home.id === id);
-  // TODO manage the case when 'home' is undefined
+  const home: Home | undefined = homes.find((home: Home) => home && home.id === id);
 
   const {handleSubmit, control, getValues} = useForm({
     defaultValues: {
-      nameInput: (home as Home).name,
-      locationInput: (home as Home).location
+      nameInput: !home ? '' : (home as Home).name,
+      locationInput: !home ? '' : (home as Home).location
     }
   });
 
   const roomsForm = useForm({
     defaultValues: {
-      rooms: (home as Home).rooms
+      rooms: !home ? [] : (home as Home).rooms,
     }
   });
   const {fields, append, remove} = useFieldArray({

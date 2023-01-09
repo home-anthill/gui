@@ -36,18 +36,18 @@ export function Profile() {
         </Typography>
         <div className={styles['profile-container']}>
           <Typography variant="h5" component="div" gutterBottom>
-            {profile?.github.login}
+            {profile?.github?.login}
           </Typography>
           <Typography variant="h5" component="div" gutterBottom>
-            {profile?.github.name}
+            {profile?.github?.name}
           </Typography>
           <Typography sx={{fontSize: 12}} variant="h5" component="div" gutterBottom>
-            {profile?.github.email}
+            {profile?.github?.email}
           </Typography>
           <br/>
           <Avatar
             alt="profile"
-            src={profile?.github.avatarURL}
+            src={profile?.github?.avatarURL}
             sx={{width: 256, height: 256}}
           />
           <br/>

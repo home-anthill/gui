@@ -65,7 +65,8 @@ export function Devices() {
                 </Typography>
                 <div className={styles['FeaturesContainer']}>
                   {homeDevices.unassignedDevices.map((device: any) => (
-                    <DeviceCard device={device}
+                    <DeviceCard key={device.id}
+                                device={device}
                                 deviceType={isController(device) ? 'controller' : 'sensor'}
                                 onShowController={() => showController(device)}
                                 onShowSensor={() => showSensor(device)}
@@ -77,14 +78,14 @@ export function Devices() {
             </>
           }
           {homeDevices.homeDevices.map((home: any) => (
-            <>
+            <div key={home.name + home.location}>
               <div className={styles['HomeContainer']}>
                 <Typography variant="h5" component="h1">
                   { home.name } ({ home.location })
                 </Typography>
                 <br />
                 {home.rooms.map((room: any) => (
-                  <div className={styles['RoomContainer']}>
+                  <div className={styles['RoomContainer']} key={room.name + room.floor}>
                     <Typography variant="h6" component="h2">
                       { room.name } - { room.floor }
                     </Typography>
@@ -92,7 +93,8 @@ export function Devices() {
                       <>
                         <div className={styles['FeaturesContainer']}>
                           {room.controllerDevices.map((controller: any) => (
-                            <DeviceCard device={controller}
+                            <DeviceCard key={controller.id}
+                                        device={controller}
                                         deviceType={'controller'}
                                         onShowController={() => showController(controller)}
                                         onShowSettings={() => showDeviceSettings(controller)}
@@ -101,7 +103,8 @@ export function Devices() {
                         </div>
                         <div className={styles['FeaturesContainer']}>
                           {room.sensorDevices.map((sensor: any) => (
-                            <DeviceCard device={sensor}
+                            <DeviceCard key={sensor.id}
+                                        device={sensor}
                                         deviceType={'sensor'}
                                         onShowSensor={() => showSensor(sensor)}
                                         onShowSettings={() => showDeviceSettings(sensor)}
@@ -116,7 +119,7 @@ export function Devices() {
                 ))}
               </div>
               <div className={styles['DevicesDivider']}></div>
-            </>
+            </div>
           ))}
         </>
       ) : (
