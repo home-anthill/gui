@@ -1,4 +1,4 @@
-import { FormEvent, MouseEvent } from 'react';
+import { FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { Typography, Button, TextField, FormControl, Stack, IconButton } from '@mui/material';
@@ -13,21 +13,41 @@ import { useRooms } from '../../hooks/useRooms';
 
 export function EditHome() {
   const id = useParams().id as string;
-  const {homes, updateHome} = useHomes();
+  const {trigger, lazyHomes, updateHome} = useHomes();
   const {deleteRoom, addRoom, updateRoom} = useRooms();
 
-  const home: Home | undefined = homes.find((home: Home) => home && home.id === id);
+  // home and setHome are used only to store the home current home to be used in onSaveRoom
+  const [home, setHome] = useState<Home | undefined>(undefined);
 
-  const {handleSubmit, control, getValues} = useForm({
+  useEffect(() => {
+    async function fn() {
+      // update state calling setHome
+      await trigger();
+      if (!lazyHomes) {
+        return;
+      }
+      const homeFound: Home | undefined = lazyHomes.find((home: Home) => home && home.id === id);
+      if (homeFound) {
+        setHome(homeFound);
+        // handleSubmit, control, setValue, getValues
+        homeForm.setValue('nameInput', homeFound.name);
+        homeForm.setValue('locationInput', homeFound.location);
+        roomsForm.setValue('rooms', homeFound.rooms);
+      }
+    }
+    fn();
+  }, [id, lazyHomes, trigger]);
+
+  const homeForm = useForm({
     defaultValues: {
-      nameInput: !home ? '' : (home as Home).name,
-      locationInput: !home ? '' : (home as Home).location
+      nameInput: '',
+      locationInput: ''
     }
   });
 
   const roomsForm = useForm({
     defaultValues: {
-      rooms: !home ? [] : (home as Home).rooms,
+      rooms: [] as Room[],
     }
   });
   const {fields, append, remove} = useFieldArray({
@@ -38,7 +58,7 @@ export function EditHome() {
   const navigate = useNavigate();
 
   const onAddHome = async () => {
-    const values = getValues();
+    const values = homeForm.getValues();
     try {
       const result = await updateHome(id, values.nameInput, values.locationInput).unwrap();
       console.log('onAddHome - result = ', result);
@@ -108,7 +128,7 @@ export function EditHome() {
         Edit Home
       </Typography>
       <div className={styles['edit-home-container']}>
-        <form onSubmit={handleSubmit((data) => onAddHome())} className="form">
+        <form onSubmit={homeForm.handleSubmit((data) => onAddHome())} className="form">
           <FormControl>
             <Controller
               render={({field}) =>
@@ -120,7 +140,7 @@ export function EditHome() {
               }
               name="nameInput"
               rules={{required: true, maxLength: 15}}
-              control={control}
+              control={homeForm.control}
             />
           </FormControl>
           <FormControl>
@@ -137,7 +157,7 @@ export function EditHome() {
               }
               name="locationInput"
               rules={{required: true, maxLength: 15}}
-              control={control}
+              control={homeForm.control}
             />
           </FormControl>
         </form>
