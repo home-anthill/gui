@@ -18,10 +18,10 @@ const STATE_ERROR = 'Cannot update device state!';
 export function Values(props: ValuesProps) {
   const { trigger, acValue, updateACValue } = useACValue();
 
-  const [onOff, setOnOff] = useState(false);
-  const [temperature, setTemperature] = useState(28);
-  const [mode, setMode] = useState(1);
-  const [fanSpeed, setFanSpeed] = useState(1);
+  const [onOff, setOnOff] = useState<boolean>(false);
+  const [temperature, setTemperature] = useState<number>(28);
+  const [mode, setMode] = useState<number>(1);
+  const [fanSpeed, setFanSpeed] = useState<number>(1);
   const [snackBarState, setSnackBarState] = useState({
     open: false,
     severity: 'success',
@@ -32,13 +32,15 @@ export function Values(props: ValuesProps) {
     async function fn() {
       // update form calling set*** one by one
       await trigger(props.device.id);
-      setOnOff(acValue.on);
-      setTemperature(acValue.temperature);
-      setMode(acValue.mode);
-      setFanSpeed(acValue.fanSpeed);
+      if (acValue && Object.keys(acValue).length !== 0) {
+        setOnOff(acValue.on);
+        setTemperature(acValue.temperature);
+        setMode(acValue.mode);
+        setFanSpeed(acValue.fanSpeed);
+      }
     }
     fn();
-  }, []);
+  }, [acValue, props.device.id, trigger]);
 
   // use a custom Alert extending MuiAlert instead of the Alert defined in @mui/material
   const Alert = forwardRef(function Alert(props: any, ref: any) {

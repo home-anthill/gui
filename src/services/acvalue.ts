@@ -4,9 +4,11 @@ import { ACValue } from '../models/acvalue';
 export const acValueApi = commonApi.injectEndpoints({
   endpoints: builder => ({
     getACValue: builder.query<ACValue, string>({
-      query: (deviceId: string) => ({
-        url: `devices/${deviceId}/values`
-      }),
+      query(deviceId: string) {
+        return {
+          url: `devices/${deviceId}/values`
+        }
+      },
       providesTags: ['ACValue']
     }),
     updateACValue: builder.mutation<{ message: string }, { deviceId: string, acValue: ACValue }>({
