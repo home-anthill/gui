@@ -21,7 +21,7 @@ export function useDevices() {
   const error = homesError || devicesError;
 
   const deleteDevice = useCallback(
-    (deviceId: string, homeId: string, roomId: string) => deleteDeviceMutation({deviceId, homeId, roomId}),
+    (deviceId: string) => deleteDeviceMutation({deviceId}),
     [deleteDeviceMutation]
   );
 

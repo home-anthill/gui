@@ -75,11 +75,11 @@ export const devicesApi = commonApi.injectEndpoints({
       // FIXME every element of the list should be tagged one by one, not like this
       providesTags: ['Devices']
     }),
-    deleteDevice: builder.mutation<{ message: string }, { deviceId: string, homeId: string, roomId: string }>({
-      query(data: { deviceId: string, homeId: string, roomId: string }) {
-        const {deviceId, homeId, roomId} = data;
+    deleteDevice: builder.mutation<{ message: string }, { deviceId: string }>({
+      query(data: { deviceId: string }) {
+        const {deviceId} = data;
         return {
-          url: `devices/${deviceId}?homeId=${homeId}&roomId=${roomId}`,
+          url: `devices/${deviceId}`,
           method: 'DELETE'
         };
       },

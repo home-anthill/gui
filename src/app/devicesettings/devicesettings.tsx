@@ -108,12 +108,8 @@ export function DeviceSettings() {
   }
 
   async function onRemove() {
-    if (!selectedHome || !selectedRoom) {
-      console.error('onRemove - cannot remove, you must choose both home and room');
-      return;
-    }
     try {
-      const response = await deleteDevice(device.id, selectedHome.id, selectedRoom.id).unwrap();
+      const response = await deleteDevice(device.id).unwrap();
       console.log('onRemove - response = ', response);
       // navigate back
       navigate(-1);
