@@ -94,7 +94,7 @@ export function DeviceSettings() {
     if (!newRoom.devices) {
       newRoom.devices = [device.id];
     } else {
-      newRoom.devices.push(device.id);
+      newRoom.devices = [...newRoom.devices, device.id];
     }
     try {
       // I pass newRoom with 'device.id' in room.devices
