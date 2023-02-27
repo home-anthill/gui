@@ -96,6 +96,8 @@ export function DeviceSettings() {
     } else {
       newRoom.devices = [...newRoom.devices, device.id];
     }
+    // remove duplicates from `newRoom.devices`
+    newRoom.devices = [...new Set(newRoom.devices)];
     try {
       // I pass newRoom with 'device.id' in room.devices
       const response = await updateRoom(selectedHome.id, selectedRoom.id, newRoom);
