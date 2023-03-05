@@ -16,6 +16,12 @@ export interface RoomSplitDevices extends Room {
   sensorDevices: Device[];
 }
 
+interface AssignDeviceRequest {
+  deviceId: string;
+  homeId: string;
+  roomId: string;
+}
+
 export const devicesApi = commonApi.injectEndpoints({
   endpoints: builder => ({
     getDevices: builder.query<DevicesResponse, { homes: Home[] }>({
@@ -75,6 +81,17 @@ export const devicesApi = commonApi.injectEndpoints({
       // FIXME every element of the list should be tagged one by one, not like this
       providesTags: ['Devices']
     }),
+    assignDevice: builder.mutation<{message: string}, AssignDeviceRequest>({
+      query(data: AssignDeviceRequest) {
+        const { deviceId, ...body } = data
+        return {
+          url: `devices/${deviceId}`,
+          method: 'PUT',
+          body: body
+        }
+      },
+      invalidatesTags: ['Devices', { type: 'Homes', id: 'LIST' }]
+    }),
     deleteDevice: builder.mutation<{ message: string }, { deviceId: string }>({
       query(data: { deviceId: string }) {
         const {deviceId} = data;
@@ -116,5 +133,6 @@ function getSensors(devices: Device[]): Device[] {
 // auto-generated based on the defined endpoints
 export const {
   useGetDevicesQuery,
+  useAssignDeviceMutation,
   useDeleteDeviceMutation
 } = devicesApi

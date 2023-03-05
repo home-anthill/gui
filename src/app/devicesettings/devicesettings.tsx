@@ -5,7 +5,6 @@ import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, T
 import { Home, Room } from '../../models/home';
 import { useDevices } from '../../hooks/useDevices';
 import { useHomes } from '../../hooks/useHomes';
-import { useRooms } from '../../hooks/useRooms';
 
 import styles from './devicesettings.module.scss';
 
@@ -18,8 +17,7 @@ export function DeviceSettings() {
   const navigate = useNavigate();
 
   const { trigger, lazyHomes } = useHomes();
-  const { deleteDevice } = useDevices();
-  const { updateRoom } = useRooms();
+  const { assignDeviceHomeRoom, deleteDevice } = useDevices();
 
   const [homes, setHomes] = useState<Home[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -85,27 +83,18 @@ export function DeviceSettings() {
     setSelectedRoom(room);
   }
 
-  async function onSave() {
+  async function onAssign() {
     if (!selectedHome || !selectedRoom) {
-      console.error('onSave - cannot save, you must choose both home and room');
+      console.error('onAssign - cannot assign device, you must choose both home and room');
       return;
     }
-    const newRoom: Room = Object.assign({}, selectedRoom);
-    if (!newRoom.devices) {
-      newRoom.devices = [device.id];
-    } else {
-      newRoom.devices = [...newRoom.devices, device.id];
-    }
-    // remove duplicates from `newRoom.devices`
-    newRoom.devices = [...new Set(newRoom.devices)];
     try {
-      // I pass newRoom with 'device.id' in room.devices
-      const response = await updateRoom(selectedHome.id, selectedRoom.id, newRoom);
-      console.log('onSave - response = ', response);
+      const response = await assignDeviceHomeRoom(device.id, selectedHome.id, selectedRoom.id);
+      console.log('onAssign - response = ', response);
       // navigate back
       navigate(-1);
     } catch (err) {
-      console.error('onSave - cannot save device assigning it to this room');
+      console.error('onAssign - cannot assign device to home and room');
     }
   }
 
@@ -170,7 +159,7 @@ export function DeviceSettings() {
 
         <br/>
         {selectedHome !== DEFAULT_HOME && selectedRoom !== DEFAULT_ROOM &&
-          <Button onClick={() => onSave()}>Save</Button>
+          <Button onClick={() => onAssign()}>Assign</Button>
         }
         <br/>
         <Button onClick={() => onRemove()}>Remove this Device</Button>

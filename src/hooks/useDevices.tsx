@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { Home } from '../models/home';
+import { Home} from '../models/home';
 import { useGetHomesQuery } from '../services/homes';
-import { DevicesResponse, useDeleteDeviceMutation, useGetDevicesQuery } from '../services/devices';
+import { DevicesResponse, useAssignDeviceMutation, useDeleteDeviceMutation, useGetDevicesQuery } from '../services/devices';
 
 export function useDevices() {
   const {
@@ -15,10 +15,16 @@ export function useDevices() {
     isLoading: devicesLoading,
     error: devicesError
   } = useGetDevicesQuery({homes});
+  const [assignDeviceMutation] = useAssignDeviceMutation();
   const [deleteDeviceMutation, {isLoading: deleteDeviceLoading}] = useDeleteDeviceMutation();
 
   const loading = homesLoading || devicesLoading || deleteDeviceLoading;
   const error = homesError || devicesError;
+
+  const assignDeviceHomeRoom = useCallback(
+    (deviceId: string, homeId: string, roomId: string) => assignDeviceMutation({ deviceId, homeId, roomId }),
+    [assignDeviceMutation]
+  );
 
   const deleteDevice = useCallback(
     (deviceId: string) => deleteDeviceMutation({deviceId}),
@@ -29,6 +35,7 @@ export function useDevices() {
     homeDevices,
     loading,
     error,
+    assignDeviceHomeRoom,
     deleteDevice
   }
 }
