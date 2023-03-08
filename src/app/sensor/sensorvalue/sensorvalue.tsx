@@ -16,9 +16,16 @@ export interface SensorValueProps {
 
 export interface FeatureValue extends Feature {
   value: number;
+  createdAt: number;
+  modifiedAt: number;
 }
 
 export default function SensorValue(props: SensorValueProps) {
+  function getPrettyDate(unixEpoch: number) {
+    const date = new Date(unixEpoch);
+    return date.toUTCString()
+  }
+
   return (
     <Card variant="outlined"
           key={props.feature?.uuid}
@@ -108,6 +115,13 @@ export default function SensorValue(props: SensorValueProps) {
               }
             })()}
           </div>
+          {props.feature?.modifiedAt &&
+            <div>
+              <Typography sx={{fontSize: 16}} color="text.secondary" gutterBottom>
+                {getPrettyDate(props.feature?.modifiedAt)}
+              </Typography>
+            </div>
+          }
         </div>
       </CardContent>
     </Card>

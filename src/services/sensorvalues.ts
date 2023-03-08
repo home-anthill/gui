@@ -8,6 +8,8 @@ export interface SensorWithValue extends Device {
 
 export interface FeatureValue extends Feature {
   value: number;
+  createdAt: number;
+  modifiedAt: number;
 }
 
 export const sensorValuesApi = commonApi.injectEndpoints({
@@ -33,6 +35,8 @@ export const sensorValuesApi = commonApi.injectEndpoints({
               return feature as FeatureValue;
             }
             featureValue.value = sensorValue.value;
+            featureValue.createdAt = sensorValue.createdAt;
+            featureValue.modifiedAt = sensorValue.modifiedAt;
             return featureValue;
           });
         return sensorObj;
