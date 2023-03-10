@@ -101,7 +101,7 @@ export default function SensorValue(props: SensorValueProps) {
               }
             })()}
           </div>
-          {props.feature?.modifiedAt &&
+          {props.feature?.modifiedAt !== 0 &&
             <div className={styles['sensor-date']}>
               <Typography sx={{fontSize: 12}} color="text.secondary" gutterBottom>
                 {getPrettyDateFromUnixEpoch(props.feature?.modifiedAt)}

@@ -21,6 +21,11 @@ export function Sensor() {
       <Typography variant="h2" component="h1">
         Sensor
       </Typography>
+      <div className={styles['sensor-home-info']}>
+        <Typography variant="body1" component="p">
+          {home?.name} ({home?.location}) - {room?.name} ({room?.floor})
+        </Typography>
+      </div>
       <div className={styles['sensor']}>
         <Typography variant="h5" component="h2">
           {sensorWithValues?.mac}
@@ -28,16 +33,6 @@ export function Sensor() {
         <Typography variant="subtitle1" component="h3">
           {sensorWithValues?.manufacturer} - {sensorWithValues?.model}
         </Typography>
-        {home &&
-          <Typography variant="subtitle1" component="h3">
-            {home?.name} - {home?.location}
-          </Typography>
-        }
-        {room &&
-          <Typography variant="subtitle1" component="h3">
-            {room?.name} ({room?.floor})
-          </Typography>
-        }
         {sensorWithValuesError && <div className="error">Something went wrong</div>}
         {loading && <div className="loading">Loading...</div>}
         {sensorWithValues ? (

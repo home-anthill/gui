@@ -13,27 +13,22 @@ export function Controller() {
   const room: RoomSplitDevices | undefined = state.room;
 
   return (
-    <div className={styles['Controller']}>
+    <div className={styles['controller']}>
       <Typography variant="h2" component="h1">
         Controller
       </Typography>
-      <div className={styles['ControllerContainer']}>
+      <div className={styles['controller-home-info']}>
+        <Typography variant="body1" component="p">
+          {home?.name} ({home?.location}) - {room?.name} ({room?.floor})
+        </Typography>
+      </div>
+      <div className={styles['controller-container']}>
         <Typography variant="h5" component="h2">
           {device?.mac}
         </Typography>
         <Typography variant="subtitle1" component="h3">
           {device?.manufacturer} - {device?.model}
         </Typography>
-        {home &&
-          <Typography variant="subtitle1" component="h3">
-            {home?.name} - {home?.location}
-          </Typography>
-        }
-        {room &&
-          <Typography variant="subtitle1" component="h3">
-            {room?.name} ({room?.floor})
-          </Typography>
-        }
 
         <Values device={device}/>
       </div>
