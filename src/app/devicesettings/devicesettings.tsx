@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 
 import { Home, Room } from '../../models/home';
+import { Device } from '../../models/device';
 import { useDevices } from '../../hooks/useDevices';
 import { useHomes } from '../../hooks/useHomes';
 
@@ -13,7 +14,7 @@ const DEFAULT_ROOM: Room = {id: 'r0', name: '---', floor: -1, devices: [], creat
 
 export function DeviceSettings() {
   const {state} = useLocation();
-  const device = state.device;
+  const device: Device = state.device;
   const navigate = useNavigate();
 
   const { trigger, lazyHomes } = useHomes();

@@ -1,17 +1,5 @@
 import { commonApi } from './common';
-import { Home } from '../models/home';
-
-interface NewHomeRequest {
-  name: string;
-  location: string;
-  rooms: [];
-}
-
-interface UpdateHomeRequest {
-  id: string;
-  name: string;
-  location: string;
-}
+import { Home, NewHomeRequest, UpdateHomeRequest } from '../models/home';
 
 export const homesApi = commonApi.injectEndpoints({
   endpoints: builder => ({

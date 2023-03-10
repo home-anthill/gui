@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { useLazyGetACValueQuery, useUpdateACValueMutation } from '../services/acvalue';
-import { ACValue } from '../models/acvalue';
+import { ACValue, ACValueStates } from '../models/acvalue';
 
 export function useACValue() {
   const [trigger, {
@@ -15,7 +15,7 @@ export function useACValue() {
   const loading = acValueLoading || updateACValueLoading;
 
   const updateACValue = useCallback(
-    (deviceId: string, acValue: ACValue) => updateACValueMutation({deviceId, acValue}),
+    (deviceId: string, acValueReq: ACValueStates) => updateACValueMutation({deviceId, acValueReq}),
     [updateACValueMutation]
   );
 

@@ -1,15 +1,18 @@
 import { useLocation } from 'react-router-dom';
-
 import { Typography } from '@mui/material';
+
+import { useSensorValues } from '../../hooks/useSensorValues';
+import SensorValue from './sensorvalue/sensorvalue';
+import { Device, HomeWithDevices, RoomSplitDevices } from '../../models/device';
+import { FeatureValue } from '../../models/value';
 
 import styles from './sensor.module.scss';
 
-import { useSensorValues } from '../../hooks/useSensorValues';
-import SensorValue, { FeatureValue } from './sensorvalue/sensorvalue';
-
 export function Sensor() {
   const {state} = useLocation();
-  const sensor = state.device;
+  const sensor: Device = state.device;
+  const home: HomeWithDevices | undefined = state.home;
+  const room: RoomSplitDevices | undefined = state.room;
 
   const {sensorWithValues, loading, sensorWithValuesError} = useSensorValues(sensor);
 
@@ -25,6 +28,16 @@ export function Sensor() {
         <Typography variant="subtitle1" component="h3">
           {sensorWithValues?.manufacturer} - {sensorWithValues?.model}
         </Typography>
+        {home &&
+          <Typography variant="subtitle1" component="h3">
+            {home?.name} - {home?.location}
+          </Typography>
+        }
+        {room &&
+          <Typography variant="subtitle1" component="h3">
+            {room?.name} ({room?.floor})
+          </Typography>
+        }
         {sensorWithValuesError && <div className="error">Something went wrong</div>}
         {loading && <div className="loading">Loading...</div>}
         {sensorWithValues ? (

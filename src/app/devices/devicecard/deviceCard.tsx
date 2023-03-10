@@ -10,13 +10,9 @@ import styles from './device.module.scss';
 export interface DeviceProps {
   device: Device;
   deviceType: string;
-  // TODO define the right function types!!!
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onShowSettings: Function;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onShowController: Function;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onShowSensor: Function;
+  onShowSettings: (device: Device) => void;
+  onShowController: (device: Device) => void;
+  onShowSensor: (device: Device) => void;
 }
 
 

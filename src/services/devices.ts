@@ -1,26 +1,6 @@
 import { commonApi } from './common';
-import { Device, Feature } from '../models/device';
+import { Device, DevicesResponse, Feature, HomeWithDevices, RoomSplitDevices, AssignDeviceRequest } from '../models/device';
 import { Home, Room } from '../models/home';
-
-export interface DevicesResponse {
-  unassignedDevices: Device[];
-  homeDevices: HomeWithDevices[];
-}
-
-export interface HomeWithDevices extends Home {
-  rooms: RoomSplitDevices[]
-}
-
-export interface RoomSplitDevices extends Room {
-  controllerDevices: Device[];
-  sensorDevices: Device[];
-}
-
-interface AssignDeviceRequest {
-  deviceId: string;
-  homeId: string;
-  roomId: string;
-}
 
 export const devicesApi = commonApi.injectEndpoints({
   endpoints: builder => ({

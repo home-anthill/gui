@@ -4,3 +4,10 @@ export interface Auth {
   login: (token: string) => void;
   logout: () => void;
 }
+
+// *****************************************************************
+// ********** requests, responses and utility interfaces ***********
+// *****************************************************************
+export interface LoginResponse {
+  loginURL: string;
+}

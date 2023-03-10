@@ -9,3 +9,10 @@ export interface Profile {
   id: string;
   github: Github;
 }
+
+// *****************************************************************
+// ********** requests, responses and utility interfaces ***********
+// *****************************************************************
+export interface ProfileTokenResponse {
+  apiToken: string;
+}

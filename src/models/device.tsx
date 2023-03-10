@@ -1,3 +1,5 @@
+import { Home, Room } from './home';
+
 export interface Device {
   id: string;
   uuid: string;
@@ -16,4 +18,27 @@ export interface Feature {
   unit: string;
   order: number;
   enable: boolean;
+}
+
+// *****************************************************************
+// ********** requests, responses and utility interfaces ***********
+// *****************************************************************
+export interface HomeWithDevices extends Home {
+  rooms: RoomSplitDevices[]
+}
+
+export interface RoomSplitDevices extends Room {
+  controllerDevices: Device[];
+  sensorDevices: Device[];
+}
+
+export interface AssignDeviceRequest {
+  deviceId: string;
+  homeId: string;
+  roomId: string;
+}
+
+export interface DevicesResponse {
+  unassignedDevices: Device[];
+  homeDevices: HomeWithDevices[];
 }

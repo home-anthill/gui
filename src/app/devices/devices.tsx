@@ -3,6 +3,7 @@ import { Typography } from '@mui/material';
 
 import { useDevices } from '../../hooks/useDevices';
 import DeviceCard from './devicecard/deviceCard';
+import { Device, DevicesResponse, Feature, HomeWithDevices, RoomSplitDevices } from '../../models/device';
 
 import styles from './devices.module.scss';
 
@@ -13,7 +14,7 @@ export function Devices() {
   // Devices that are not assigned are defined in `unassignedDevices` array
   const { homeDevices, loading, error } = useDevices();
 
-  function showDeviceSettings(device: any) {
+  function showDeviceSettings(device: Device): void {
     if (!device) {
       console.error(`Cannot show settings - 'id' is missing`);
       return;
@@ -21,27 +22,25 @@ export function Devices() {
     navigate(`/main/devices/${device.id}`, {state: {device}});
   }
 
-  function showController(device: any) {
+  function showDevice(type: 'controller' | 'sensor', device: Device, home: HomeWithDevices | undefined, room: RoomSplitDevices | undefined): void {
     if (!device) {
       console.error(`Cannot open controller - 'id' is missing`);
       return;
     }
-    navigate(`/main/devices/${device.id}/controller`, {state: {device}});
-  }
-
-  function showSensor(device: any) {
-    if (!device) {
-      console.error(`Cannot open sensor - 'id' is missing`);
+    if (home && room) {
+      navigate(`/main/devices/${device.id}/${type}`, {state: {device, home, room}});
+      return;
+    } else {
+      navigate(`/main/devices/${device.id}/${type}`, {state: {device}});
       return;
     }
-    navigate(`/main/devices/${device.id}/sensor`, {state: {device}});
   }
 
-  function isController(device: any) {
-    return device.features.find((feature: any) => feature.type === 'controller') !== undefined;
+  function isController(device: Device): boolean {
+    return device.features.find((feature: Feature) => feature.type === 'controller') !== undefined;
   }
 
-  function hasDevices(devicesResult: any) {
+  function hasDevices(devicesResult: DevicesResponse): boolean {
     return devicesResult && ((devicesResult.homeDevices && devicesResult.homeDevices.length > 0)
       || (devicesResult.unassignedDevices && devicesResult.unassignedDevices.length > 0));
   }
@@ -64,12 +63,12 @@ export function Devices() {
                   Unassigned
                 </Typography>
                 <div className={styles['FeaturesContainer']}>
-                  {homeDevices.unassignedDevices.map((device: any) => (
+                  {homeDevices.unassignedDevices.map((device: Device) => (
                     <DeviceCard key={device.id}
                                 device={device}
                                 deviceType={isController(device) ? 'controller' : 'sensor'}
-                                onShowController={() => showController(device)}
-                                onShowSensor={() => showSensor(device)}
+                                onShowController={() => showDevice('controller', device, undefined, undefined)}
+                                onShowSensor={() => showDevice('sensor', device, undefined, undefined)}
                                 onShowSettings={() => showDeviceSettings(device)}></DeviceCard>
                   ))}
                 </div>
@@ -77,14 +76,14 @@ export function Devices() {
               <div className={styles['DevicesDivider']}></div>
             </>
           }
-          {homeDevices.homeDevices.map((home: any) => (
+          {homeDevices.homeDevices.map((home: HomeWithDevices) => (
             <div key={home.name + home.location}>
               <div className={styles['HomeContainer']}>
                 <Typography variant="h5" component="h1">
                   { home.name } ({ home.location })
                 </Typography>
                 <br />
-                {home.rooms.map((room: any) => (
+                {home.rooms.map((room: RoomSplitDevices) => (
                   <div className={styles['RoomContainer']} key={room.name + room.floor}>
                     <Typography variant="h6" component="h2">
                       { room.name } - { room.floor }
@@ -92,21 +91,21 @@ export function Devices() {
                     {(room.controllerDevices.length > 0 || room.sensorDevices.length > 0) ? (
                       <>
                         <div className={styles['FeaturesContainer']}>
-                          {room.controllerDevices.map((controller: any) => (
+                          {room.controllerDevices.map((controller: Device) => (
                             <DeviceCard key={controller.id}
                                         device={controller}
                                         deviceType={'controller'}
-                                        onShowController={() => showController(controller)}
+                                        onShowController={() => showDevice('controller', controller, home, room)}
                                         onShowSettings={() => showDeviceSettings(controller)}
                                         onShowSensor={() => ({})}></DeviceCard>
                           ))}
                         </div>
                         <div className={styles['FeaturesContainer']}>
-                          {room.sensorDevices.map((sensor: any) => (
+                          {room.sensorDevices.map((sensor: Device) => (
                             <DeviceCard key={sensor.id}
                                         device={sensor}
                                         deviceType={'sensor'}
-                                        onShowSensor={() => showSensor(sensor)}
+                                        onShowSensor={() => showDevice('sensor', sensor, home, room)}
                                         onShowSettings={() => showDeviceSettings(sensor)}
                                         onShowController={() => ({})}></DeviceCard>
                           ))}

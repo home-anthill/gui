@@ -6,26 +6,12 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import WbCloudyIcon from '@mui/icons-material/WbCloudy';
 import CompressIcon from '@mui/icons-material/Compress';
 
-import { Feature } from '../../../models/device';
+import { SensorValueProps } from '../../../models/value';
+import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
 
 import styles from './sensorvalue.module.scss';
 
-export interface SensorValueProps {
-  feature: FeatureValue;
-}
-
-export interface FeatureValue extends Feature {
-  value: number;
-  createdAt: number;
-  modifiedAt: number;
-}
-
 export default function SensorValue(props: SensorValueProps) {
-  function getPrettyDate(unixEpoch: number) {
-    const date = new Date(unixEpoch);
-    return date.toUTCString()
-  }
-
   return (
     <Card variant="outlined"
           key={props.feature?.uuid}
@@ -34,7 +20,7 @@ export default function SensorValue(props: SensorValueProps) {
         <div className={styles['sensor-value-container']}>
           <div className={styles['sensor-header']}>
             {(() => {
-              switch(props.feature.name) {
+              switch (props.feature.name) {
                 case 'temperature':
                   return <DeviceThermostatIcon fontSize="large"></DeviceThermostatIcon>
                 case 'humidity':
@@ -61,7 +47,7 @@ export default function SensorValue(props: SensorValueProps) {
           </div>
           <div className={styles['sensor-value']}>
             {(() => {
-              switch(props.feature.name) {
+              switch (props.feature.name) {
                 case 'temperature':
                 case 'humidity':
                   return (
@@ -78,14 +64,14 @@ export default function SensorValue(props: SensorValueProps) {
                 case 'motion':
                   return (
                     <Typography sx={{fontSize: 24}} color="text.secondary" gutterBottom>
-                      {props.feature?.value === 1 ? 'True' : 'False' }
+                      {props.feature?.value === 1 ? 'True' : 'False'}
                     </Typography>
                   )
                 case 'airquality':
                   return (
                     <Typography sx={{fontSize: 24}} color="text.secondary" gutterBottom>
                       {(() => {
-                        switch(props.feature?.value) {
+                        switch (props.feature?.value) {
                           case 0:
                             return 'Extreme pollution'
                           case 1:
@@ -116,9 +102,9 @@ export default function SensorValue(props: SensorValueProps) {
             })()}
           </div>
           {props.feature?.modifiedAt &&
-            <div>
-              <Typography sx={{fontSize: 16}} color="text.secondary" gutterBottom>
-                {getPrettyDate(props.feature?.modifiedAt)}
+            <div className={styles['sensor-date']}>
+              <Typography sx={{fontSize: 12}} color="text.secondary" gutterBottom>
+                {getPrettyDateFromUnixEpoch(props.feature?.modifiedAt)}
               </Typography>
             </div>
           }

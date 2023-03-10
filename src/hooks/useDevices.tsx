@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 
 import { Home} from '../models/home';
 import { useGetHomesQuery } from '../services/homes';
-import { DevicesResponse, useAssignDeviceMutation, useDeleteDeviceMutation, useGetDevicesQuery } from '../services/devices';
+import { useAssignDeviceMutation, useDeleteDeviceMutation, useGetDevicesQuery } from '../services/devices';
+import { DevicesResponse } from '../models/device';
 
 export function useDevices() {
   const {

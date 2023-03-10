@@ -1,16 +1,6 @@
 import { commonApi } from './common';
-import { Value } from '../models/value';
+import { FeatureValue, SensorWithValue, Value } from '../models/value';
 import { Device, Feature } from '../models/device';
-
-export interface SensorWithValue extends Device {
-  features: FeatureValue[];
-}
-
-export interface FeatureValue extends Feature {
-  value: number;
-  createdAt: number;
-  modifiedAt: number;
-}
 
 export const sensorValuesApi = commonApi.injectEndpoints({
   endpoints: builder => ({
@@ -26,7 +16,7 @@ export const sensorValuesApi = commonApi.injectEndpoints({
         sensorObj.features = sensorObj.features
           .filter((feature: Feature) => feature)
           // order by 'order'
-          .sort((a: { order: number; }, b: { order: number; }) => a.order - b.order)
+          .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
           .map((feature: Feature) => {
             const featureValue: FeatureValue = Object.assign({}, feature) as FeatureValue;
             const sensorValue: Value | undefined = response.find((v: Value) => v && v.uuid === feature.uuid);
@@ -42,7 +32,7 @@ export const sensorValuesApi = commonApi.injectEndpoints({
         return sensorObj;
       },
       // FIXME every element of the list should be tagged one by one, not like this
-      providesTags: [ 'SensorValues' ]
+      providesTags: ['SensorValues']
     })
   })
 })

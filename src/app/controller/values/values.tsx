@@ -1,16 +1,13 @@
 import { useState, forwardRef, ChangeEvent, useEffect } from 'react';
-
-import { Button, Snackbar, FormControl, FormControlLabel, Switch, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Button, Snackbar, FormControl, FormControlLabel, Switch, InputLabel, Select, MenuItem, SelectChangeEvent, Typography } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
-import { Device } from '../../../models/device';
 import { useACValue } from '../../../hooks/useACValue';
+import { ACValueStates } from '../../../models/acvalue';
+import { ValuesProps } from '../../../models/value';
+import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
 
 import styles from './values.module.scss';
-
-export interface ValuesProps {
-  device: Device;
-}
 
 const STATE_SUCCESS = 'Device state update successfully!';
 const STATE_ERROR = 'Cannot update device state!';
@@ -53,8 +50,8 @@ export function Values(props: ValuesProps) {
           on: onOff,
           temperature: temperature,
           mode: mode,
-          fanSpeed: fanSpeed
-        }).unwrap();
+          fanSpeed: fanSpeed,
+        } as ACValueStates).unwrap();
       console.log('postValue - response = ', response);
       setSnackBarState({...snackBarState, open: true, severity: 'success', message: STATE_SUCCESS});
     } catch (err) {
@@ -150,6 +147,14 @@ export function Values(props: ValuesProps) {
           </Select>
         </FormControl>
       </div>
+
+      {acValue?.modifiedAt &&
+        <div className={styles['controller-date']}>
+          <Typography sx={{fontSize: 12}} color="text.secondary" gutterBottom>
+            {getPrettyDateFromUnixEpoch(acValue?.modifiedAt)}
+          </Typography>
+        </div>
+      }
 
       <Button variant="contained"
               color="success"

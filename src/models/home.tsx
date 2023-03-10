@@ -15,3 +15,18 @@ export interface Room {
   modifiedAt: Date;
   devices: string[]
 }
+
+// *****************************************************************
+// ********** requests, responses and utility interfaces ***********
+// *****************************************************************
+export interface NewHomeRequest {
+  name: string;
+  location: string;
+  rooms: [];
+}
+
+export interface UpdateHomeRequest {
+  id: string;
+  name: string;
+  location: string;
+}

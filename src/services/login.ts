@@ -1,8 +1,5 @@
 import { commonApi } from './common';
-
-export interface LoginResponse {
-  loginURL: string;
-}
+import { LoginResponse } from '../models/auth';
 
 export const loginApi = commonApi.injectEndpoints({
   endpoints: builder => ({

@@ -1,5 +1,7 @@
 import { commonApi } from './common';
-import { ACValue } from '../models/acvalue';
+import { ACValue, ACValueStates } from '../models/acvalue';
+
+type ACValueRequest = ACValueStates
 
 export const acValueApi = commonApi.injectEndpoints({
   endpoints: builder => ({
@@ -11,13 +13,13 @@ export const acValueApi = commonApi.injectEndpoints({
       },
       providesTags: ['ACValue']
     }),
-    updateACValue: builder.mutation<{ message: string }, { deviceId: string, acValue: ACValue }>({
-      query(data: { deviceId: string, acValue: ACValue }) {
-        const {deviceId, acValue} = data;
+    updateACValue: builder.mutation<{ message: string }, { deviceId: string, acValueReq: ACValueRequest }>({
+      query(data: { deviceId: string, acValueReq: ACValueRequest }) {
+        const {deviceId, acValueReq} = data;
         return {
           url: `devices/${deviceId}/values`,
           method: 'POST',
-          body: acValue
+          body: acValueReq
         }
       },
       invalidatesTags: ['ACValue']

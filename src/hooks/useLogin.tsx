@@ -1,4 +1,5 @@
-import { LoginResponse, useGetLoginUrlQuery } from '../services/login';
+import { useGetLoginUrlQuery } from '../services/login';
+import { LoginResponse } from '../models/auth';
 
 export function useLogin() {
   const {

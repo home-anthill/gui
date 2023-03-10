@@ -1,9 +1,5 @@
 import { commonApi } from './common';
-import { Profile } from '../models/profile';
-
-export interface ProfileTokenResponse {
-  apiToken: string;
-}
+import { Profile, ProfileTokenResponse } from '../models/profile';
 
 export const profileApi = commonApi.injectEndpoints({
   endpoints: builder => ({
@@ -11,7 +7,7 @@ export const profileApi = commonApi.injectEndpoints({
       query: () => ({
         url: `profile`
       }),
-      providesTags: [ 'Profile' ]
+      providesTags: ['Profile']
     }),
     newProfileToken: builder.mutation<ProfileTokenResponse, string>({
       query: (id: string) => ({
