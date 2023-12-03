@@ -15,7 +15,7 @@ COPY . .
 
 RUN npm run build:prod
 
-FROM nginx:1.21.6-alpine
+FROM nginx:1.25.3-alpine
 
 # install certbot and openssl (all required to enable certbot with standalone mode)
 RUN apk update \
