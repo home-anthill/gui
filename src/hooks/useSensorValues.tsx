@@ -1,5 +1,6 @@
 import { Device } from '../models/device';
-import { SensorWithValue, useGetSensorValuesQuery } from '../services/sensorvalues';
+import { SensorWithValue } from '../models/value';
+import { useGetSensorValuesQuery } from '../services/sensorvalues';
 
 export function useSensorValues(sensor: Device) {
   const {

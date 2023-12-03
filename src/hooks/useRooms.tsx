@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { useDeleteRoomByIdMutation, useAddRoomMutation, useUpdateRoomMutation } from '../services/rooms';
-import { Room } from '../models/Home';
+import { Room } from '../models/home';
 
 export function useRooms() {
   const [deleteRoomMutation, {isLoading: deleteRoomLoading}] = useDeleteRoomByIdMutation();

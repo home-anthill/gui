@@ -1,10 +1,9 @@
-import { PropsWithChildren } from 'react';
+import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import useAuth from '../hooks/useAuth';
 
-// Record<string, never> is equivalent to an empty object {}
-export default function ProtectedLayout(props: PropsWithChildren<Record<string, never>>) {
+export default function ProtectedLayout(props: {children?: ReactNode}) {
   const {isLogged} = useAuth();
   const location = useLocation();
 

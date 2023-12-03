@@ -12,8 +12,12 @@
         "outputPath": "dist/home-anthill"
       },
       "configurations": {
-        "development": {},
-        "production": {}
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "serve": {
@@ -34,11 +38,27 @@
         }
       }
     },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "home-anthill:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "home-anthill:build:development"
+        },
+        "production": {
+          "buildTarget": "home-anthill:build:production"
+        }
+      }
+    },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["{projectRoot}/coverage"],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "reportsDirectory": "coverage/home-anthill"
       }
     },
     "lint": {
@@ -46,6 +66,12 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["./src/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "home-anthill:build"
       }
     }
   },

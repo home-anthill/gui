@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { useGetHomesQuery, useLazyGetHomesQuery, useDeleteHomeByIdMutation, useAddHomeMutation, useUpdateHomeMutation } from '../services/homes';
-import { Home } from '../models/Home';
+import { Home } from '../models/home';
 
 export function useHomes() {
   const {
