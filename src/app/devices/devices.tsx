@@ -46,7 +46,7 @@ export function Devices() {
   }
 
   return (
-    <div className={styles['DevicesContainer']}>
+    <div className={styles['devices-container']}>
       <Typography variant="h2" component="h1" textAlign={'center'}>
         Devices
       </Typography>
@@ -58,11 +58,11 @@ export function Devices() {
         <>
           {homeDevices.unassignedDevices && homeDevices.unassignedDevices.length > 0 &&
             <>
-              <div className={styles['HomeContainer']}>
+              <div className={styles['home-container']}>
                 <Typography variant="h5" component="h1">
                   Unassigned
                 </Typography>
-                <div className={styles['FeaturesContainer']}>
+                <div className={styles['features-container']}>
                   {homeDevices.unassignedDevices.map((device: Device) => (
                     <DeviceCard key={device.id}
                                 device={device}
@@ -73,24 +73,24 @@ export function Devices() {
                   ))}
                 </div>
               </div>
-              <div className={styles['DevicesDivider']}></div>
+              <div className={styles['devices-divider']}></div>
             </>
           }
           {homeDevices.homeDevices.map((home: HomeWithDevices) => (
             <div key={home.name + home.location}>
-              <div className={styles['HomeContainer']}>
+              <div className={styles['home-container']}>
                 <Typography variant="h5" component="h1">
                   { home.name } ({ home.location })
                 </Typography>
                 <br />
                 {home.rooms.map((room: RoomSplitDevices) => (
-                  <div className={styles['RoomContainer']} key={room.name + room.floor}>
+                  <div className={styles['room-container']} key={room.name + room.floor}>
                     <Typography variant="h6" component="h2">
                       { room.name } - { room.floor }
                     </Typography>
                     {(room.controllerDevices.length > 0 || room.sensorDevices.length > 0) ? (
                       <>
-                        <div className={styles['FeaturesContainer']}>
+                        <div className={styles['features-container']}>
                           {room.controllerDevices.map((controller: Device) => (
                             <DeviceCard key={controller.id}
                                         device={controller}
@@ -100,7 +100,7 @@ export function Devices() {
                                         onShowSensor={() => ({})}></DeviceCard>
                           ))}
                         </div>
-                        <div className={styles['FeaturesContainer']}>
+                        <div className={styles['features-container']}>
                           {room.sensorDevices.map((sensor: Device) => (
                             <DeviceCard key={sensor.id}
                                         device={sensor}
@@ -117,7 +117,7 @@ export function Devices() {
                   </div>
                 ))}
               </div>
-              <div className={styles['DevicesDivider']}></div>
+              <div className={styles['devices-divider']}></div>
             </div>
           ))}
         </>

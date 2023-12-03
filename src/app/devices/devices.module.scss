@@ -1,4 +1,4 @@
-.DevicesContainer {
+.devices-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -8,27 +8,50 @@
   margin-bottom: 40px;
   margin-left: 40px;
   margin-right: 40px;
+
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    margin-bottom: 0;
+
+    //.card {
+    //  background-color: dodgerblue;
+    //  color: white;
+    //  padding: 1rem;
+    //  height: 4rem;
+    //}
+    //
+    //.cards {
+    //  max-width: 1200px;
+    //  margin: 0 auto;
+    //  display: grid;
+    //  gap: 1rem;
+    //  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    //}
+
+    .features-container {
+      display: card;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .room-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+  }
 }
 
-.HomeContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin-top: 40px;
-  margin-bottom: 0;
-}
-
-.RoomContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-
-.DevicesDivider {
+.devices-divider {
   margin-top: 40px;
   margin-bottom: 0;
   height: 1px;
@@ -36,10 +59,3 @@
   background-color: #ffffff1a;
 }
 
-.FeaturesContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
