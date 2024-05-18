@@ -10,7 +10,7 @@
     "clean": "npm run clean:dist && npm run clean:dest",
     "clean:dist": "rm -rf dist",
     "clean:dest": "rm -rf ../api-server/public",
-    "copy": "cpr dist/home-anthill/ ../api-server/public/",
+    "copy": "cpr dist/ ../api-server/public/",
     "test": "nx test",
     "deps": "nx migrate latest"
   },
