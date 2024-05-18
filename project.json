@@ -3,13 +3,14 @@
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "./src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/home-anthill"
+        "outputPath": "dist"
       },
       "configurations": {
         "development": {
@@ -63,9 +64,8 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["./src/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["{projectRoot}/src"]
       }
     },
     "serve-static": {
@@ -74,6 +74,5 @@
         "buildTarget": "home-anthill:build"
       }
     }
-  },
-  "tags": []
+  }
 }
