@@ -21,36 +21,38 @@ export const devicesApi = commonApi.injectEndpoints({
         arg.homes.forEach((home: Home) => {
           const homeObj: HomeWithDevices = Object.assign({}, home) as HomeWithDevices;
           const roomsObjs: RoomSplitDevices[] = [];
-          homeObj.rooms.forEach((room: Room) => {
-            // if this room has devices, otherwise skip it
-            if (room?.devices?.length > 0) {
-              const roomObj: RoomSplitDevices = Object.assign({}, room) as RoomSplitDevices;
-              // get all devices in this room removing duplicates
-              // and mapping these as device object instead of an id string
-              const roomDevices: Device[] = roomObj.devices
-                // remove duplicated
-                .filter((v1: string, i: number, array: string[]) => array.findIndex((v2: string) => (v2 === v1)) === i)
-                // map device id to its full device object
-                .map((deviceId: string) => response.find((device: Device) => device && device.id === deviceId))
-                // remove undefined devices (it happens when the find above fails.
-                // the reason is that you have a broken db with bad references across collections
-                .filter((device: Device | undefined) => device) as Device[];
-              // split those devices into 2 different arrays:
-              // - controllers (devices able to receive commands)
-              // - sensors (read-only devices)
-              roomObj.controllerDevices = getControllers(roomDevices);
-              roomObj.sensorDevices = getSensors(roomDevices);
-              // remove the list of device ids in string format, because above we added full objects
-              roomObj.devices = [];
-              // add this room to the list of rooms of the current home
-              roomsObjs.push(roomObj);
+          if (homeObj.rooms) {
+            homeObj.rooms.forEach((room: Room) => {
+              // if this room has devices, otherwise skip it
+              if (room?.devices?.length > 0) {
+                const roomObj: RoomSplitDevices = Object.assign({}, room) as RoomSplitDevices;
+                // get all devices in this room removing duplicates
+                // and mapping these as device object instead of an id string
+                const roomDevices: Device[] = roomObj.devices
+                  // remove duplicated
+                  .filter((v1: string, i: number, array: string[]) => array.findIndex((v2: string) => (v2 === v1)) === i)
+                  // map device id to its full device object
+                  .map((deviceId: string) => response.find((device: Device) => device && device.id === deviceId))
+                  // remove undefined devices (it happens when the find above fails.
+                  // the reason is that you have a broken db with bad references across collections
+                  .filter((device: Device | undefined) => device) as Device[];
+                // split those devices into 2 different arrays:
+                // - controllers (devices able to receive commands)
+                // - sensors (read-only devices)
+                roomObj.controllerDevices = getControllers(roomDevices);
+                roomObj.sensorDevices = getSensors(roomDevices);
+                // remove the list of device ids in string format, because above we added full objects
+                roomObj.devices = [];
+                // add this room to the list of rooms of the current home
+                roomsObjs.push(roomObj);
+              }
+            });
+            // if this home has rooms (added in the loop above), otherwise skip it
+            if (roomsObjs.length > 0) {
+              homeObj.rooms = roomsObjs;
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              result.homeDevices.push(homeObj);
             }
-          });
-          // if this home has rooms (added in the loop above), otherwise skip it
-          if (roomsObjs.length > 0) {
-            homeObj.rooms = roomsObjs;
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            result.homeDevices.push(homeObj);
           }
         });
         // 3) result object contains `unassignedDevices`,
