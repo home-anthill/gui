@@ -18,8 +18,7 @@ export interface DeviceProps {
 
 export default function DeviceCard(props: DeviceProps) {
   return (
-    <Card variant="outlined"
-          sx={{margin: '12px', minWidth: '250px'}}>
+    <Card variant="outlined">
       <CardContent sx={{paddingTop: '14px', paddingLeft: '14px', paddingRight: '14px', paddingBottom: '6px'}}>
         <Typography sx={{fontSize: 14}} component="div">
           {props.device?.mac}

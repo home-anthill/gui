@@ -82,7 +82,6 @@ export function Devices() {
                 <Typography variant="h5" component="h1">
                   { home.name } ({ home.location })
                 </Typography>
-                <br />
                 {home.rooms.map((room: RoomSplitDevices) => (
                   <div className={styles['room-container']} key={room.name + room.floor}>
                     <Typography variant="h6" component="h2">
