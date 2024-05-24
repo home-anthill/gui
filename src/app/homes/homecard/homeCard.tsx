@@ -35,11 +35,7 @@ export function HomeCard(props: PropsWithChildren<HomeProps>) {
   };
 
   return (
-    <Card variant="outlined"
-          sx={{
-            margin: "12px",
-            minWidth: "250px"
-          }}>
+    <Card variant="outlined">
       <CardContent>
         <Typography variant="h5" component="div">
           {props.home.name}
