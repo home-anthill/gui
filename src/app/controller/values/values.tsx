@@ -40,6 +40,7 @@ export function Values(props: ValuesProps) {
   }, [acValue, props.device.id, trigger]);
 
   // use a custom Alert extending MuiAlert instead of the Alert defined in @mui/material
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   const Alert = forwardRef(function Alert(props: any, ref: any) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
@@ -76,7 +77,7 @@ export function Values(props: ValuesProps) {
     setFanSpeed(+(event.target.value));
   }
 
-  const handleSnackbarClose = (event: any, reason: string) => {
+  const handleSnackbarClose = (event: unknown, reason: string) => {
     if (reason === 'clickaway') {
       return;
     }

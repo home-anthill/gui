@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
-    "build": "npm run build:dev",
+    "start": "npm run lint && nx serve",
+    "build": "npm run lint && npm run build:dev",
     "build:dev": "npm run clean && nx build --configuration=development && npm run clean:dest && npm run copy",
     "build:prod": "npm run clean:dist && nx build",
+    "lint": "nx lint",
     "clean": "npm run clean:dist && npm run clean:dest",
     "clean:dist": "rm -rf dist",
     "clean:dest": "rm -rf ../api-server/public",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "@nx/cypress": "19.0.4",
     "@nx/eslint": "19.0.4",
-    "@nx/eslint-plugin": "19.0.4",
+    "@nx/eslint-plugin": "^19.0.4",
     "@nx/js": "19.0.4",
     "@nx/react": "19.0.4",
     "@nx/vite": "19.0.4",

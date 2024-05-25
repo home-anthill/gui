@@ -9,7 +9,7 @@ import styles from './login.module.scss';
 import logoPng from '../../assets/home-anthill.png'
 
 export function Login() {
-  const {login, loading, loginError} = useLogin();
+  const {login} = useLogin();
   const navigate = useNavigate();
 
   function onLogin() {
@@ -23,7 +23,7 @@ export function Login() {
       console.log(`login - already logged in, navigating to 'main'`);
       navigate('/main');
     }
-  }, [])
+  }, [navigate])
 
   return (
     <div className={styles['login']}>

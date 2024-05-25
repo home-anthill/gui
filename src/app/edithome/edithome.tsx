@@ -19,6 +19,19 @@ export function EditHome() {
   // home and setHome are used only to store the home current home to be used in onSaveRoom
   const [home, setHome] = useState<Home | undefined>(undefined);
 
+  const homeForm = useForm({
+    defaultValues: {
+      nameInput: '',
+      locationInput: ''
+    }
+  });
+
+  const roomsForm = useForm({
+    defaultValues: {
+      rooms: [] as Room[],
+    }
+  });
+
   useEffect(() => {
     async function fn() {
       // update state calling setHome
@@ -36,20 +49,8 @@ export function EditHome() {
       }
     }
     fn();
-  }, [id, lazyHomes, trigger]);
+  }, [id, lazyHomes, trigger, homeForm, roomsForm]);
 
-  const homeForm = useForm({
-    defaultValues: {
-      nameInput: '',
-      locationInput: ''
-    }
-  });
-
-  const roomsForm = useForm({
-    defaultValues: {
-      rooms: [] as Room[],
-    }
-  });
   const {fields, append, remove} = useFieldArray({
     control: roomsForm.control,
     name: 'rooms',
