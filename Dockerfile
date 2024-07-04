@@ -22,10 +22,7 @@ RUN apk update \
 
 WORKDIR /ac
 
-COPY --from=builder /ac/run.sh run.sh
 COPY --from=builder /ac/dist/ /etc/nginx/html/html
 
 # remove nginx default configuration
 RUN rm /etc/nginx/conf.d/default.conf
-
-ENTRYPOINT ["sh", "run.sh"]
