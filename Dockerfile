@@ -15,25 +15,15 @@ COPY . .
 
 RUN npm run build:prod
 
-FROM nginx:1.25.3-alpine
+FROM nginx:1.27.0-alpine
 
-# install certbot and openssl (all required to enable certbot with standalone mode)
 RUN apk update \
-    && apk upgrade \
-    && apk add --no-cache \
-    certbot certbot-nginx openssl
+    && apk upgrade
 
 WORKDIR /ac
 
 COPY --from=builder /ac/run.sh run.sh
 COPY --from=builder /ac/dist/ /etc/nginx/html/html
-# Scripts to renew let's encrypt certs and to upgrade certbot automatically.
-# Filenames in `/etc/periodic` must follow specific rules: https://askubuntu.com/a/611430
-# For example you cannot use "dot" and "dash" in filenames, so you must remove file extensions
-COPY --from=builder /ac/certbotrenew.sh /etc/periodic/daily/certbotrenew
-# you have to make all files in /etc/periodic executables,
-# otherwise crond will skip non-exetubale files without throwing errors
-RUN chmod +x /etc/periodic/daily/certbotrenew
 
 # remove nginx default configuration
 RUN rm /etc/nginx/conf.d/default.conf
