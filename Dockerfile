@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:22-alpine as builder
+FROM node:22-alpine AS builder
 
 WORKDIR /ac
 
@@ -9,7 +9,7 @@ ENV PATH /ac/node_modules/.bin:$PATH
 COPY package.json .
 COPY package-lock.json .
 
-RUN npm ci
+RUN npm i
 
 COPY . .
 
