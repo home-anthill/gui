@@ -4,15 +4,16 @@ FROM node:22-alpine AS builder
 
 WORKDIR /ac
 
-ENV PATH /ac/node_modules/.bin:$PATH
+ENV PATH=/ac/node_modules/.bin:$PATH
 
 COPY package.json .
 COPY package-lock.json .
 
-RUN npm i
+RUN npm ci
 
 COPY . .
 
+RUN nx reset
 RUN npm run build:prod
 
 FROM nginx:1.27.3-alpine
