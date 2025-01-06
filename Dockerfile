@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20-alpine as builder
+FROM node:22-alpine as builder
 
 WORKDIR /ac
 
@@ -15,7 +15,7 @@ COPY . .
 
 RUN npm run build:prod
 
-FROM nginx:1.27.0-alpine
+FROM nginx:1.27.3-alpine
 
 RUN apk update \
     && apk upgrade
