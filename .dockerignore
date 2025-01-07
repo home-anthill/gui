@@ -1,5 +1,7 @@
 .idea
 build
+.nx
+dist
 node_modules
 .dockerignore
 Dockerfile

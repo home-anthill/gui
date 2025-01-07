@@ -7,14 +7,13 @@
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/.eslintrc.json",
-      "!{projectRoot}/eslint.config.js",
-      "!{projectRoot}/cypress/**/*",
-      "!{projectRoot}/**/*.cy.[jt]s?(x)",
-      "!{projectRoot}/cypress.config.[jt]s"
+      "!{projectRoot}/eslint.config.cjs"
     ],
-    "sharedGlobals": []
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/docker-image.yml"]
   },
+  "nxCloudId": "677d884bad9e5333bd1d8522",
   "plugins": [
     {
       "plugin": "@nx/vite/plugin",
@@ -23,22 +22,14 @@
         "testTargetName": "test",
         "serveTargetName": "serve",
         "previewTargetName": "preview",
-        "serveStaticTargetName": "serve-static"
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck"
       }
     },
     {
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
-      }
-    },
-    {
-      "plugin": "@nx/cypress/plugin",
-      "options": {
-        "targetName": "e2e",
-        "openTargetName": "open-cypress",
-        "componentTestingTargetName": "component-test",
-        "ciTargetName": "e2e-ci"
       }
     }
   ],
@@ -59,6 +50,4 @@
         "linter": "eslint"
       }
     }
-  },
-  "useLegacyCache": true
-}
+  },}

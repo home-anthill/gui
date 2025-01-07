@@ -50,7 +50,6 @@ export const devicesApi = commonApi.injectEndpoints({
             // if this home has rooms (added in the loop above), otherwise skip it
             if (roomsObjs.length > 0) {
               homeObj.rooms = roomsObjs;
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               result.homeDevices.push(homeObj);
             }
           }

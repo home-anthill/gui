@@ -1,6 +1,7 @@
 {
   "name": "home-anthill",
   "$schema": "node_modules/nx/schemas/project-schema.json",
+  "includedScripts": [],
   "sourceRoot": "./src",
   "projectType": "application",
   "tags": [],
