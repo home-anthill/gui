@@ -23,7 +23,7 @@ export function Sensor() {
       </Typography>
       <div className={styles['sensor-home-info']}>
         <Typography variant="body1" component="p">
-          {home?.name} ({home?.location}) - {room?.name} ({room?.floor})
+          {home?.name} {home?.location && (home?.location)} {(room?.name || room?.floor) && '-'} {room?.name} {room?.floor && (room?.floor)}
         </Typography>
       </div>
       <div className={styles['sensor']}>
@@ -39,7 +39,7 @@ export function Sensor() {
           <div className={styles['sensor-features-container']}>
             {sensorWithValues?.features?.map((feature: FeatureValue) => (
               <div className={styles['feature-value']} key={feature?.uuid}>
-                <SensorValue feature={feature}></SensorValue>
+                <SensorValue id={sensor.id} feature={feature}></SensorValue>
               </div>
             ))}
           </div>

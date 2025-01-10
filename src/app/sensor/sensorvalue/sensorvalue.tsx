@@ -5,7 +5,9 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import WbCloudyIcon from '@mui/icons-material/WbCloudy';
 import CompressIcon from '@mui/icons-material/Compress';
+import BoltIcon from '@mui/icons-material/Bolt';
 
+import OnlineValue from './onlinevalue/onlinevalue';
 import { SensorValueProps } from '../../../models/value';
 import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
 
@@ -33,6 +35,8 @@ export default function SensorValue(props: SensorValueProps) {
                   return <WbCloudyIcon fontSize="large"></WbCloudyIcon>
                 case 'airpressure':
                   return <CompressIcon fontSize="large"></CompressIcon>
+                case 'poweroutage':
+                  return <BoltIcon fontSize="large"></BoltIcon>
                 default:
                   return (
                     <>
@@ -91,6 +95,10 @@ export default function SensorValue(props: SensorValueProps) {
                     <Typography sx={{fontSize: 24}} color="text.secondary" gutterBottom>
                       {props.feature?.value.toFixed(0)} {props.feature?.unit}
                     </Typography>
+                  )
+                case 'poweroutage':
+                  return (
+                    <OnlineValue id={props.id}></OnlineValue>
                   )
                 default:
                   return (

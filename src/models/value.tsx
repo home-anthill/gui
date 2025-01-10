@@ -15,6 +15,7 @@ export interface ValuesProps {
 }
 
 export interface SensorValueProps {
+  id: string;
   feature: FeatureValue;
 }
 

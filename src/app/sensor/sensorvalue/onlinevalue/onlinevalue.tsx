@@ -1,0 +1,44 @@
+import {  Typography } from '@mui/material';
+
+import styles from './onlinevalue.module.scss';
+import { useOnline } from '../../../../hooks/useOnline';
+import { OnlineProps } from '../../../../models/online';
+import { getPrettyDateFromUnixEpoch } from '../../../../utils/dateUtils';
+
+export default function OnlineValue(props: OnlineProps) {
+
+  const {online, loading, onlineError} = useOnline(props.id);
+
+  function isOnline(modifiedAtISO: string): boolean {
+    const modDate = new Date(modifiedAtISO);
+    const currentDate = new Date();
+    return modDate.getTime() < (currentDate.getTime() - (60 * 1000))
+  }
+
+  return (
+    <div className={styles['online-value-container']}>
+      {onlineError ? (
+        <div className="error">Cannot check if online</div>
+      ) : loading ? (
+        <div className="loading">Loading...</div>
+      ) : isOnline(online.modifiedAt) ? (
+        <div className={styles['online-value']}>
+          <div className={styles['online']}></div>
+          <Typography sx={{ fontSize: 24, margin: 0 }} color="text.secondary" gutterBottom>&nbsp;Online</Typography>
+        </div>
+      ) : (
+        <div className={styles['online-value']}>
+          <div className={styles['offline']}></div>
+          <Typography sx={{ fontSize: 24, margin: 0 }} color="text.secondary" gutterBottom>&nbsp;Offline</Typography>
+        </div>
+      )}
+      {online.modifiedAt &&
+        <div className={styles['last-seen-online']}>
+          <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
+            {getPrettyDateFromUnixEpoch(new Date(online.modifiedAt).getTime())}
+          </Typography>
+        </div>
+      }
+    </div>
+  )
+}

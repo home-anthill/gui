@@ -33,6 +33,6 @@ export const commonApi = createApi({
   // after the subscriber reference count reaches zero.
   keepUnusedDataFor: 60, // invalidate cache after 60 seconds
   baseQuery: baseQueryWithForceLogout,
-  tagTypes: ['Login', 'Homes', 'Rooms', 'Devices', 'SensorValues', 'ACValue', 'Profile'],
+  tagTypes: ['Login', 'Homes', 'Rooms', 'Devices', 'SensorValues', 'ACValue', 'Profile', 'Online'],
   endpoints: _ => ({}),
 });

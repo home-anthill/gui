@@ -1,0 +1,39 @@
+.online-value-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+
+  > .online-value {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+
+    > .online {
+      height: 15px;
+      width: 15px;
+      background-color: #00FF36;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    > .offline {
+      height: 15px;
+      width: 15px;
+      background-color: #FF0000;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  }
+
+  > .last-seen-online {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    margin-top: 8px;
+  }
+}
