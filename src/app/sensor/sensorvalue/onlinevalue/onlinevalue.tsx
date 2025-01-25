@@ -9,9 +9,9 @@ export default function OnlineValue(props: OnlineProps) {
 
   const {online, loading, onlineError} = useOnline(props.id);
 
-  function isOnline(modifiedAtISO: string): boolean {
+  function isOnline(modifiedAtISO: string, currentTimeISO: string): boolean {
     const modDate = new Date(modifiedAtISO);
-    const currentDate = new Date();
+    const currentDate = new Date(currentTimeISO);
     return modDate.getTime() < (currentDate.getTime() - (60 * 1000))
   }
 
@@ -21,7 +21,7 @@ export default function OnlineValue(props: OnlineProps) {
         <div className="error">Cannot check if online</div>
       ) : loading ? (
         <div className="loading">Loading...</div>
-      ) : isOnline(online.modifiedAt) ? (
+      ) : isOnline(online.modifiedAt, online.currentTime) ? (
         <div className={styles['online-value']}>
           <div className={styles['online']}></div>
           <Typography sx={{ fontSize: 24, margin: 0 }} color="text.secondary" gutterBottom>&nbsp;Online</Typography>
