@@ -15,7 +15,7 @@ COPY . .
 
 RUN npm run build:prod
 
-FROM nginx:1.27.3-alpine
+FROM nginx:1.27.5-alpine
 
 RUN apk update \
     && apk upgrade
