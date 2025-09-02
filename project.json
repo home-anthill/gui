@@ -40,30 +40,6 @@
         }
       }
     },
-    "preview": {
-      "executor": "@nx/vite:preview-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "home-anthill:build"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "home-anthill:build:development"
-        },
-        "production": {
-          "buildTarget": "home-anthill:build:production"
-        }
-      },
-      "dependsOn": ["build"]
-    },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
-      "options": {
-        "passWithNoTests": true,
-        "reportsDirectory": "coverage/home-anthill"
-      }
-    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
