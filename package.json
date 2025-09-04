@@ -1,12 +1,12 @@
 {
   "name": "home-anthill",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "scripts": {
     "start": "npm run lint && nx serve",
     "build": "npm run lint && npm run build:dev",
     "build:dev": "npm run clean && nx build --configuration=development && npm run clean:dest && npm run copy",
-    "build:prod": "npm run clean:dist && nx build",
+    "build:prod": "npm run clean:dist && nx build --configuration=production",
     "lint": "nx lint",
     "clean": "npm run clean:dist && npm run clean:dest",
     "clean:dist": "rm -rf dist",
