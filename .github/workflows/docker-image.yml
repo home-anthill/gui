@@ -42,7 +42,7 @@ jobs:
       - name: Run builds
         run: |
           echo "Installing deps"
-          npm ci
+          npm i
           echo "Running Build dev"
           npm run build:dev
           echo "Running Build prod"
