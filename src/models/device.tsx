@@ -6,8 +6,8 @@ export interface Device {
   mac: string;
   manufacturer: string;
   model: string;
-  createdAt: Date;
-  modifiedAt: Date;
+  createdAt: string;
+  modifiedAt: string;
   features: Feature[];
 }
 
@@ -20,18 +20,17 @@ export interface Feature {
   enable: boolean;
 }
 
+export interface HomeWithDevices extends Omit<Home, "rooms"> {
+  rooms: RoomWithDevices[]
+}
+
+export interface RoomWithDevices extends Omit<Room, "devices"> {
+  devices: Device[];
+}
+
 // *****************************************************************
 // ********** requests, responses and utility interfaces ***********
 // *****************************************************************
-export interface HomeWithDevices extends Home {
-  rooms: RoomSplitDevices[]
-}
-
-export interface RoomSplitDevices extends Room {
-  controllerDevices: Device[];
-  sensorDevices: Device[];
-}
-
 export interface AssignDeviceRequest {
   deviceId: string;
   homeId: string;

@@ -1,15 +1,15 @@
-.sensor-container {
+.features-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   margin-top: 20px;
 
-  > .sensor-home-info {
+  > .features-device-home-info {
     margin-top: 10px;
   }
 
-  > .sensor {
+  > .features-device {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,10 +17,10 @@
     margin-top: 20px;
     margin-bottom: 20px;
 
-    > .sensor-features-container {
+    > .features-sensor-container {
       margin-top: 20px;
 
-      > .feature-value {
+      > .features-value {
         display: flex;
         flex-direction: row;
         justify-content: space-between;

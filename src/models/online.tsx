@@ -3,7 +3,3 @@ export interface Online {
   modifiedAt: string;
   currentTime: string;
 }
-
-export interface OnlineProps {
-  id: string;
-}

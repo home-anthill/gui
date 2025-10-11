@@ -1,24 +1,36 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
-import { useGetHomesQuery, useLazyGetHomesQuery, useDeleteHomeByIdMutation, useAddHomeMutation, useUpdateHomeMutation } from '../services/homes';
+import {
+  useGetHomesQuery,
+  useLazyGetHomesQuery,
+  useDeleteHomeByIdMutation,
+  useAddHomeMutation,
+  useUpdateHomeMutation,
+} from '../services/homes';
 import { Home } from '../models/home';
 
 export function useHomes() {
   const {
     data: homes = [] as Home[],
     isLoading: homesLoading,
-    error: homesError
+    error: homesError,
   } = useGetHomesQuery();
-  const [trigger, {
-    data: lazyHomes = [] as Home[],
-    isLoading: lazyHomesLoading,
-    error: lazyHomesError
-  }] = useLazyGetHomesQuery();
-  const [deleteHomeMutation, { isLoading: deleteHomeLoading }] = useDeleteHomeByIdMutation();
+  const [
+    trigger,
+    {
+      data: lazyHomes = [] as Home[],
+      isLoading: lazyHomesLoading,
+      error: lazyHomesError,
+    },
+  ] = useLazyGetHomesQuery();
+  const [deleteHomeMutation, { isLoading: deleteHomeLoading }] =
+    useDeleteHomeByIdMutation();
   const [addHomeMutation, { isLoading: addHomeLoading }] = useAddHomeMutation();
-  const [updateHomeMutation, { isLoading: updateHomeLoading }] = useUpdateHomeMutation();
+  const [updateHomeMutation, { isLoading: updateHomeLoading }] =
+    useUpdateHomeMutation();
 
-  const loading = homesLoading || deleteHomeLoading || addHomeLoading || updateHomeLoading;
+  const loading =
+    homesLoading || deleteHomeLoading || addHomeLoading || updateHomeLoading;
 
   const deleteHome = useCallback(
     (id: string) => deleteHomeMutation(id),
@@ -27,12 +39,14 @@ export function useHomes() {
 
   const addHome = useCallback(
     // pass a fixed rooms: [], because you cannot add rooms with this api
-    (name: string, location: string) => addHomeMutation({name, location, rooms: []}),
+    (name: string, location: string) =>
+      addHomeMutation({ name, location, rooms: [] }),
     [addHomeMutation]
   );
 
   const updateHome = useCallback(
-    (id: string, name: string, location: string) => updateHomeMutation({id, name, location}),
+    (id: string, name: string, location: string) =>
+      updateHomeMutation({ id, name, location }),
     [updateHomeMutation]
   );
 
@@ -41,7 +55,7 @@ export function useHomes() {
     homes,
     loading,
     homesError,
-    // homes lazy quuery
+    // homes lazy query
     trigger,
     lazyHomes,
     lazyHomesLoading,
@@ -49,6 +63,6 @@ export function useHomes() {
     // mutations
     deleteHome,
     addHome,
-    updateHome
-  }
+    updateHome,
+  };
 }

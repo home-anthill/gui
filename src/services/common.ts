@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { getToken, removeToken } from '../auth/auth-utils';
 import { BaseQueryApi, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
+
+import { getToken, removeToken } from '../auth/auth-utils';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '/api',
@@ -18,7 +19,7 @@ const baseQueryWithForceLogout: BaseQueryFn<string | FetchArgs, unknown, FetchBa
   async (args: string | FetchArgs, api: BaseQueryApi, extraOptions) => {
     const result = await baseQuery(args, api, extraOptions);
     if (result.error && (result.error.status === 401 || result.error.status === 403)) {
-      console.log('baseQueryWithForceLogout - status 401 or 403 - logging out');
+      console.error('baseQueryWithForceLogout - status 401 or 403 - logging out');
       //  1. Redirect user to LOGIN
       //  2. Reset authentication from localstorage/sessionstorage
       removeToken();
@@ -33,6 +34,6 @@ export const commonApi = createApi({
   // after the subscriber reference count reaches zero.
   keepUnusedDataFor: 60, // invalidate cache after 60 seconds
   baseQuery: baseQueryWithForceLogout,
-  tagTypes: ['Login', 'Homes', 'Rooms', 'Devices', 'SensorValues', 'ACValue', 'Profile', 'Online'],
+  tagTypes: ['Login', 'Homes', 'Rooms', 'Devices', 'Values', 'Profile', 'Online'],
   endpoints: _ => ({}),
 });

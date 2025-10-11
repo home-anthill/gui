@@ -1,7 +1,9 @@
 import { Device, Feature } from './device';
 
 export interface Value {
-  uuid: string;
+  featureUuid: string;
+  type: string;
+  name: string;
   value: number;
   createdAt: number;
   modifiedAt: number;
@@ -10,21 +12,23 @@ export interface Value {
 // *****************************************************************
 // ********** requests, responses and utility interfaces ***********
 // *****************************************************************
-export interface ValuesProps {
-  device: Device;
+export interface DeviceWithValuesResponse extends Omit<Device, "features"> {
+  features: FeatureValue[];
 }
 
-export interface SensorValueProps {
-  id: string;
-  feature: FeatureValue;
-}
-
-export interface FeatureValue extends Feature {
+export interface FeatureValue extends Omit<Feature, "uuid"> {
+  featureUuid: string;
   value: number;
   createdAt: number;
   modifiedAt: number;
 }
+export interface SetValueRequest {
+  featureUuid: string;
+  type: string;
+  name: string;
+  value: number;
+}
 
-export interface SensorWithValue extends Device {
-  features: FeatureValue[];
+export interface SetValueResponse {
+  message: string
 }

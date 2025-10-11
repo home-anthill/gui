@@ -63,7 +63,7 @@ export function DeviceSettings() {
     const selectedHomeId: string = event.target.value;
     const home: Home | undefined = homes.find((home: Home) => home.id === selectedHomeId);
     if (!home) {
-      console.log('onChangeHome - cannot find home');
+      console.error('onChangeHome - cannot find home');
       return;
     }
     setRooms([DEFAULT_ROOM, ...home.rooms])
@@ -78,7 +78,7 @@ export function DeviceSettings() {
     const selectedRoomId: string = event.target.value;
     const room: Room | undefined = rooms.find((room: Room) => room.id === selectedRoomId)
     if (!room) {
-      console.log('onChangeRoom - cannot find room');
+      console.error('onChangeRoom - cannot find room');
       return;
     }
     setSelectedRoom(room);
@@ -91,7 +91,6 @@ export function DeviceSettings() {
     }
     try {
       const response = await assignDeviceHomeRoom(device.id, selectedHome.id, selectedRoom.id);
-      console.log('onAssign - response = ', response);
       // navigate back
       navigate(-1);
     } catch (err) {
@@ -102,7 +101,6 @@ export function DeviceSettings() {
   async function onRemove() {
     try {
       const response = await deleteDevice(device.id).unwrap();
-      console.log('onRemove - response = ', response);
       // navigate back
       navigate(-1);
     } catch (err) {

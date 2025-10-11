@@ -27,7 +27,6 @@ export function Homes() {
   async function removeHome(home: Home): Promise<void> {
     try {
       const response = await deleteHome(home.id).unwrap();
-      console.log('removeHome - response = ', response);
     } catch (err) {
       console.error(`removeHome - cannot delete home with id = ${home.id}`);
     }
@@ -104,7 +103,6 @@ function NewHomeDialog(props: NewHomeProps) {
     const values = getValues();
     try {
       const response = await addHome(values.nameInput, values.locationInput).unwrap();
-      console.log('onAddHome - response = ', response);
       handleAdd(true);
     } catch (err) {
       console.error('onAddHome - cannot add a new home, err = ', err);

@@ -64,7 +64,6 @@ export function EditHome() {
     const values = homeForm.getValues();
     try {
       const result = await updateHome(id, values.nameInput, values.locationInput).unwrap();
-      console.log('onAddHome - result = ', result);
       // navigate back
       navigate(-1);
     } catch (err) {
@@ -82,7 +81,6 @@ export function EditHome() {
     }
     try {
       const result = await deleteRoom(id, room.id).unwrap();
-      console.log('onRemoveRoom - result = ', result);
       // navigate back
       navigate(-1);
     } catch (err) {
@@ -100,7 +98,6 @@ export function EditHome() {
     }
     try {
       if (room.id) {
-        console.log('onSaveRoom - updating existing room = ', room);
         const result = await updateRoom(
           (home as Home).id,
           room.id,
@@ -109,9 +106,7 @@ export function EditHome() {
             floor: +room.floor
           } as Room
         ).unwrap();
-        console.log('onSaveRoom - update result = ', result);
       } else {
-        console.log('onSaveRoom - adding new room = ', room);
         const result = await addRoom(
           (home as Home).id,
           {
@@ -119,7 +114,6 @@ export function EditHome() {
             floor: +room.floor
           } as Room
         ).unwrap();
-        console.log('onSaveRoom - add result = ', result);
       }
       // navigate back
       navigate(-1);

@@ -1,6 +1,5 @@
 import { Card, CardActions, CardContent, Typography, IconButton } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 
 import { Device } from '../../../models/device';
@@ -9,12 +8,9 @@ import styles from './device.module.scss';
 
 export interface DeviceProps {
   device: Device;
-  deviceType: string;
   onShowSettings: (device: Device) => void;
-  onShowController: (device: Device) => void;
-  onShowSensor: (device: Device) => void;
+  onShow: (device: Device) => void;
 }
-
 
 export default function DeviceCard(props: DeviceProps) {
   return (
@@ -32,16 +28,9 @@ export default function DeviceCard(props: DeviceProps) {
         <IconButton aria-label="settings" onClick={() => props.onShowSettings(props.device)}>
           <SettingsIcon/>
         </IconButton>
-        {props.deviceType === 'controller' &&
-          <IconButton aria-label="controller" onClick={() => props.onShowController(props.device)}>
-            <PlayArrowIcon/>
-          </IconButton>
-        }
-        {props.deviceType === 'sensor' &&
-          <IconButton aria-label="sensor" onClick={() => props.onShowSensor(props.device)}>
-            <AutoStoriesIcon/>
-          </IconButton>
-        }
+        <IconButton aria-label="sensor" onClick={() => props.onShow(props.device)}>
+          <AutoStoriesIcon/>
+        </IconButton>
       </CardActions>
     </Card>
   )

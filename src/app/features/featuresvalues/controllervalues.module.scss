@@ -1,11 +1,11 @@
-.values {
+.controller-values {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-top: 30px;
 
-  > .value-container {
+  > .controller-value-container {
     margin-top: 10px;
     margin-bottom: 20px;
   }

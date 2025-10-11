@@ -1,18 +1,21 @@
-import {  Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
-import styles from './onlinevalue.module.scss';
 import { useOnline } from '../../../../hooks/useOnline';
-import { OnlineProps } from '../../../../models/online';
 import { getPrettyDateFromUnixEpoch } from '../../../../utils/dateUtils';
 
-export default function OnlineValue(props: OnlineProps) {
+import styles from './onlinevalue.module.scss';
 
-  const {online, loading, onlineError} = useOnline(props.id);
+interface OnlineProps {
+  id: string;
+}
+
+export default function OnlineValue(props: OnlineProps) {
+  const { online, loading, onlineError } = useOnline(props.id);
 
   function isOffline(modifiedAtISO: string, currentTimeISO: string): boolean {
     const modDate = new Date(modifiedAtISO);
     const currentDate = new Date(currentTimeISO);
-    return modDate.getTime() < (currentDate.getTime() - (60 * 1000))
+    return modDate.getTime() < currentDate.getTime() - 60 * 1000;
   }
 
   return (
@@ -24,21 +27,33 @@ export default function OnlineValue(props: OnlineProps) {
       ) : isOffline(online.modifiedAt, online.currentTime) ? (
         <div className={styles['online-value']}>
           <div className={styles['offline']}></div>
-          <Typography sx={{ fontSize: 24, margin: 0 }} color="text.secondary" gutterBottom>&nbsp;Offline</Typography>
+          <Typography
+            sx={{ fontSize: 24, margin: 0 }}
+            color="text.secondary"
+            gutterBottom
+          >
+            &nbsp;Offline
+          </Typography>
         </div>
       ) : (
         <div className={styles['online-value']}>
           <div className={styles['online']}></div>
-          <Typography sx={{ fontSize: 24, margin: 0 }} color="text.secondary" gutterBottom>&nbsp;Online</Typography>
+          <Typography
+            sx={{ fontSize: 24, margin: 0 }}
+            color="text.secondary"
+            gutterBottom
+          >
+            &nbsp;Online
+          </Typography>
         </div>
       )}
-      {online.modifiedAt &&
+      {online.modifiedAt && (
         <div className={styles['last-seen-online']}>
           <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
             {getPrettyDateFromUnixEpoch(new Date(online.modifiedAt).getTime())}
           </Typography>
         </div>
-      }
+      )}
     </div>
-  )
+  );
 }

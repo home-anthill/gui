@@ -10,8 +10,7 @@ import Homes from './homes/homes';
 import EditHome from './edithome/edithome';
 import Devices from './devices/devices';
 import DeviceSettings from './devicesettings/devicesettings';
-import Controller from './controller/controller';
-import Sensor from './sensor/sensor';
+import Features from './features/features';
 import { AuthLayout } from '../auth/AuthLayout';
 
 const darkTheme = createTheme({
@@ -32,8 +31,7 @@ export const router = createBrowserRouter(
         <Route index element={<ProtectedLayout><Devices/></ProtectedLayout>}/>
         <Route path="devices" element={<ProtectedLayout><Devices/></ProtectedLayout>}/>
         <Route path="devices/:id" element={<ProtectedLayout><DeviceSettings/></ProtectedLayout>}/>
-        <Route path="devices/:id/controller" element={<ProtectedLayout><Controller/></ProtectedLayout>}/>
-        <Route path="devices/:id/sensor" element={<ProtectedLayout><Sensor/></ProtectedLayout>}/>
+        <Route path="devices/:id/features" element={<ProtectedLayout><Features/></ProtectedLayout>}/>
         <Route path="homes" element={<ProtectedLayout> <Homes/> </ProtectedLayout>}/>
         <Route path="homes/:id/edit" element={<ProtectedLayout> <EditHome/> </ProtectedLayout>}/>
         <Route
