@@ -54,7 +54,7 @@ export default function SensorValue(props: SensorValueProps) {
                   return <WbCloudyIcon fontSize="large"></WbCloudyIcon>;
                 case 'airpressure':
                   return <CompressIcon fontSize="large"></CompressIcon>;
-                case 'poweroutage':
+                case 'online':
                   return <BoltIcon fontSize="large"></BoltIcon>;
                 default:
                   return <>Unsupported feature = {props.feature.name}</>;
@@ -132,7 +132,7 @@ export default function SensorValue(props: SensorValueProps) {
                         {props.feature?.value.toFixed(0)} {props.feature?.unit}
                       </Typography>
                     );
-                  case 'poweroutage':
+                  case 'online':
                     return <OnlineValue id={props.id}></OnlineValue>;
                   default:
                     return (
@@ -148,17 +148,18 @@ export default function SensorValue(props: SensorValueProps) {
               }
             })()}
           </div>
-          {props.feature?.modifiedAt !== 0 && (
-            <div className={styles['sensor-date']}>
-              <Typography
-                sx={{ fontSize: 12 }}
-                color="text.secondary"
-                gutterBottom
-              >
-                {getPrettyDateFromUnixEpoch(props.feature?.modifiedAt)}
-              </Typography>
-            </div>
-          )}
+          {props.feature?.modifiedAt !== 0 &&
+            props.feature.name !== 'online' && (
+              <div className={styles['sensor-date']}>
+                <Typography
+                  sx={{ fontSize: 12 }}
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  {getPrettyDateFromUnixEpoch(props.feature?.modifiedAt)}
+                </Typography>
+              </div>
+            )}
         </div>
       </CardContent>
     </Card>
