@@ -110,7 +110,9 @@ export function Devices() {
                             key={device.id}
                             device={device}
                             onShowSettings={() => showDeviceSettings(device)}
-                            onShow={() => ({})}
+                            onShow={() =>
+                              showDevice( device, home, room)
+                            }
                           ></DeviceCard>
                         ))}
                       </div>
