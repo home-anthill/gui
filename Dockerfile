@@ -15,10 +15,7 @@ COPY . .
 
 RUN npm run build:prod
 
-FROM nginx:1.29.6-alpine
-
-RUN apk update \
-    && apk upgrade
+FROM dhi.io/nginx:1-alpine3.23
 
 WORKDIR /ac
 
