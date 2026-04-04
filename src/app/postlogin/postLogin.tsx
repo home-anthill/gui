@@ -9,19 +9,20 @@ export function PostLogin() {
   const { login } = useAuth();
 
   useEffect(() => {
-    const token: string | null = new URLSearchParams(location.search).get('token');
+    const hash = location.hash.slice(1); // strip leading '#'
+    const token: string | null = new URLSearchParams(hash).get('token');
     if (!token) {
-      console.error('postlogin - cannot read token from query parameters');
+      console.error('postlogin - cannot read token from URL fragment');
+      navigate('/');
       return;
     }
     login(token);
     navigate('/main');
-  });
+  }, [location, navigate, login]);
 
   return (
     <div>
       <h1>PostLogin</h1>
-      <div>{location.pathname}</div>
     </div>
   );
 }

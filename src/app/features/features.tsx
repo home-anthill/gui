@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
 import { Device, HomeWithDevices, RoomWithDevices } from '../../models/device';
@@ -11,12 +11,16 @@ import styles from './features.module.scss';
 
 export function Features() {
   const { state } = useLocation();
-  const device: Device = state.device;
-  const home: HomeWithDevices | undefined = state.home;
-  const room: RoomWithDevices | undefined = state.room;
+  const device: Device | undefined = state?.device;
+  const home: HomeWithDevices | undefined = state?.home;
+  const room: RoomWithDevices | undefined = state?.room;
 
   const { deviceWithValues, loading, deviceWithValuesError } =
     useValues(device);
+
+  if (!device) {
+    return <Navigate to="/main/devices" replace />;
+  }
 
   return (
     <div className={styles['features-container']}>

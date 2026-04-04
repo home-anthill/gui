@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardActions, CardContent, Typography, IconButton, Collapse, styled, IconButtonProps } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,19 +16,19 @@ interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
-export function HomeCard(props: PropsWithChildren<HomeProps>) {
-  const [expanded, setExpanded] = useState<boolean>(false);
+const ExpandMore = styled((props: ExpandMoreProps) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
 
-  const ExpandMore = styled((props: ExpandMoreProps) => {
-    const { expand, ...other } = props;
-    return <IconButton {...other} />;
-  })(({ theme, expand }) => ({
-    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  }));
+export function HomeCard(props: HomeProps) {
+  const [expanded, setExpanded] = useState<boolean>(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

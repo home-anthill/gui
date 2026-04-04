@@ -14,7 +14,7 @@ export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(commonApi.middleware),
   preloadedState,
-  devTools: true,
+  devTools: import.meta.env.DEV,
 });
 
 // enable listener behavior for the store

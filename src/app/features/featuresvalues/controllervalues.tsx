@@ -1,4 +1,4 @@
-import { useState, forwardRef, ChangeEvent, useEffect } from 'react';
+import { useState, forwardRef, ChangeEvent, useEffect, useMemo } from 'react';
 import {
   Button,
   Snackbar,
@@ -11,7 +11,7 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
+import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
 
 import { DeviceWithValuesResponse, FeatureValue } from '../../../models/value';
 import { Device } from '../../../models/device';
@@ -20,21 +20,56 @@ import { getPrettyDateFromDateString } from '../../../utils/dateUtils';
 
 import styles from './controllervalues.module.scss';
 
+const SETPOINT_VALUES = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+const HVAC_MODES = [
+  { value: 1, label: 'Cool' },
+  { value: 2, label: 'Auto' },
+  { value: 3, label: 'Heat' },
+  { value: 4, label: 'Fan' },
+  { value: 5, label: 'Dry' },
+];
+const FAN_SPEEDS = [
+  { value: 1, label: 'Min' },
+  { value: 2, label: 'Med' },
+  { value: 3, label: 'Max' },
+  { value: 4, label: 'Auto' },
+  { value: 5, label: 'Auto0' },
+];
+const TOLERANCE_VALUES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
 const STATE_SUCCESS = 'Device state update successfully!';
 const STATE_ERROR = 'Cannot update device state!';
+
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 interface ValuesProps {
   deviceWithValues: DeviceWithValuesResponse;
 }
 
 export default function ControllerValues(props: ValuesProps) {
-  const { trigger, lazyDeviceWithValues, setValues } = useValues(
-    props.deviceWithValues as unknown as Device
-  );
+  const deviceRef = useMemo<Device>(() => ({
+    ...props.deviceWithValues,
+    features: props.deviceWithValues.features.map(fv => ({
+      uuid: fv.featureUuid,
+      name: fv.name,
+      type: fv.type,
+      unit: fv.unit,
+      order: fv.order,
+      enable: fv.enable,
+    })),
+  }), [props.deviceWithValues]);
+
+  const { trigger, lazyDeviceWithValues, setValues } = useValues(deviceRef);
 
   const [featureValues, setFeatureValues] = useState<FeatureValue[]>([]);
 
-  const [snackBarState, setSnackBarState] = useState({
+  const [snackBarState, setSnackBarState] = useState<{
+    open: boolean;
+    severity: AlertColor;
+    message: string;
+  }>({
     open: false,
     severity: 'success',
     message: STATE_SUCCESS,
@@ -46,31 +81,24 @@ export default function ControllerValues(props: ValuesProps) {
         return;
       }
       // update state calling setHome
-      await trigger(props.deviceWithValues as unknown as Device);
+      await trigger(deviceRef);
       if (!lazyDeviceWithValues) {
         return;
       }
       setFeatureValues(props.deviceWithValues.features);
     }
     fn();
-  }, [props, lazyDeviceWithValues, trigger]);
-
-  // use a custom Alert extending MuiAlert instead of the Alert defined in @mui/material
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
-  const Alert = forwardRef(function Alert(props: any, ref: any) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
+  }, [props.deviceWithValues, deviceRef, lazyDeviceWithValues, trigger]);
 
   async function postValue() {
     try {
       const controllerFeatures = featureValues.filter(
         (f: FeatureValue) => f.type === 'controller'
       );
-      const response = await setValues(
+      await setValues(
         props.deviceWithValues.id,
         controllerFeatures
       ).unwrap();
-      console.log('postValue - response = ', response);
       setSnackBarState({
         ...snackBarState,
         open: true,
@@ -78,7 +106,7 @@ export default function ControllerValues(props: ValuesProps) {
         message: STATE_SUCCESS,
       });
     } catch (err) {
-      console.log('postValue - cannot set device values. Err = ', err);
+      console.error('postValue - cannot update device state', err);
       setSnackBarState({
         ...snackBarState,
         open: true,
@@ -115,11 +143,11 @@ export default function ControllerValues(props: ValuesProps) {
     setFeatureValues([...fv]);
   }
 
-  const handleSnackbarClose = (event: unknown, reason: string) => {
+  const handleSnackbarClose = (_event: unknown, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
-    setSnackBarState({ ...snackBarState, open: false });
+    setSnackBarState(prev => ({ ...prev, open: false }));
   };
 
   const getValueFromFeature = (featureUuid: string): number => {
@@ -166,10 +194,7 @@ export default function ControllerValues(props: ValuesProps) {
                           handleNumericChange(feature, e)
                         }
                       >
-                        {[
-                          17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-                          30,
-                        ].map((item) => (
+                        {SETPOINT_VALUES.map((item) => (
                           <MenuItem key={`setpoint-${item}`} value={item}>
                             {item}
                           </MenuItem>
@@ -190,11 +215,9 @@ export default function ControllerValues(props: ValuesProps) {
                           handleNumericChange(feature, e)
                         }
                       >
-                        <MenuItem value={1}>Cool</MenuItem>
-                        <MenuItem value={2}>Auto</MenuItem>
-                        <MenuItem value={3}>Heat</MenuItem>
-                        <MenuItem value={4}>Fan</MenuItem>
-                        <MenuItem value={5}>Dry</MenuItem>
+                        {HVAC_MODES.map((m) => (
+                          <MenuItem key={m.value} value={m.value}>{m.label}</MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   );
@@ -211,11 +234,9 @@ export default function ControllerValues(props: ValuesProps) {
                           handleNumericChange(feature, e)
                         }
                       >
-                        <MenuItem value={1}>Min</MenuItem>
-                        <MenuItem value={2}>Med</MenuItem>
-                        <MenuItem value={3}>Max</MenuItem>
-                        <MenuItem value={4}>Auto</MenuItem>
-                        <MenuItem value={5}>Auto0</MenuItem>
+                        {FAN_SPEEDS.map((f) => (
+                          <MenuItem key={f.value} value={f.value}>{f.label}</MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   );
@@ -234,7 +255,7 @@ export default function ControllerValues(props: ValuesProps) {
                           handleNumericChange(feature, e)
                         }
                       >
-                        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
+                        {TOLERANCE_VALUES.map((item) => (
                           <MenuItem key={`tolerance-${item}`} value={item}>
                             {item}
                           </MenuItem>

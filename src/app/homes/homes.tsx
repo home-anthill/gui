@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { Typography, Fab, Dialog, DialogTitle, Button, DialogContent, TextField, DialogActions, FormControl } from '@mui/material';
@@ -20,25 +20,25 @@ export function Homes() {
   const {homes, loading, homesError, deleteHome} = useHomes();
   const navigate = useNavigate();
 
-  function editHome(home: Home): void {
+  const editHome = useCallback((home: Home): void => {
     navigate(`/main/homes/${home.id}/edit`);
-  }
+  }, [navigate]);
 
-  async function removeHome(home: Home): Promise<void> {
+  const removeHome = useCallback(async (home: Home): Promise<void> => {
     try {
-      const response = await deleteHome(home.id).unwrap();
+      await deleteHome(home.id).unwrap();
     } catch (err) {
-      console.error(`removeHome - cannot delete home with id = ${home.id}`);
+      console.error(`removeHome - cannot delete home with id = ${home.id}`, err);
     }
-  }
+  }, [deleteHome]);
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     setOpen(true);
-  };
+  }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
   return (
     <div className={styles['homes']}>
@@ -86,7 +86,7 @@ function NewHomeDialog(props: NewHomeProps) {
     nameInput: '',
     locationInput: ''
   };
-  const {handleSubmit, reset, control, getValues} = useForm({defaultValues});
+  const {handleSubmit, reset, control} = useForm<{ nameInput: string; locationInput: string }>({defaultValues});
   const {addHome} = useHomes();
 
   const handleClose = () => {
@@ -99,39 +99,40 @@ function NewHomeDialog(props: NewHomeProps) {
     props.onClose(value);
   };
 
-  const onAddHome = async () => {
-    const values = getValues();
+  const onAddHome = handleSubmit(async (values) => {
     try {
-      const response = await addHome(values.nameInput, values.locationInput).unwrap();
+      await addHome(values.nameInput, values.locationInput).unwrap();
       handleAdd(true);
     } catch (err) {
       console.error('onAddHome - cannot add a new home, err = ', err);
       handleAdd(false);
     }
-  }
+  });
 
   return (
     <Dialog open={props.open} onClose={handleClose}>
       <DialogTitle>Create a new home</DialogTitle>
       <DialogContent>
-        <form onSubmit={handleSubmit((data) => onAddHome())} className={styles['form']}>
+        <form onSubmit={onAddHome} className={styles['form']}>
           <FormControl>
             <Controller
-              render={({field}) =>
+              render={({field, fieldState}) =>
                 <TextField
                   id="name-input"
                   variant="outlined"
                   label="Name"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message ?? ''}
                   {...field} />
               }
               name="nameInput"
-              rules={{required: true, maxLength: 15}}
+              rules={{required: 'Required', maxLength: {value: 15, message: 'Max 15 chars'}, pattern: {value: /^[a-zA-Z0-9\s\-_]+$/, message: 'Alphanumeric only'}}}
               control={control}
             />
           </FormControl>
           <FormControl>
             <Controller
-              render={({field}) =>
+              render={({field, fieldState}) =>
                 <TextField
                   sx={{
                     marginLeft: '15px'
@@ -139,10 +140,12 @@ function NewHomeDialog(props: NewHomeProps) {
                   id="location-input"
                   variant="outlined"
                   label="Location"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message ?? ''}
                   {...field} />
               }
               name="locationInput"
-              rules={{required: true, maxLength: 15}}
+              rules={{required: 'Required', maxLength: {value: 15, message: 'Max 15 chars'}, pattern: {value: /^[a-zA-Z0-9\s\-_]+$/, message: 'Alphanumeric only'}}}
               control={control}
             />
           </FormControl>
@@ -150,7 +153,7 @@ function NewHomeDialog(props: NewHomeProps) {
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose()}>Cancel</Button>
-        <Button onClick={() => onAddHome()}>Add</Button>
+        <Button onClick={onAddHome}>Add</Button>
       </DialogActions>
     </Dialog>
   );

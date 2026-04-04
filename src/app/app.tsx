@@ -12,6 +12,7 @@ import Devices from './devices/devices';
 import DeviceSettings from './devicesettings/devicesettings';
 import Features from './features/features';
 import { AuthLayout } from '../auth/AuthLayout';
+import ErrorBoundary from '../shared/ErrorBoundary';
 
 const darkTheme = createTheme({
   palette: {
@@ -60,7 +61,9 @@ export function App() {
     <ThemeProvider theme={darkTheme}>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline/>
-      <RouterProvider router={router} />
+      <ErrorBoundary>
+        <RouterProvider router={router} />
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }

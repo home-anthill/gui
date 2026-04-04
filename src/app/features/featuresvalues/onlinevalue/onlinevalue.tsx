@@ -9,14 +9,16 @@ interface OnlineProps {
   id: string;
 }
 
+const OFFLINE_THRESHOLD_MS = 60 * 1000;
+
+function isOffline(modifiedAtISO: string, currentTimeISO: string): boolean {
+  const modDate = new Date(modifiedAtISO);
+  const currentDate = new Date(currentTimeISO);
+  return modDate.getTime() < currentDate.getTime() - OFFLINE_THRESHOLD_MS;
+}
+
 export default function OnlineValue(props: OnlineProps) {
   const { online, loading, onlineError } = useOnline(props.id);
-
-  function isOffline(modifiedAtISO: string, currentTimeISO: string): boolean {
-    const modDate = new Date(modifiedAtISO);
-    const currentDate = new Date(currentTimeISO);
-    return modDate.getTime() < currentDate.getTime() - 60 * 1000;
-  }
 
   return (
     <div className={styles['online-value-container']}>

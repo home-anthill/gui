@@ -3,12 +3,9 @@ import { Avatar, Button, Typography } from '@mui/material';
 
 import Navbar from '../../shared/navbar/navbar';
 import { useProfile } from '../../hooks/useProfile';
+import { ProfileTokenResponse } from '../../models/profile';
 
 import styles from './profile.module.scss';
-
-interface ProfileTokenResponse {
-  apiToken: string;
-}
 
 export function Profile() {
   const [apiToken, setApiToken] = useState('********-****-****-****-************');
@@ -23,7 +20,7 @@ export function Profile() {
       const response: ProfileTokenResponse = await newProfileToken(profile.id).unwrap();
       setApiToken(response?.apiToken);
     } catch (err) {
-      console.error('Cannot re-generate API Token');
+      console.error('Cannot re-generate API Token', err);
     }
   }
 

@@ -1,5 +1,5 @@
 import { FormEvent, MouseEvent, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { Typography, Button, TextField, FormControl, Stack, IconButton } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
@@ -12,23 +12,23 @@ import { useHomes } from '../../hooks/useHomes';
 import { useRooms } from '../../hooks/useRooms';
 
 export function EditHome() {
-  const id = useParams().id as string;
+  const { id } = useParams<{ id: string }>();
   const {trigger, lazyHomes, updateHome} = useHomes();
   const {deleteRoom, addRoom, updateRoom} = useRooms();
 
   // home and setHome are used only to store the home current home to be used in onSaveRoom
   const [home, setHome] = useState<Home | undefined>(undefined);
 
-  const homeForm = useForm({
+  const homeForm = useForm<{ nameInput: string; locationInput: string }>({
     defaultValues: {
       nameInput: '',
       locationInput: ''
     }
   });
 
-  const roomsForm = useForm({
+  const roomsForm = useForm<{ rooms: Room[] }>({
     defaultValues: {
-      rooms: [] as Room[],
+      rooms: [],
     }
   });
 
@@ -60,16 +60,18 @@ export function EditHome() {
 
   const navigate = useNavigate();
 
-  const onAddHome = async () => {
-    const values = homeForm.getValues();
+  const onAddHome = homeForm.handleSubmit(async (values) => {
+    if (!id) {
+      return;
+    }
     try {
-      const result = await updateHome(id, values.nameInput, values.locationInput).unwrap();
+      await updateHome(id, values.nameInput, values.locationInput).unwrap();
       // navigate back
       navigate(-1);
     } catch (err) {
-      console.error('onAddHome - cannot add a new home');
+      console.error('onAddHome - cannot add a new home', err);
     }
-  }
+  });
 
   async function onRemoveRoom(index: number) {
     const room: Room = roomsForm.getValues().rooms[index];
@@ -80,11 +82,11 @@ export function EditHome() {
       return;
     }
     try {
-      const result = await deleteRoom(id, room.id).unwrap();
+      await deleteRoom(id ?? '', room.id).unwrap();
       // navigate back
       navigate(-1);
     } catch (err) {
-      console.error('onRemoveRoom -cannot add a new home');
+      console.error('onRemoveRoom -cannot add a new home', err);
     }
   }
 
@@ -98,28 +100,40 @@ export function EditHome() {
     }
     try {
       if (room.id) {
-        const result = await updateRoom(
-          (home as Home).id,
+        if (!home) {
+          console.error('onSaveRoom - home not loaded yet');
+          return;
+        }
+        await updateRoom(
+          home.id,
           room.id,
           {
             name: room.name,
             floor: +room.floor
-          } as Room
+          }
         ).unwrap();
       } else {
-        const result = await addRoom(
-          (home as Home).id,
+        if (!home) {
+          console.error('onSaveRoom - home not loaded yet');
+          return;
+        }
+        await addRoom(
+          home.id,
           {
             name: room.name,
             floor: +room.floor
-          } as Room
+          }
         ).unwrap();
       }
       // navigate back
       navigate(-1);
     } catch (err) {
-      console.error('onSaveRoom - cannot add a new home');
+      console.error('onSaveRoom - cannot add a new home', err);
     }
+  }
+
+  if (!id) {
+    return <Navigate to="/main/homes" replace />;
   }
 
   return (
@@ -128,24 +142,26 @@ export function EditHome() {
         Edit Home
       </Typography>
       <div className={styles['edit-home-container']}>
-        <form onSubmit={homeForm.handleSubmit((data) => onAddHome())} className="form">
+        <form onSubmit={onAddHome} className="form">
           <FormControl>
             <Controller
-              render={({field}) =>
+              render={({field, fieldState}) =>
                 <TextField
                   id="name-input"
                   variant="outlined"
                   label="Name"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message ?? ''}
                   {...field} />
               }
               name="nameInput"
-              rules={{required: true, maxLength: 15}}
+              rules={{required: 'Required', maxLength: {value: 15, message: 'Max 15 chars'}, pattern: {value: /^[a-zA-Z0-9\s\-_]+$/, message: 'Alphanumeric only'}}}
               control={homeForm.control}
             />
           </FormControl>
           <FormControl>
             <Controller
-              render={({field}) =>
+              render={({field, fieldState}) =>
                 <TextField
                   sx={{
                     left: 15
@@ -153,16 +169,18 @@ export function EditHome() {
                   id="location-input"
                   variant="outlined"
                   label="Location"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message ?? ''}
                   {...field} />
               }
               name="locationInput"
-              rules={{required: true, maxLength: 15}}
+              rules={{required: 'Required', maxLength: {value: 15, message: 'Max 15 chars'}, pattern: {value: /^[a-zA-Z0-9\s\-_]+$/, message: 'Alphanumeric only'}}}
               control={homeForm.control}
             />
           </FormControl>
         </form>
       </div>
-      <Button variant="outlined" onClick={() => onAddHome()}>Save Home</Button>
+      <Button variant="outlined" onClick={onAddHome}>Save Home</Button>
 
       <div className={styles['edit-home-divider']}></div>
 
@@ -178,24 +196,26 @@ export function EditHome() {
           marginTop: '30px'
         }}
       >
-        {fields.map((item: Room, index: number) => (
-          <form className={styles['room']} key={`room-${index}`}>
+        {fields.map((item, index) => (
+          <form className={styles['room']} key={item.uniqueid}>
             <FormControl>
               <Controller
-                render={({field}) =>
+                render={({field, fieldState}) =>
                   <TextField
                     variant="standard"
                     label="Name"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message ?? ''}
                     {...field} />
                 }
                 name={`rooms.${index}.name`}
-                rules={{required: true, maxLength: 15}}
+                rules={{required: 'Required', maxLength: {value: 15, message: 'Max 15 chars'}, pattern: {value: /^[a-zA-Z0-9\s\-_]+$/, message: 'Alphanumeric only'}}}
                 control={roomsForm.control}
               />
             </FormControl>
             <FormControl>
               <Controller
-                render={({field}) =>
+                render={({field, fieldState}) =>
                   <TextField
                     sx={{
                       left: 15
@@ -203,10 +223,12 @@ export function EditHome() {
                     variant="standard"
                     label="Floor"
                     inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message ?? ''}
                     {...field} />
                 }
                 name={`rooms.${index}.floor`}
-                rules={{required: true}}
+                rules={{required: 'Required'}}
                 control={roomsForm.control}
               />
             </FormControl>

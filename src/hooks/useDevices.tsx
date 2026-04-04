@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { Home} from '../models/home';
 import { useGetHomesQuery } from '../services/homes';
 import { useAssignDeviceMutation, useDeleteDeviceMutation, useGetDevicesQuery } from '../services/devices';
-import { DevicesResponse } from '../models/device';
 
 export function useDevices() {
   const {
@@ -12,7 +11,7 @@ export function useDevices() {
     error: homesError
   } = useGetHomesQuery();
   const {
-    data: homeDevices = {} as DevicesResponse,
+    data: homeDevices = { unassignedDevices: [], homeDevices: [] },
     isLoading: devicesLoading,
     error: devicesError
   } = useGetDevicesQuery({homes});

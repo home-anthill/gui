@@ -6,13 +6,14 @@ import {
   useSetValuesMutation,
 } from '../services/values';
 import { useCallback } from 'react';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
-export function useValues(device: Device) {
+export function useValues(device: Device | undefined) {
   const {
     data: deviceWithValues = {} as DeviceWithValuesResponse,
     isLoading: deviceWithValuesLoading,
     error: deviceWithValuesError,
-  } = useGetValuesQuery(device);
+  } = useGetValuesQuery(device ?? skipToken);
 
   const [
     trigger,

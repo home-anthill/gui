@@ -19,7 +19,6 @@ interface SensorValueProps {
 }
 
 export default function SensorValue(props: SensorValueProps) {
-  console.log('sensorValue', props);
   return (
     <Card
       variant="outlined"

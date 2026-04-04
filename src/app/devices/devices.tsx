@@ -19,10 +19,6 @@ export function Devices() {
   const { homeDevices, loading, error } = useDevices();
 
   function showDeviceSettings(device: Device): void {
-    if (!device) {
-      console.error(`Cannot show settings - 'id' is missing`);
-      return;
-    }
     navigate(`/main/devices/${device.id}`, { state: { device } });
   }
 
@@ -31,10 +27,6 @@ export function Devices() {
     home: HomeWithDevices | undefined,
     room: RoomWithDevices | undefined
   ): void {
-    if (!device) {
-      console.error(`Cannot open device - 'id' is missing`);
-      return;
-    }
     if (home && room) {
       navigate(`/main/devices/${device.id}/features`, {
         state: { device, home, room },
@@ -90,7 +82,7 @@ export function Devices() {
               </>
             )}
           {homeDevices.homeDevices.map((home: HomeWithDevices) => (
-            <div key={home.name + home.location}>
+            <div key={home.id}>
               <div className={styles['home-container']}>
                 <Typography variant="h5" component="h1">
                   {home.name} ({home.location})
@@ -98,7 +90,7 @@ export function Devices() {
                 {home.rooms.map((room: RoomWithDevices) => (
                   <div
                     className={styles['room-container']}
-                    key={room.name + room.floor}
+                    key={room.id}
                   >
                     <Typography variant="h6" component="h2">
                       {room.name} - {room.floor}

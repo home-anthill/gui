@@ -17,35 +17,44 @@ export const valuesApi = commonApi.injectEndpoints({
         };
       },
       transformResponse: (response: Value[], _meta, arg: Device) => {
-        const device: Device = Object.assign({}, arg);
         const deviceWithValue: DeviceWithValuesResponse = {
-          ...device,
+          ...arg,
           features: [],
         };
-        const deviceFeatures = device.features
+        const deviceFeatures = arg.features
           .filter((feature: Feature) => feature)
           // order by 'order'
           .sort(
             (a: { order: number }, b: { order: number }) => a.order - b.order
           )
-          .map((feature: Feature) => {
-            const featureValue: FeatureValue = Object.assign(
-              {},
-              feature
-            ) as unknown as FeatureValue;
+          .map((feature: Feature): FeatureValue => {
             const value: Value | undefined = response.find(
               (v: Value) => v && v.featureUuid === feature.uuid
             );
             if (!value) {
-              // TODO manage this error in the right way!
-              return feature as unknown as FeatureValue;
+              return {
+                featureUuid: feature.uuid,
+                name: feature.name,
+                type: feature.type,
+                unit: feature.unit,
+                order: feature.order,
+                enable: feature.enable,
+                value: 0,
+                createdAt: 0,
+                modifiedAt: 0,
+              };
             }
-            featureValue.type = value.type;
-            featureValue.featureUuid = value.featureUuid;
-            featureValue.value = value.value;
-            featureValue.createdAt = value.createdAt;
-            featureValue.modifiedAt = value.modifiedAt;
-            return featureValue;
+            return {
+              featureUuid: value.featureUuid,
+              name: feature.name,
+              type: value.type,
+              unit: feature.unit,
+              order: feature.order,
+              enable: feature.enable,
+              value: value.value,
+              createdAt: value.createdAt,
+              modifiedAt: value.modifiedAt,
+            };
           });
         // order first all sensors and next controllers
         deviceWithValue.features = [
@@ -56,8 +65,7 @@ export const valuesApi = commonApi.injectEndpoints({
         ];
         return deviceWithValue;
       },
-      // FIXME every element of the list should be tagged one by one, not like this
-      providesTags: ['Values'],
+      providesTags: (_result, _error, arg) => [{ type: 'Values' as const, id: arg.id }],
     }),
     setValues: builder.mutation<
       SetValueResponse,
@@ -71,7 +79,7 @@ export const valuesApi = commonApi.injectEndpoints({
           body: setValuesRequest,
         };
       },
-      invalidatesTags: ['Values'],
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Values', id: arg.deviceId }],
     }),
   }),
 });

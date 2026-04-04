@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { BaseQueryApi, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-import { getToken, removeToken } from '../auth/auth-utils';
+import { getToken, removeToken, setToken } from '../auth/auth-utils';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '/api',
   prepareHeaders: (headers) => {
     headers.set('Content-Type', 'application/json');
-    const token: string | null = getToken('token');
+    const token: string | null = getToken();
     if (token) {
       headers.set('Authorization', 'Bearer ' + token);
     }
@@ -15,16 +15,68 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWithForceLogout: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
-  async (args: string | FetchArgs, api: BaseQueryApi, extraOptions) => {
-    const result = await baseQuery(args, api, extraOptions);
-    if (result.error && (result.error.status === 401 || result.error.status === 403)) {
-      console.error('baseQueryWithForceLogout - status 401 or 403 - logging out');
-      //  1. Redirect user to LOGIN
-      //  2. Reset authentication from localstorage/sessionstorage
+// Separate query used only for the refresh call — no auth header, sends cookies
+const refreshBaseQuery = fetchBaseQuery({
+  baseUrl: '/api',
+  credentials: 'include',
+});
+
+// Serialize concurrent 401 responses so only one refresh request is made
+let refreshPromise: Promise<boolean> | null = null;
+
+async function refreshAccessToken(api: BaseQueryApi, extraOptions: Record<string, unknown>): Promise<boolean> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+  refreshPromise = (async (): Promise<boolean> => {
+    try {
+      const result = await refreshBaseQuery(
+        { url: 'token/refresh', method: 'POST' },
+        api,
+        extraOptions
+      );
+      if (result.data) {
+        const { token } = result.data as { token: string };
+        setToken(token);
+        return true;
+      }
+      console.error('baseQueryWithReauth - token refresh failed - logging out');
       removeToken();
       window.location.href = '/';
+      return false;
+    } catch (err: unknown) {
+      console.error('baseQueryWithReauth - token refresh error - logging out', err);
+      removeToken();
+      window.location.href = '/';
+      return false;
     }
+  })().finally(() => {
+    refreshPromise = null;
+  });
+  return refreshPromise;
+}
+
+const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
+  async (args: string | FetchArgs, api: BaseQueryApi, extraOptions) => {
+    let result = await baseQuery(args, api, extraOptions);
+
+    if (result.error) {
+      if (result.error.status === 403) {
+        console.error('baseQueryWithReauth - status 403 - logging out');
+        removeToken();
+        window.location.href = '/';
+        return result;
+      }
+
+      if (result.error.status === 401) {
+        const refreshed = await refreshAccessToken(api, extraOptions as Record<string, unknown>);
+        if (refreshed) {
+          // Retry the original request with the refreshed access token
+          result = await baseQuery(args, api, extraOptions);
+        }
+      }
+    }
+
     return result;
   };
 
@@ -33,7 +85,7 @@ export const commonApi = createApi({
   // keepUnusedDataFor: specifies how long the data should be kept in the cache
   // after the subscriber reference count reaches zero.
   keepUnusedDataFor: 60, // invalidate cache after 60 seconds
-  baseQuery: baseQueryWithForceLogout,
+  baseQuery: baseQueryWithReauth,
   tagTypes: ['Login', 'Homes', 'Rooms', 'Devices', 'Values', 'Profile', 'Online'],
   endpoints: _ => ({}),
 });

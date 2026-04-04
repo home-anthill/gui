@@ -18,7 +18,6 @@ export function Login() {
 
   useEffect(() => {
     if (isLoggedIn()) {
-      console.log(`login - already logged in, navigating to 'main'`);
       navigate('/main');
     }
   }, [navigate])

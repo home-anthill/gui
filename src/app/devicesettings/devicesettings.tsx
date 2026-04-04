@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 
 import { Home, Room } from '../../models/home';
@@ -14,8 +14,9 @@ const DEFAULT_ROOM: Room = {id: 'r0', name: '---', floor: -1, devices: [], creat
 
 export function DeviceSettings() {
   const {state} = useLocation();
-  const device: Device = state.device;
   const navigate = useNavigate();
+
+  const device: Device | undefined = state?.device;
 
   const { trigger, lazyHomes } = useHomes();
   const { assignDeviceHomeRoom, deleteDevice } = useDevices();
@@ -28,6 +29,9 @@ export function DeviceSettings() {
 
   useEffect(() => {
     async function fn() {
+      if (!device) {
+        return;
+      }
       try {
         await trigger();
         const homes: Home[] = [DEFAULT_HOME, ...lazyHomes];
@@ -54,9 +58,9 @@ export function DeviceSettings() {
       }
     }
     fn();
-  }, [device.id, lazyHomes, trigger]);
+  }, [device, lazyHomes, trigger]);
 
-  function onChangeHome(event: SelectChangeEvent) {
+  const onChangeHome = useCallback((event: SelectChangeEvent) => {
     if (!event || !event.target || !event.target.value) {
       return;
     }
@@ -66,46 +70,51 @@ export function DeviceSettings() {
       console.error('onChangeHome - cannot find home');
       return;
     }
-    setRooms([DEFAULT_ROOM, ...home.rooms])
+    setRooms([DEFAULT_ROOM, ...home.rooms]);
     setSelectedHome(home);
-    setSelectedRoom(DEFAULT_ROOM)
-  }
+    setSelectedRoom(DEFAULT_ROOM);
+  }, [homes]);
 
-  function onChangeRoom(event: SelectChangeEvent) {
+  const onChangeRoom = useCallback((event: SelectChangeEvent) => {
     if (!event || !event.target || !event.target.value) {
       return;
     }
     const selectedRoomId: string = event.target.value;
-    const room: Room | undefined = rooms.find((room: Room) => room.id === selectedRoomId)
+    const room: Room | undefined = rooms.find((room: Room) => room.id === selectedRoomId);
     if (!room) {
       console.error('onChangeRoom - cannot find room');
       return;
     }
     setSelectedRoom(room);
-  }
+  }, [rooms]);
 
-  async function onAssign() {
-    if (!selectedHome || !selectedRoom) {
+  const onAssign = useCallback(async () => {
+    if (!device || !selectedHome || !selectedRoom) {
       console.error('onAssign - cannot assign device, you must choose both home and room');
       return;
     }
     try {
-      const response = await assignDeviceHomeRoom(device.id, selectedHome.id, selectedRoom.id);
-      // navigate back
+      await assignDeviceHomeRoom(device.id, selectedHome.id, selectedRoom.id);
       navigate(-1);
     } catch (err) {
-      console.error('onAssign - cannot assign device to home and room');
+      console.error('onAssign - cannot assign device to home and room', err);
     }
-  }
+  }, [device, selectedHome, selectedRoom, assignDeviceHomeRoom, navigate]);
 
-  async function onRemove() {
+  const onRemove = useCallback(async () => {
+    if (!device) {
+      return;
+    }
     try {
-      const response = await deleteDevice(device.id).unwrap();
-      // navigate back
+      await deleteDevice(device.id).unwrap();
       navigate(-1);
     } catch (err) {
-      console.error('onRemove -  cannot remove device');
+      console.error('onRemove -  cannot remove device', err);
     }
+  }, [device, deleteDevice, navigate]);
+
+  if (!device) {
+    return <Navigate to="/main/devices" replace />;
   }
 
   return (
@@ -158,10 +167,10 @@ export function DeviceSettings() {
 
         <br/>
         {selectedHome !== DEFAULT_HOME && selectedRoom !== DEFAULT_ROOM &&
-          <Button onClick={() => onAssign()}>Assign</Button>
+          <Button onClick={onAssign}>Assign</Button>
         }
         <br/>
-        <Button onClick={() => onRemove()}>Remove this Device</Button>
+        <Button onClick={onRemove}>Remove this Device</Button>
         <br/>
       </div>
     </div>

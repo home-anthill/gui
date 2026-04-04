@@ -30,20 +30,19 @@ export const devicesApi = commonApi.injectEndpoints({
         result.unassignedDevices = getUnassignedDevices(arg.homes, response);
         // 2) add assigned devices with homes and rooms to `result.homeDevices`
         arg.homes.forEach((h: Home) => {
-          const home: Home = Object.assign({}, h);
           const homeObj: HomeWithDevices = {
-            ...home,
+            ...h,
             rooms: [],
           };
           const roomsObjs: RoomWithDevices[] = [];
-          if (home.rooms) {
-            home.rooms.forEach((room: Room) => {
+          if (h.rooms) {
+            h.rooms.forEach((room: Room) => {
               // if this room has devices, otherwise skip it
               if (room?.devices?.length > 0) {
-                const roomObj: RoomWithDevices = Object.assign(
-                  {},
-                  room
-                ) as unknown as RoomWithDevices;
+                const roomObj: RoomWithDevices = {
+                  ...room,
+                  devices: [],
+                };
                 // get all devices in this room removing duplicates
                 // and mapping these as device object instead of an id string
                 // and replace the array of device IDs with full device objects
@@ -76,8 +75,18 @@ export const devicesApi = commonApi.injectEndpoints({
         // 3) result object contains `unassignedDevices` and`homeDevices`
         return result;
       },
-      // FIXME every element of the list should be tagged one by one, not like this
-      providesTags: ['Devices'],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.unassignedDevices.map(({ id }) => ({ type: 'Devices' as const, id })),
+              ...result.homeDevices.flatMap(h =>
+                h.rooms.flatMap(r =>
+                  r.devices.map(({ id }) => ({ type: 'Devices' as const, id }))
+                )
+              ),
+              { type: 'Devices' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Devices' as const, id: 'LIST' }],
     }),
     assignDevice: builder.mutation<{ message: string }, AssignDeviceRequest>({
       query(data: AssignDeviceRequest) {
@@ -88,7 +97,7 @@ export const devicesApi = commonApi.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: ['Devices', { type: 'Homes', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Devices', id: 'LIST' }, { type: 'Homes', id: 'LIST' }],
     }),
     deleteDevice: builder.mutation<{ message: string }, { deviceId: string }>({
       query(data: { deviceId: string }) {
@@ -98,7 +107,10 @@ export const devicesApi = commonApi.injectEndpoints({
           method: 'DELETE',
         };
       },
-      invalidatesTags: ['Devices'],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Devices', id: arg.deviceId },
+        { type: 'Devices', id: 'LIST' },
+      ],
     }),
   }),
 });
