@@ -51,7 +51,7 @@ interface ValuesProps {
 export default function ControllerValues(props: ValuesProps) {
   const deviceRef = useMemo<Device>(() => ({
     ...props.deviceWithValues,
-    features: props.deviceWithValues.features.map(fv => ({
+    features: (props.deviceWithValues.features ?? []).map(fv => ({
       uuid: fv.featureUuid,
       name: fv.name,
       type: fv.type,

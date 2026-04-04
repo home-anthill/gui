@@ -45,7 +45,7 @@ export function Features() {
           <div className="error">Something went wrong</div>
         )}
         {loading && <div className="loading">Loading...</div>}
-        {deviceWithValues ? (
+        {deviceWithValues?.features ? (
           <>
             <div className={styles['features-sensor-container']}>
               {deviceWithValues?.features
