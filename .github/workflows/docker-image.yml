@@ -47,6 +47,10 @@ jobs:
           npm run build:dev
           echo "Running Build prod"
           npm run build:prod
+          echo "Running Tests"
+          npm test
+          echo "Running Tests with coverage"
+          npm run test:coverage
 
   build-and-publish:
     name: Build and publish

@@ -14,6 +14,8 @@ npm run start       # Lint + start dev server (Vite on :4200 with /api proxy)
 npm run build       # Lint + dev build → dist/home-anthill/, then copies to ../api-server/public/
 npm run build:prod  # Production build → dist/home-anthill/ only (no copy step)
 npm run lint        # Run ESLint (flat config via nx lint)
+npm run test        # Run vitest (watch mode)
+npm run test:coverage # Run tests with coverage report (HTML in ./coverage)
 npm run deps        # Upgrade Nx to latest
 ```
 
@@ -21,7 +23,7 @@ npm run deps        # Upgrade Nx to latest
 
 **Build output**: Both `npm run build` and `npm run build:prod` output to `dist/home-anthill/`. The `build` command then copies this to `../api-server/public/` for serving as static assets; `build:prod` skips the copy.
 
-**No tests currently exist** — vitest is installed but there are no test files.
+**Testing**: Vitest with jsdom environment, React Testing Library, and MSW for API mocking. Tests match `src/**/*.{test,spec}.{ts,tsx}`. See Testing section below.
 
 ## Architecture
 
@@ -32,10 +34,15 @@ src/
 ├── app/              # Pages/views (login, postlogin, profile, homes, edithome, devices, devicesettings, features)
 ├── auth/             # AuthContext, AuthLayout, ProtectedLayout, auth-utils (localStorage JWT)
 ├── hooks/            # Custom hooks wrapping RTK Query (useHomes, useDevices, useRooms, useAuth, etc.)
+├── mocks/            # MSW handlers (handlers.ts, server.ts)
 ├── models/           # TypeScript interfaces (Home, Device, Profile, Auth, Value, Online)
 ├── services/         # RTK Query endpoint definitions (homes, devices, rooms, values, profile, online)
 ├── shared/           # Shared UI components (navbar)
-└── store.ts          # Redux store + RTK Query setup
+├── store.ts          # Redux store + RTK Query setup
+├── test-setup.ts     # Vitest + MSW lifecycle setup
+├── test-utils.tsx    # Custom render() with ThemeProvider + MemoryRouter
+├── test-fixtures.ts  # Mock data (mockHome, mockDevice, mockProfile, etc.)
+└── **/*.{test,spec}.tsx  # Component and hook tests
 ```
 
 ### State Management / API Pattern
@@ -115,6 +122,52 @@ AuthLayout (AuthProvider)
 **Material UI dark theme:**
 - Theme is configured in `src/app/app.tsx` with `createTheme({ palette: { mode: 'dark' } })`
 - All pages inherit this theme; no light theme support
+
+## Testing
+
+Tests use **Vitest** with **React Testing Library**, **MSW** for HTTP mocking, and **jsdom** environment. Test files coexist with source files: `src/**/*.{test,spec}.tsx`.
+
+### Test Setup
+- `src/test-setup.ts` — Vitest lifecycle (MSW server start/reset/stop), localStorage mock
+- `src/test-utils.tsx` — Custom `render()` wrapper that provides `ThemeProvider` (dark theme) and `MemoryRouter` for navigation tests
+- `src/test-fixtures.ts` — Mock data objects (`mockHome`, `mockDevice`, `mockProfile`, `mockOnlineNow`)
+- `src/mocks/server.ts` — MSW server instance
+- `src/mocks/handlers.ts` — MSW HTTP request handlers for all API endpoints
+
+### Testing Patterns
+
+**Component tests:**
+- Import the custom `render` from `src/test-utils.tsx` (not `@testing-library/react`)
+- Use `vi.mock()` to mock auth-utils, image imports, or router functions
+- Use `screen.getByRole()`, `screen.getByText()` for assertions
+- Example:
+  ```typescript
+  import { describe, it, expect, vi } from 'vitest';
+  import { render, screen } from '../../test-utils';
+  import Login from './login';
+
+  describe('Login', () => {
+    it('renders login button', () => {
+      render(<Login />);
+      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+    });
+  });
+  ```
+
+**Hook tests (e.g., useHomes, useDevices):**
+- Test RTK Query hooks using `renderHook()` from `@testing-library/react`
+- MSW mocks the API responses automatically
+- Access hook result via `result.current`; wrap hook calls in `waitFor()` for async updates
+
+**API/Service tests:**
+- MSW intercepts and mocks API calls; no backend required
+- Override handlers per-test: `server.use(http.get('/api/path', () => ...))`
+- Tests run in watch mode by default; use `npm run test:coverage` for full coverage report
+
+### Mocking & Fixtures
+- Mock data is centralized in `src/test-fixtures.ts` for consistency
+- MSW handlers in `src/mocks/handlers.ts` cover all API endpoints (homes, devices, rooms, values, profile, online, token refresh)
+- Custom render wraps components with Material UI theme and React Router; tests can pass `routerProps` for route testing
 
 ## CI/CD
 

@@ -1,10 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { BaseQueryApi, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import {
+  BaseQueryApi,
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+} from '@reduxjs/toolkit/query';
 
 import { getToken, removeToken, setToken } from '../auth/auth-utils';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: '/api',
+  baseUrl: (import.meta.env.VITE_API_BASE_URL ?? '') + '/api',
   prepareHeaders: (headers) => {
     headers.set('Content-Type', 'application/json');
     const token: string | null = getToken();
@@ -17,23 +22,26 @@ const baseQuery = fetchBaseQuery({
 
 // Separate query used only for the refresh call — no auth header, sends cookies
 const refreshBaseQuery = fetchBaseQuery({
-  baseUrl: '/api',
+  baseUrl: (import.meta.env.VITE_API_BASE_URL ?? '') + '/api',
   credentials: 'include',
 });
 
 // Serialize concurrent 401 responses so only one refresh request is made
 let refreshPromise: Promise<boolean> | null = null;
 
-async function refreshAccessToken(api: BaseQueryApi, extraOptions: Record<string, unknown>): Promise<boolean> {
+async function refreshAccessToken(
+  api: BaseQueryApi,
+  extraOptions: Record<string, unknown>,
+): Promise<boolean> {
   if (refreshPromise) {
     return refreshPromise;
   }
-  refreshPromise = (async (): Promise<boolean> => {
+  async function doRefresh(): Promise<boolean> {
     try {
       const result = await refreshBaseQuery(
         { url: 'token/refresh', method: 'POST' },
         api,
-        extraOptions
+        extraOptions,
       );
       if (result.data) {
         const { token } = result.data as { token: string };
@@ -45,40 +53,50 @@ async function refreshAccessToken(api: BaseQueryApi, extraOptions: Record<string
       window.location.href = '/';
       return false;
     } catch (err: unknown) {
-      console.error('baseQueryWithReauth - token refresh error - logging out', err);
+      console.error(
+        'baseQueryWithReauth - token refresh error - logging out',
+        err,
+      );
       removeToken();
       window.location.href = '/';
       return false;
     }
-  })().finally(() => {
+  }
+  refreshPromise = doRefresh().finally(() => {
     refreshPromise = null;
   });
   return refreshPromise;
 }
 
-const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> =
-  async (args: string | FetchArgs, api: BaseQueryApi, extraOptions) => {
-    let result = await baseQuery(args, api, extraOptions);
+const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions);
 
-    if (result.error) {
-      if (result.error.status === 403) {
-        console.error('baseQueryWithReauth - status 403 - logging out');
-        removeToken();
-        window.location.href = '/';
-        return result;
-      }
-
-      if (result.error.status === 401) {
-        const refreshed = await refreshAccessToken(api, extraOptions as Record<string, unknown>);
-        if (refreshed) {
-          // Retry the original request with the refreshed access token
-          result = await baseQuery(args, api, extraOptions);
-        }
-      }
+  if (result.error) {
+    if (result.error.status === 403) {
+      console.error('baseQueryWithReauth - status 403 - logging out');
+      removeToken();
+      window.location.href = '/';
+      return result;
     }
 
-    return result;
-  };
+    if (result.error.status === 401) {
+      const refreshed = await refreshAccessToken(
+        api,
+        extraOptions as Record<string, unknown>,
+      );
+      if (refreshed) {
+        // Retry the original request with the refreshed access token
+        result = await baseQuery(args, api, extraOptions);
+      }
+    }
+  }
+
+  return result;
+};
 
 export const commonApi = createApi({
   reducerPath: 'api',
@@ -86,6 +104,14 @@ export const commonApi = createApi({
   // after the subscriber reference count reaches zero.
   keepUnusedDataFor: 60, // invalidate cache after 60 seconds
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Login', 'Homes', 'Rooms', 'Devices', 'Values', 'Profile', 'Online'],
-  endpoints: _ => ({}),
+  tagTypes: [
+    'Login',
+    'Homes',
+    'Rooms',
+    'Devices',
+    'Values',
+    'Profile',
+    'Online',
+  ],
+  endpoints: (_) => ({}),
 });

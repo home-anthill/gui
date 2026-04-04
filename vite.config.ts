@@ -24,4 +24,31 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost',
+      },
+    },
+    env: {
+      VITE_API_BASE_URL: 'http://localhost',
+    },
+    setupFiles: ['./src/test-setup.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    reporters: ['default'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/main.tsx',
+        'src/test-setup.ts',
+        'src/**/*.{test,spec}.{ts,tsx}',
+        'src/**/*.d.ts',
+      ],
+    },
+  },
 });

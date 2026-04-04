@@ -46,6 +46,14 @@
         "lintFilePatterns": ["{projectRoot}/src"]
       }
     },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../coverage/home-anthill"
+      }
+    },
     "serve-static": {
       "executor": "@nx/web:file-server",
       "options": {
