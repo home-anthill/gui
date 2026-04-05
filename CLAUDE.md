@@ -17,6 +17,11 @@ npm run lint        # Run ESLint (flat config via nx lint)
 npm run test        # Run vitest (watch mode)
 npm run test:coverage # Run tests with coverage report (HTML in ./coverage)
 npm run deps        # Upgrade Nx to latest
+
+# Run a single test file:
+npx vitest run src/path/to/file.test.tsx
+# Run tests matching a name pattern:
+npx vitest run -t "test name pattern"
 ```
 
 **Dev server**: Runs on `http://localhost:4200`. The `proxy.config.json` forwards `/api/*` to `http://localhost:8082` (api-server). The dev proxy requires the backend to be running locally.
@@ -37,10 +42,12 @@ src/
 ├── mocks/            # MSW handlers (handlers.ts, server.ts)
 ├── models/           # TypeScript interfaces (Home, Device, Profile, Auth, Value, Online)
 ├── services/         # RTK Query endpoint definitions (homes, devices, rooms, values, profile, online)
-├── shared/           # Shared UI components (navbar)
+├── shared/           # Shared UI components (navbar, ErrorBoundary)
+├── utils/            # Pure utilities (dateUtils: format Unix epoch / date strings)
 ├── store.ts          # Redux store + RTK Query setup
 ├── test-setup.ts     # Vitest + MSW lifecycle setup
 ├── test-utils.tsx    # Custom render() with ThemeProvider + MemoryRouter
+├── test-store.tsx    # makeTestStore() + renderHookWithStore() for RTK Query hook tests
 ├── test-fixtures.ts  # Mock data (mockHome, mockDevice, mockProfile, etc.)
 └── **/*.{test,spec}.tsx  # Component and hook tests
 ```
@@ -123,6 +130,13 @@ AuthLayout (AuthProvider)
 - Theme is configured in `src/app/app.tsx` with `createTheme({ palette: { mode: 'dark' } })`
 - All pages inherit this theme; no light theme support
 
+**SCSS modules:**
+- Each page/component has a colocated `.module.scss` file for scoped styles (e.g., `features.module.scss`)
+- Import as `import styles from './foo.module.scss'` and use as `className={styles['class-name']}`
+
+**Router state navigation:**
+- The Features page (`/devices/:id/features`) receives `device`, `home`, and `room` objects via `useLocation().state` — they are passed as route state from the DeviceSettings page, not as URL params
+
 ## Testing
 
 Tests use **Vitest** with **React Testing Library**, **MSW** for HTTP mocking, and **jsdom** environment. Test files coexist with source files: `src/**/*.{test,spec}.tsx`.
@@ -155,7 +169,7 @@ Tests use **Vitest** with **React Testing Library**, **MSW** for HTTP mocking, a
   ```
 
 **Hook tests (e.g., useHomes, useDevices):**
-- Test RTK Query hooks using `renderHook()` from `@testing-library/react`
+- Use `renderHookWithStore()` from `src/test-store.tsx` (not bare `renderHook`) — it wraps the hook in a fresh Redux store with RTK Query middleware so each test is isolated
 - MSW mocks the API responses automatically
 - Access hook result via `result.current`; wrap hook calls in `waitFor()` for async updates
 
