@@ -6,7 +6,7 @@ import { IconDevices, IconHome2 } from '@tabler/icons-react';
 import { useProfile } from '../../hooks/useProfile';
 import appIcon from '../../assets/logo.svg';
 
-import styles from './Navbar.module.scss';
+import styles from './navbar.module.scss';
 
 const NAV_ITEMS = [
   { label: 'Devices', icon: IconDevices, path: '/' },
