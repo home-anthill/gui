@@ -52,11 +52,8 @@ async function refreshAccessToken(
       removeToken();
       window.location.href = '/';
       return false;
-    } catch (err: unknown) {
-      console.error(
-        'baseQueryWithReauth - token refresh error - logging out',
-        err,
-      );
+    } catch {
+      console.error('baseQueryWithReauth - token refresh error - logging out');
       removeToken();
       window.location.href = '/';
       return false;

@@ -17,7 +17,7 @@ describe('PostLogin', () => {
     vi.clearAllMocks();
   });
 
-  it('calls login with the token and navigates to /main', async () => {
+  it('calls login with the token and navigates to /', async () => {
     const mockLogin = vi.fn();
     vi.mocked(useAuth).mockReturnValue({
       login: mockLogin,
@@ -41,7 +41,7 @@ describe('PostLogin', () => {
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith('my-jwt-token');
     });
-    expect(mockNavigate).toHaveBeenCalledWith('/main');
+    expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 
   it('navigates to / and logs an error when no token is in the URL hash', async () => {

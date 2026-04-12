@@ -1,16 +1,59 @@
-.profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  margin-top: 20px;
+@use '../../styles/variables' as *;
 
-  > .profile-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 40px;
+.profile-page {
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+
+  &-heading {
+    margin-bottom: 2rem;
+  }
+
+  .profile-card {
+    background-color: $bg-surface;
+    border-color: $border;
+
+    &-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+
+      .profile-card-name {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        width: 100%;
+        text-align: center;
+      }
+
+      .profile-card-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+
+        .token-display-row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          width: 100%;
+          padding: 0.5rem 0.75rem;
+          background-color: $bg-base;
+          border: 1px solid $border;
+          border-radius: 6px;
+          min-height: 2.25rem;
+
+          .token-display-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            letter-spacing: 0.04em;
+          }
+        }
+      }
+    }
   }
 }
-

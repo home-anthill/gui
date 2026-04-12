@@ -8,12 +8,15 @@ import {
 import { useCallback } from 'react';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 
-export function useValues(device: Device | undefined) {
+export function useValues(
+  device: Device | undefined,
+  { skip }: { skip?: boolean } = {},
+) {
   const {
     data: deviceWithValues = {} as DeviceWithValuesResponse,
     isLoading: deviceWithValuesLoading,
     error: deviceWithValuesError,
-  } = useGetValuesQuery(device ?? skipToken);
+  } = useGetValuesQuery(device ?? skipToken, { skip: skip ?? false });
 
   const [
     trigger,
@@ -32,7 +35,7 @@ export function useValues(device: Device | undefined) {
   const setValues = useCallback(
     (deviceId: string, setValuesRequest: SetValueRequest[]) =>
       setValuesMutation({ deviceId, setValuesRequest }),
-    [setValuesMutation]
+    [setValuesMutation],
   );
 
   return {
@@ -44,6 +47,7 @@ export function useValues(device: Device | undefined) {
     lazyDeviceWithValuesError,
 
     loading,
+    isSending: setValuesLoading,
     deviceWithValuesError,
     setValues,
   };

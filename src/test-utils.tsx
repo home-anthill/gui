@@ -1,9 +1,8 @@
 import { ReactElement, ReactNode } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { MantineProvider } from '@mantine/core';
 import { MemoryRouter, MemoryRouterProps } from 'react-router-dom';
-
-const darkTheme = createTheme({ palette: { mode: 'dark' } });
+import { theme } from './theme/theme';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   routerProps?: MemoryRouterProps;
@@ -17,9 +16,9 @@ function AllProviders({
   routerProps?: MemoryRouterProps;
 }) {
   return (
-    <ThemeProvider theme={darkTheme}>
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <MemoryRouter {...routerProps}>{children}</MemoryRouter>
-    </ThemeProvider>
+    </MantineProvider>
   );
 }
 
@@ -27,7 +26,7 @@ function customRender(ui: ReactElement, options: CustomRenderOptions = {}) {
   const { routerProps, ...renderOptions } = options;
   return render(ui, {
     wrapper: ({ children }) => (
-      <AllProviders routerProps={routerProps}>{children}</AllProviders>
+      <AllProviders {...(routerProps !== undefined ? { routerProps } : {})}>{children}</AllProviders>
     ),
     ...renderOptions,
   });

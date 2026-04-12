@@ -1,3 +1,165 @@
-.box-container {
-  margin-left: 20px;
+@use '../../styles/variables' as *;
+
+// ─── Header (sticky top bar) ───────────────────────────────────────────────────
+
+header.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  height: 60px;
+  background-color: $bg-surface;
+  border-bottom: 1px solid $border;
+
+  .app-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 1rem;
+    gap: 1rem;
+
+    // ── Left group: burger + brand ──────────────────────────────────────────
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .app-header-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        user-select: none;
+
+        .app-header-brand-icon {
+          width: 28px;
+          height: 28px;
+        }
+
+        .app-header-brand-name {
+          font-size: 1rem;
+          font-weight: 700;
+          color: $accent;
+          letter-spacing: 0.01em;
+        }
+      }
+    }
+
+    // ── Center: desktop nav links ───────────────────────────────────────────
+    nav.app-header-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex: 1;
+      justify-content: center;
+
+      .app-header-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: $text-secondary;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        user-select: none;
+        padding: 0.25rem 0;
+
+        svg {
+          color: inherit;
+        }
+
+        &:hover {
+          color: $accent;
+        }
+
+        &.active {
+          color: $accent;
+          font-weight: 600;
+        }
+      }
+    }
+
+    // ── Right: profile avatar ───────────────────────────────────────────────
+    .app-header-profile {
+      cursor: pointer;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      flex-shrink: 0;
+
+      &:hover {
+        opacity: 0.85;
+        transform: scale(1.06);
+      }
+    }
+  }
+}
+
+// ─── Mobile drawer ─────────────────────────────────────────────────────────────
+
+.app-drawer {
+  background-color: $bg-surface !important;
+
+  .app-drawer-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .app-drawer-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  nav.app-drawer-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .app-drawer-item {
+      color: $text-secondary;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: rgba($accent, 0.1);
+        color: $accent;
+      }
+
+      &[data-active='true'] {
+        background-color: rgba($accent, 0.15);
+        color: $accent;
+        font-weight: 600;
+
+        svg {
+          color: $accent;
+        }
+      }
+    }
+  }
+
+  // ── Profile summary at drawer bottom ─────────────────────────────────────
+  .app-drawer-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding: 0.875rem 0.5rem;
+    border-top: 1px solid $border;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+
+    &:hover {
+      background-color: rgba($accent, 0.08);
+    }
+
+    .app-drawer-profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 0;
+    }
+  }
 }

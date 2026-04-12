@@ -1,0 +1,13 @@
+@use '../styles/variables' as *;
+
+.root-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $bg-base;
+
+  .root-layout-main {
+    flex: 1;
+    background-color: $bg-base;
+  }
+}

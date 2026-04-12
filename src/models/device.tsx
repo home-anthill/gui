@@ -2,6 +2,7 @@ import { Home, Room } from './home';
 
 export interface Device {
   id: string;
+  name: string;
   uuid: string;
   mac: string;
   manufacturer: string;
@@ -33,6 +34,7 @@ export interface RoomWithDevices extends Omit<Room, "devices"> {
 // *****************************************************************
 export interface AssignDeviceRequest {
   deviceId: string;
+  name: string;
   homeId: string;
   roomId: string;
 }

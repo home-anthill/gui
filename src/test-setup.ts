@@ -1,7 +1,22 @@
 import '@testing-library/jest-dom';
-import { afterAll, afterEach, beforeAll } from 'vitest';
+import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
 import { server } from './mocks/server';
+
+// jsdom does not implement window.matchMedia; Mantine requires it for color-scheme detection.
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 
 // jsdom's localStorage may lack a clear() implementation depending on the
 // runner configuration, so we install a complete in-memory Storage mock.
@@ -18,7 +33,7 @@ class LocalStorageMock implements Storage {
 
   getItem(key: string): string | null {
     return Object.prototype.hasOwnProperty.call(this.store, key)
-      ? this.store[key]
+      ? (this.store[key] ?? null)
       : null;
   }
 

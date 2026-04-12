@@ -37,6 +37,7 @@ export const mockHomeNoRooms: Home = {
 
 export const mockDevice: Device = {
   id: 'd1',
+  name: '',
   uuid: 'uuid-d1',
   mac: 'AA:BB:CC:DD:EE:FF',
   manufacturer: 'Acme',
@@ -57,6 +58,7 @@ export const mockDevice: Device = {
 
 export const mockDevice2: Device = {
   id: 'd2',
+  name: '',
   uuid: 'uuid-d2',
   mac: '11:22:33:44:55:66',
   manufacturer: 'BrandX',
@@ -103,6 +105,7 @@ export const makeFeatureValue = (
 
 export const mockDeviceWithValues: DeviceWithValuesResponse = {
   id: 'd1',
+  name: '',
   uuid: 'uuid-d1',
   mac: 'AA:BB:CC:DD:EE:FF',
   manufacturer: 'Acme',

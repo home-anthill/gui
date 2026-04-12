@@ -1,0 +1,99 @@
+@use '../../../styles/variables' as *;
+
+.device-card {
+  background: linear-gradient(150deg, $bg-elevated 0%, $bg-surface 100%);
+  border-color: $border-card;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  height: 100%;
+  min-height: 130px;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba($accent, 0.55);
+    box-shadow:
+            0 8px 28px rgba($accent, 0.13),
+            0 2px 8px rgba($black, 0.45);
+  }
+
+  &-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1rem 0.875rem;
+    height: 100%;
+
+    .device-card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+
+      .device-card-name {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.9rem;
+        color: $text-primary;
+        letter-spacing: 0.01em;
+      }
+
+      .device-card-ctrl-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 7px 2px 5px;
+        border-radius: 20px;
+        background: rgba($accent, 0.14);
+        border: 1px solid rgba($accent, 0.38);
+        color: $accent;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        flex-shrink: 0;
+        white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease;
+
+        .device-card:hover & {
+          background: rgba($accent, 0.22);
+          border-color: rgba($accent, 0.6);
+        }
+      }
+    }
+
+    .device-card-mac {
+      font-size: 0.65rem;
+      color: $text-dimmest;
+      letter-spacing: 0.03em;
+      line-height: 1.4;
+    }
+
+    .device-card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.5rem;
+      padding-top: 0.625rem;
+      border-top: 1px solid rgba($white, 0.05);
+
+      .device-card-feat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background: rgba($accent, 0.08);
+        border: 1px solid rgba($accent, 0.18);
+        color: $accent;
+        transition: all 0.18s ease;
+
+        &:hover {
+          background: rgba($accent, 0.2);
+          border-color: rgba($accent, 0.45);
+          transform: scale(1.12);
+        }
+      }
+    }
+  }
+}

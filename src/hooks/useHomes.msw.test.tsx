@@ -18,12 +18,10 @@ describe('useHomes (MSW)', () => {
     const { result } = renderHookWithStore(() => useHomes());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    let response: Awaited<ReturnType<typeof result.current.addHome>>;
     await waitFor(async () => {
-      response = await result.current.addHome('New Home', 'Berlin');
-      expect(response).toBeDefined();
+      const response = await result.current.addHome('New Home', 'Berlin');
+      expect((response as { data?: unknown }).data).toBeDefined();
     });
-    expect((response! as { data?: unknown }).data).toBeDefined();
   });
 
   it('deletes a home via DELETE /api/homes/:id', async () => {

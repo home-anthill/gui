@@ -1,0 +1,35 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Design tokens — Home Anthill
+// Import in every SCSS file with:  @use '…/styles/variables' as *;
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Backgrounds ──────────────────────────────────────────────────────────────
+$bg-base:        #0a0a0a;   // page / body background
+$bg-dark:        #0d0d0f;   // darker panel (login right column)
+$bg-deep:        #111214;   // login gradient midpoint
+$bg-surface:     #141517;   // cards, header, elevated surface
+$bg-surface-dim: #161719;   // login gradient end
+$bg-surface-2:   #1a1b1e;   // scrollbar track, secondary surface
+$bg-elevated:    #18191c;   // device-card gradient start
+
+// ── Borders ───────────────────────────────────────────────────────────────────
+$border-subtle:  #1e1f23;   // very faint separator
+$border:         #25262b;   // standard border
+$border-card:    #2c2e33;   // device-card outline
+
+// ── Text ─────────────────────────────────────────────────────────────────────
+$white:          #ffffff;
+$black:          #000000;
+$text-primary:   #e8e9eb;   // headings / prominent text
+$text-secondary: #c1c2c5;   // body, nav, label text
+$text-muted:     #909296;   // units, subtitles
+$text-dim:       #6b6e76;   // descriptions, hints
+$text-dimmer:    #5c5f66;   // fine print, scrollbar hover
+$text-dimmest:   #4c4f56;   // barely visible (mac address)
+
+// ── Scrollbar ─────────────────────────────────────────────────────────────────
+$scrollbar-thumb: #373a40;
+
+// ── Brand / Accent (orange) ───────────────────────────────────────────────────
+$accent:     #ff922b;   // primary orange
+$accent-alt: #fd7e14;   // secondary orange (gradient end)

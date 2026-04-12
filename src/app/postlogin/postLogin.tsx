@@ -12,12 +12,11 @@ export function PostLogin() {
     const hash = location.hash.slice(1); // strip leading '#'
     const token: string | null = new URLSearchParams(hash).get('token');
     if (!token) {
-      console.error('postlogin - cannot read token from URL fragment');
       navigate('/');
       return;
     }
     login(token);
-    navigate('/main');
+    navigate('/');
   }, [location, navigate, login]);
 
   return (

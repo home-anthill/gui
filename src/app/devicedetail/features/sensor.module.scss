@@ -1,0 +1,128 @@
+@use '../../../styles/variables' as *;
+
+.detail-section {
+  margin-top: 2rem;
+
+  // ─── Section header ────────────────────────────────────────────────────────
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    .section-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba($accent, 0.15);
+      color: $accent;
+      flex-shrink: 0;
+    }
+  }
+
+  // ─── Sensor cards grid ─────────────────────────────────────────────────────
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+
+    .sensor-card {
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem !important;
+      background-color: $bg-surface;
+      border-color: $border;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, $accent, $accent-alt);
+        opacity: 0.7;
+      }
+
+      &:hover {
+        border-color: rgba($accent, 0.5);
+        transform: translateY(-2px);
+
+        &::before {
+          opacity: 1;
+        }
+      }
+
+      &-header {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        margin-bottom: 1rem;
+        padding-left: 0.25rem;
+
+        .sensor-card-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 52px;
+          height: 52px;
+          flex-shrink: 0;
+          border-radius: 0.75rem;
+          background: linear-gradient(135deg, rgba($accent, 0.18), rgba($accent-alt, 0.08));
+          color: $accent;
+        }
+
+        .sensor-card-label {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex: 1;
+          min-width: 0;
+
+          h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: $text-secondary;
+            margin: 0;
+            line-height: 1.3;
+          }
+        }
+      }
+
+      &-value {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding-left: 0.25rem;
+
+        .value-text {
+          font-size: 2.25rem;
+          font-weight: 700;
+          line-height: 1;
+          color: $accent;
+          letter-spacing: -0.02em;
+        }
+
+        .value-unit {
+          font-size: 1.125rem;
+          font-weight: 500;
+          color: $text-muted;
+        }
+      }
+
+      &-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid rgba($accent, 0.1);
+      }
+    }
+  }
+}

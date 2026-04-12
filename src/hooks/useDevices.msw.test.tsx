@@ -35,6 +35,7 @@ describe('useDevices (MSW)', () => {
 
     const response = await result.current.assignDeviceHomeRoom(
       'd2',
+      'name',
       'h1',
       'r1',
     );

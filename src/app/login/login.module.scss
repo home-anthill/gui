@@ -1,12 +1,218 @@
-.login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 50px;
+@use '../../styles/variables' as *;
 
-  > .logo {
-    margin-bottom: 20px;
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  background: $bg-base;
+
+  // ─── Brand panel (left) ──────────────────────────────────────────────────
+  .login-brand {
+    flex: 0 0 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 4rem;
+    background: linear-gradient(145deg, $bg-dark 0%, $bg-deep 60%, $bg-surface-dim 100%);
+    border-right: 1px solid $border-subtle;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -120px;
+      left: -80px;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba($accent, 0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba($accent, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    &-inner {
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+
+      .login-brand-logo {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.75rem;
+        margin: 0 0 1.5rem;
+
+        .login-brand-icon {
+          width: 180px;
+          height: 103px;
+          opacity: 0.9;
+        }
+
+        .login-brand-name {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: $accent;
+          letter-spacing: 0.02em;
+        }
+      }
+
+      .login-brand-tagline {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: $text-primary;
+        margin: 0 0 1.5rem;
+        letter-spacing: -0.02em;
+
+        .login-brand-tagline-accent {
+          color: $accent;
+        }
+      }
+
+      .login-brand-desc {
+        font-size: 0.92rem;
+        line-height: 1.75;
+        color: $text-dim;
+        margin: 0 0 2.5rem;
+      }
+
+      // ─── Feature list ──────────────────────────────────────────────────
+      ul.login-features {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.125rem;
+
+        li.login-features-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.875rem;
+
+          .login-features-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: rgba($accent, 0.1);
+            border: 1px solid rgba($accent, 0.2);
+            color: $accent;
+            flex-shrink: 0;
+            margin-top: 1px;
+          }
+
+          .login-features-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+
+            strong {
+              font-size: 0.875rem;
+              font-weight: 600;
+              color: $text-secondary;
+            }
+
+            span {
+              font-size: 0.8rem;
+              color: $text-dimmer;
+              line-height: 1.5;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ─── Login panel (right) ─────────────────────────────────────────────────
+  .login-panel {
+    flex: 0 0 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2rem 2.5rem;
+    background: $bg-dark;
+
+    .login-card {
+      width: 100%;
+      max-width: 360px;
+      background: $bg-surface;
+      border-color: $border;
+
+      .login-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        .login-card-icon {
+          // Hide icon by default (desktop and tablet)
+          display: none;
+          width: 128px;
+          height: 96px;
+
+          // Show on smartphones
+          @media (max-width: 767px) {
+            display: block;
+          }
+        }
+
+        .login-card-title {
+          // Hide icon by default (desktop and tablet)
+          display: none;
+
+          // Show on smartphones
+          @media (max-width: 767px) {
+            display: block;
+            margin: 0 0 0.8rem;
+          }
+        }
+
+        .login-card-subtitle {
+          // Hide icon by default (desktop and tablet)
+          display: none;
+
+          // Show on smartphones
+          @media (max-width: 767px) {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+  // ─── Responsive ──────────────────────────────────────────────────────────
+  @media (max-width: 768px) {
+    flex-direction: column;
+
+    .login-brand {
+      display: none;
+    }
+
+    .login-panel {
+      flex: 1;
+      padding: 2rem 1.25rem;
+      justify-content: center;
+      background: $bg-base;
+
+      .login-card {
+        max-width: 420px;
+      }
+    }
   }
 }
-

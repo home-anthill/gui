@@ -1,109 +1,174 @@
-import { MouseEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
+import { Avatar, Burger, Text, NavLink, Drawer } from '@mantine/core';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { useNavigate, useLocation } from 'react-router';
+import { IconDevices, IconHome2 } from '@tabler/icons-react';
 
 import { useProfile } from '../../hooks/useProfile';
+import appIcon from '../../assets/logo.svg';
 
-import styles from './navbar.module.scss';
-import logoPng from '../../assets/home-anthill.png'
+import styles from './Navbar.module.scss';
+
+const NAV_ITEMS = [
+  { label: 'Devices', icon: IconDevices, path: '/' },
+  { label: 'Homes', icon: IconHome2, path: '/homes' },
+] as const;
 
 export function Navbar() {
-  const [anchorElNav, setAnchorElNav] = useState<Element | null>(null);
-  const navigate = useNavigate();
   const { profile } = useProfile();
+  const [drawerOpened, { toggle, close }] = useDisclosure(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-  function showProfile() {
-    navigate(`/profile`);
-  }
-
-  const handleOpenNavMenu = (event: MouseEvent) => {
-    setAnchorElNav(event.currentTarget);
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    close();
   };
 
-  const onNavigateTo = (pageName: string) => {
-    setAnchorElNav(null);
-    navigate(`/main/${pageName}`);
-  };
-
-  const onClose = () => {
-    setAnchorElNav(null);
-  };
+  const isActive = (path: string) =>
+    path === '/'
+      ? location.pathname === '/'
+      : location.pathname.startsWith(path);
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <img src={logoPng} alt="Logo air conditioner" width="50" height="auto"></img>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
+    <>
+      <header className={styles['app-header']}>
+        <div className={styles['app-header-inner']}>
+          {/* Left: burger (mobile) + brand */}
+          <div className={styles['app-header-left']}>
+            {isMobile && (
+              <Burger
+                opened={drawerOpened}
+                onClick={toggle}
+                size="sm"
+                color="orange"
+                aria-label="Open navigation"
+              />
+            )}
+            <div
+              className={styles['app-header-brand']}
+              onClick={() => handleNavigate('/')}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && handleNavigate('/')}
+              aria-label="Home Anthill – go to devices"
             >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={onClose}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              <MenuItem key="devices" onClick={() => onNavigateTo('devices')}>
-                <Typography textAlign="center">DEVICES</Typography>
-              </MenuItem>
-              <MenuItem key="home" onClick={() => onNavigateTo('homes')}>
-                <Typography textAlign="center">HOMES</Typography>
-              </MenuItem>
-            </Menu>
-          </Box>
-          <Box className={styles['box-container']}
-               sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Button key="devices"
-                    onClick={() => onNavigateTo('devices')}
-                    sx={{ my: 2, color: 'white', display: 'block' }}>
-              DEVICES
-            </Button>
-            <Button key="home"
-                    onClick={() => onNavigateTo('homes')}
-                    sx={{ my: 2, color: 'white', display: 'block' }}>
-              HOMES
-            </Button>
-          </Box>
+              <img
+                src={appIcon}
+                alt=""
+                className={styles['app-header-brand-icon']}
+              />
+              <span className={styles['app-header-brand-name']}>
+                Home Anthill
+              </span>
+            </div>
+          </div>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={showProfile} sx={{ p: 0 }}>
-              <Avatar alt="profile icon" src={profile.github?.avatarURL}/>
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+          {/* Center: nav links (desktop only) */}
+          {!isMobile && (
+            <nav
+              className={styles['app-header-nav']}
+              aria-label="Main navigation"
+            >
+              {NAV_ITEMS.map(({ label, icon: Icon, path }) => (
+                <div
+                  key={path}
+                  className={`${styles['app-header-nav-link']}${isActive(path) ? ` ${styles.active}` : ''}`}
+                  onClick={() => handleNavigate(path)}
+                  role="link"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && handleNavigate(path)}
+                  aria-current={isActive(path) ? 'page' : undefined}
+                >
+                  <Icon size={18} stroke={1.5} />
+                  <Text size="sm" fw={500}>
+                    {label}
+                  </Text>
+                </div>
+              ))}
+            </nav>
+          )}
+
+          {/* Right: profile avatar */}
+          <Avatar
+            className={styles['app-header-profile'] ?? ''}
+            size="sm"
+            radius="xl"
+            color="orange"
+            onClick={() => handleNavigate('/profile')}
+            tabIndex={0}
+            onKeyDown={(e) =>
+              e.key === 'Enter' && handleNavigate('/profile')
+            }
+            aria-label={`Profile – ${profile?.github?.name}`}
+            title={`${profile?.github?.name}\n${profile?.github?.email}`}
+            alt="profile"
+            src={profile?.github?.avatarURL ?? ''}
+          ></Avatar>
+        </div>
+      </header>
+
+      {/* Mobile navigation drawer */}
+      <Drawer
+        opened={drawerOpened}
+        onClose={close}
+        title={
+          <div className={styles['app-drawer-title']}>
+            <img src={appIcon} alt="" className={styles['app-drawer-icon']} />
+            <Text fw={700} c="orange">
+              Home Anthill
+            </Text>
+          </div>
+        }
+        size="xs"
+        padding="md"
+        classNames={{ content: styles['app-drawer'] ?? '' }}
+      >
+        <nav
+          className={styles['app-drawer-menu']}
+          aria-label="Mobile navigation"
+        >
+          {NAV_ITEMS.map(({ label, icon: Icon, path }) => (
+            <NavLink
+              key={path}
+              label={label}
+              leftSection={<Icon size={20} stroke={1.5} />}
+              active={isActive(path)}
+              onClick={() => handleNavigate(path)}
+              className={styles['app-drawer-item'] ?? ''}
+              aria-current={isActive(path) ? 'page' : undefined}
+            />
+          ))}
+        </nav>
+
+        {/* Profile summary at bottom of drawer */}
+        <div
+          className={styles['app-drawer-profile']}
+          onClick={() => handleNavigate('/profile')}
+          role="link"
+          tabIndex={0}
+          onKeyDown={(e) =>
+            e.key === 'Enter' && handleNavigate('/profile')
+          }
+          aria-label="Go to profile"
+        >
+          <Avatar
+            size="md"
+            radius="xl"
+            color="orange"
+            alt="profile icon"
+            src={profile?.github?.avatarURL ?? ''}
+          ></Avatar>
+          <div className={styles['app-drawer-profile-info']}>
+            <Text size="sm" fw={600} c="white">
+              {profile?.github?.name}
+            </Text>
+            <Text size="xs" c="dimmed">
+              {profile?.github?.email}
+            </Text>
+          </div>
+        </div>
+      </Drawer>
+    </>
   );
 }
-
-export default Navbar;

@@ -1,9 +1,8 @@
 import { useGetOnlineQuery } from '../services/online';
-import { Online } from '../models/online';
 
 export function useOnline(id: string) {
   const {
-    data: online = {} as Online,
+    data: online,
     isLoading: onlineLoading,
     error: onlineError
   } = useGetOnlineQuery(id);

@@ -1,11 +1,8 @@
-import { useCallback } from 'react'
-
 import { useGetProfileQuery, useNewProfileTokenMutation } from '../services/profile';
-import { Profile } from '../models/profile';
 
 export function useProfile() {
   const {
-    data: profile = {} as Profile,
+    data: profile,
     isLoading: profileLoading,
     error: profileError
   } = useGetProfileQuery();
@@ -13,10 +10,7 @@ export function useProfile() {
 
   const loading = profileLoading || newProfileTokenLoading;
 
-  const newProfileToken = useCallback(
-    (id: string) => newProfileTokenMutation(id),
-    [newProfileTokenMutation]
-  );
+  const newProfileToken = (id: string) => newProfileTokenMutation(id);
 
   return {
     profile,

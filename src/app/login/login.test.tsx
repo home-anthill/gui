@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, waitFor } from '../../test-utils';
 import Login from './login';
 import * as authUtils from '../../auth/auth-utils';
 
@@ -12,9 +11,9 @@ vi.mock('../../auth/auth-utils', async (importOriginal) => {
   };
 });
 
-// Mock the image import to avoid asset-pipeline issues in jsdom
-vi.mock('../../assets/home-anthill.png', () => ({
-  default: 'mocked-logo.png',
+// Mock the SVG logo import to avoid asset-pipeline issues in jsdom
+vi.mock('../../assets/login-brand-logo.svg', () => ({
+  default: 'mocked-logo.svg',
 }));
 
 const mockNavigate = vi.hoisted(() => vi.fn());
@@ -30,38 +29,26 @@ describe('Login', () => {
   });
 
   it('renders the login page', () => {
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>,
-    );
+    render(<Login />);
     expect(
-      screen.getByRole('heading', { name: /welcome to home-anthill/i }),
+      screen.getByRole('button', { name: /sign in with github/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
-    expect(screen.getByAltText('Home Anthill')).toBeInTheDocument();
+    expect(screen.getAllByAltText('Home Anthill').length).toBeGreaterThan(0);
+    expect(screen.getByText(/real-time sensors/i)).toBeInTheDocument();
   });
 
-  it('navigates to /main when the user is already logged in', async () => {
+  it('navigates to / when the user is already logged in', async () => {
     vi.mocked(authUtils.isLoggedIn).mockReturnValue(true);
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>,
-    );
+    render(<Login />);
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/main');
+      expect(mockNavigate).toHaveBeenCalledWith('/');
     });
   });
 
   it('does not navigate when the user is not logged in', async () => {
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>,
-    );
+    render(<Login />);
 
     await waitFor(() => {
       expect(mockNavigate).not.toHaveBeenCalled();

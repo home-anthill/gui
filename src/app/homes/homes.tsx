@@ -1,161 +1,355 @@
-import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
-import { Typography, Fab, Dialog, DialogTitle, Button, DialogContent, TextField, DialogActions, FormControl } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { useCallback, useMemo, useState } from 'react';
+import {
+  Title,
+  Text,
+  Button,
+  Paper,
+  Modal,
+  TextInput,
+  NumberInput,
+  Accordion,
+  Loader,
+  Alert,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconPlus, IconBuilding, IconAlertCircle } from '@tabler/icons-react';
+import { toast } from 'sonner';
+
+import { useHomes } from '../../hooks/useHomes';
+import { HomeAccordion } from './home/home';
+import { HomesActionsContext } from './HomesActionsContext';
+import { useRooms } from '../../hooks/useRooms';
 
 import styles from './homes.module.scss';
 
-import { useHomes } from '../../hooks/useHomes';
-import { Home } from '../../models/home';
-import HomeCard from './homecard/homeCard';
-
-export interface NewHomeProps {
-  onClose: (value: boolean) => void;
-  open: boolean;
-}
-
 export function Homes() {
-  const [open, setOpen] = useState(false);
-  const {homes, loading, homesError, deleteHome} = useHomes();
-  const navigate = useNavigate();
+  const { homes, homesLoading, homesError, addHome, updateHome, deleteHome } =
+    useHomes();
+  const { deleteRoom, addRoom, updateRoom } = useRooms();
 
-  const editHome = useCallback((home: Home): void => {
-    navigate(`/main/homes/${home.id}/edit`);
-  }, [navigate]);
+  const [homeModalOpened, { open: openHomeModal, close: closeHomeModal }] =
+    useDisclosure(false);
+  const [roomModalOpened, { open: openRoomModal, close: closeRoomModal }] =
+    useDisclosure(false);
+  const [
+    deleteModalOpened,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
 
-  const removeHome = useCallback(async (home: Home): Promise<void> => {
-    try {
-      await deleteHome(home.id).unwrap();
-    } catch (err) {
-      console.error(`removeHome - cannot delete home with id = ${home.id}`, err);
+  const [editingHome, setEditingHome] = useState<string | null>(null);
+  const [editingRoom, setEditingRoom] = useState<{
+    homeId: string;
+    roomId: string | null;
+  }>({ homeId: '', roomId: null });
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: 'home' | 'room';
+    homeId: string;
+    roomId?: string;
+  } | null>(null);
+
+  const [homeName, setHomeName] = useState('');
+  const [homeLocation, setHomeLocation] = useState('');
+  const [roomName, setRoomName] = useState('');
+  const [roomFloor, setRoomFloor] = useState<number | ''>(0);
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
+
+  const handleOpenHomeModal = useCallback((homeId?: string) => {
+    if (homeId) {
+      const home = homes.find((h) => h.id === homeId);
+      if (home) {
+        setHomeName(home.name);
+        setHomeLocation(home.location);
+        setEditingHome(homeId);
+      }
+    } else {
+      setHomeName('');
+      setHomeLocation('');
+      setEditingHome(null);
     }
-  }, [deleteHome]);
+    openHomeModal();
+  }, [homes, openHomeModal]);
 
-  const handleOpen = useCallback(() => {
-    setOpen(true);
-  }, []);
+  const handleSaveHome = async () => {
+    try {
+      if (editingHome) {
+        await updateHome(editingHome, homeName, homeLocation);
+      } else {
+        await addHome(homeName, homeLocation);
+      }
+      closeHomeModal();
+    } catch (err) {
+      console.error('handleSaveHome - cannot save home', err);
+      toast.error('Cannot save home');
+    }
+  };
 
-  const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
+  const handleOpenRoomModal = useCallback((homeId: string, roomId?: string) => {
+    if (roomId) {
+      const room = homes
+        .find((h) => h.id === homeId)
+        ?.rooms.find((r) => r.id === roomId);
+      if (room) {
+        setRoomName(room.name);
+        setRoomFloor(room.floor);
+        setEditingRoom({ homeId, roomId });
+      }
+    } else {
+      setRoomName('');
+      setRoomFloor(0);
+      setEditingRoom({ homeId, roomId: null });
+    }
+    openRoomModal();
+  }, [homes, openRoomModal]);
 
-  return (
-    <div className={styles['homes']}>
-      <NewHomeDialog
-        open={open}
-        onClose={handleClose}/>
-      <Typography variant="h2" component="h1" textAlign={'center'}>
-        Homes
-      </Typography>
-      <div className={styles['homes-container']}>
-        {homesError ? (
-          <div className="error">Something went wrong</div>
-        ) : loading ? (
-          <div className={styles['loading']}>Loading...</div>
-        ) : homes.length > 0 ? (
-          <>
-            {homes.map((home: Home) => (
-              <HomeCard key={home.id}
-                        home={home}
-                        onEdit={editHome}
-                        onDelete={() => removeHome(home)}>
-              </HomeCard>
-            ))}
-          </>
-        ) : (
-          'No data to show'
-        )}
-      </div>
-      <Fab color="primary"
-           sx={{
-             position: 'absolute',
-             bottom: 32,
-             right: 32
-           }}
-           aria-label="add"
-           onClick={handleOpen}>
-        <AddIcon/>
-      </Fab>
-    </div>
+  const handleSaveRoom = async () => {
+    if (roomFloor === '') return;
+    try {
+      if (editingRoom.roomId) {
+        await updateRoom(editingRoom.homeId, editingRoom.roomId, {
+          name: roomName,
+          floor: roomFloor,
+        });
+      } else {
+        await addRoom(editingRoom.homeId, { name: roomName, floor: roomFloor });
+      }
+      closeRoomModal();
+    } catch (err) {
+      console.error('handleSaveRoom - cannot save room', err);
+      toast.error('Cannot save room');
+    }
+  };
+
+  const handleOpenDeleteModal = useCallback((
+    type: 'home' | 'room',
+    homeId: string,
+    roomId?: string,
+  ) => {
+    setDeleteTarget({ type, homeId, ...(roomId !== undefined ? { roomId } : {}) });
+    openDeleteModal();
+  }, [openDeleteModal]);
+
+  const handleDeleteHome = useCallback(
+    (homeId: string) => handleOpenDeleteModal('home', homeId),
+    [handleOpenDeleteModal],
   );
-}
 
-function NewHomeDialog(props: NewHomeProps) {
-  const defaultValues = {
-    nameInput: '',
-    locationInput: ''
-  };
-  const {handleSubmit, reset, control} = useForm<{ nameInput: string; locationInput: string }>({defaultValues});
-  const {addHome} = useHomes();
+  const handleDeleteRoom = useCallback(
+    (homeId: string, roomId: string) =>
+      handleOpenDeleteModal('room', homeId, roomId),
+    [handleOpenDeleteModal],
+  );
 
-  const handleClose = () => {
-    reset();
-    props.onClose(false);
-  };
-
-  const handleAdd = (value: boolean) => {
-    reset();
-    props.onClose(value);
-  };
-
-  const onAddHome = handleSubmit(async (values) => {
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await addHome(values.nameInput, values.locationInput).unwrap();
-      handleAdd(true);
+      if (deleteTarget.type === 'home') {
+        await deleteHome(deleteTarget.homeId);
+      } else if (deleteTarget.roomId) {
+        await deleteRoom(deleteTarget.homeId, deleteTarget.roomId);
+      }
+      closeDeleteModal();
+      setDeleteTarget(null);
     } catch (err) {
-      console.error('onAddHome - cannot add a new home, err = ', err);
-      handleAdd(false);
+      console.error('handleConfirmDelete - cannot delete', err);
+      toast.error('Cannot delete item');
     }
-  });
+  };
+
+  const actionsValue = useMemo(
+    () => ({
+      onEditHome: handleOpenHomeModal,
+      onDeleteHome: handleDeleteHome,
+      onAddRoom: handleOpenRoomModal,
+      onEditRoom: handleOpenRoomModal,
+      onDeleteRoom: handleDeleteRoom,
+    }),
+    [handleOpenHomeModal, handleDeleteHome, handleOpenRoomModal, handleDeleteRoom],
+  );
+
+  // ── Render ───────────────────────────────────────────────────────────────────
+
+  if (homesLoading) {
+    return (
+      <div className="page-loading">
+        <Loader color="orange" size="lg" />
+      </div>
+    );
+  }
+
+  if (homesError) {
+    return (
+      <div className="page-error">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          color="red"
+          title="Failed to load homes"
+        >
+          Could not load your homes. Please try again later.
+        </Alert>
+      </div>
+    );
+  }
 
   return (
-    <Dialog open={props.open} onClose={handleClose}>
-      <DialogTitle>Create a new home</DialogTitle>
-      <DialogContent>
-        <form onSubmit={onAddHome} className={styles['form']}>
-          <FormControl>
-            <Controller
-              render={({field, fieldState}) =>
-                <TextField
-                  id="name-input"
-                  variant="outlined"
-                  label="Name"
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message ?? ''}
-                  {...field} />
-              }
-              name="nameInput"
-              rules={{required: 'Required', maxLength: {value: 15, message: 'Max 15 chars'}, pattern: {value: /^[a-zA-Z0-9\s\-_]+$/, message: 'Alphanumeric only'}}}
-              control={control}
-            />
-          </FormControl>
-          <FormControl>
-            <Controller
-              render={({field, fieldState}) =>
-                <TextField
-                  sx={{
-                    marginLeft: '15px'
-                  }}
-                  id="location-input"
-                  variant="outlined"
-                  label="Location"
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message ?? ''}
-                  {...field} />
-              }
-              name="locationInput"
-              rules={{required: 'Required', maxLength: {value: 15, message: 'Max 15 chars'}, pattern: {value: /^[a-zA-Z0-9\s\-_]+$/, message: 'Alphanumeric only'}}}
-              control={control}
-            />
-          </FormControl>
-        </form>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => handleClose()}>Cancel</Button>
-        <Button onClick={onAddHome}>Add</Button>
-      </DialogActions>
-    </Dialog>
+    <div className={styles['homes-page']}>
+      <div className={styles['homes-page-header']}>
+        <div>
+          <Title order={1} c="white">
+            Homes
+          </Title>
+          <Text c="dimmed" size="sm" mt="xs">
+            Manage your homes and rooms
+          </Text>
+        </div>
+        <Button
+          leftSection={<IconPlus size={18} />}
+          onClick={() => handleOpenHomeModal()}
+          color="orange"
+        >
+          Add Home
+        </Button>
+      </div>
+
+      {homes.length === 0 ? (
+        <Paper p="xl" radius="md" withBorder className={styles['empty-state'] ?? ''}>
+          <div className={styles['empty-state-inner']}>
+            <IconBuilding size={48} stroke={1.5} color="#5c5f66" />
+            <Text c="dimmed" size="lg" ta="center">
+              No homes configured
+            </Text>
+            <Button
+              onClick={() => handleOpenHomeModal()}
+              color="orange"
+              variant="light"
+            >
+              Add your first home
+            </Button>
+          </div>
+        </Paper>
+      ) : (
+        <HomesActionsContext.Provider value={actionsValue}>
+          <Accordion
+            variant="separated"
+            radius="md"
+            className={styles['homes-accordion'] ?? ''}
+          >
+            {homes.map((home) => (
+              <HomeAccordion key={home.id} home={home} />
+            ))}
+          </Accordion>
+        </HomesActionsContext.Provider>
+      )}
+
+      {/* Modal: add/edit home */}
+      <Modal
+        opened={homeModalOpened}
+        onClose={closeHomeModal}
+        title={editingHome ? 'Edit Home' : 'Add Home'}
+        centered
+      >
+        <div className="modal-form">
+          <TextInput
+            label="Name"
+            placeholder="Main Home"
+            value={homeName}
+            onChange={(e) => setHomeName(e.currentTarget.value)}
+            required
+          />
+          <TextInput
+            label="Location"
+            placeholder="123 Main St, New York"
+            value={homeLocation}
+            onChange={(e) => setHomeLocation(e.currentTarget.value)}
+            required
+          />
+          <div className="modal-actions">
+            <Button
+              variant="subtle"
+              onClick={closeHomeModal}
+              // disabled={isSavingHome}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveHome}
+              color="orange"
+              disabled={!homeName || !homeLocation}
+              // loading={isSavingHome}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal: add/edit room */}
+      <Modal
+        opened={roomModalOpened}
+        onClose={closeRoomModal}
+        title={editingRoom.roomId ? 'Edit Room' : 'Add Room'}
+        centered
+      >
+        <div className="modal-form">
+          <TextInput
+            label="Name"
+            placeholder="Living Room"
+            value={roomName}
+            onChange={(e) => setRoomName(e.currentTarget.value)}
+            required
+          />
+          <NumberInput
+            label="Floor"
+            placeholder="0"
+            value={roomFloor}
+            onChange={(value) => setRoomFloor(value as number | '')}
+            min={-5}
+            max={100}
+            required
+          />
+          <div className="modal-actions">
+            <Button
+              variant="subtle"
+              onClick={closeRoomModal}
+              // disabled={isSavingRoom}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveRoom}
+              color="orange"
+              disabled={!roomName || roomFloor === ''}
+              // loading={isSavingRoom}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal: delete confirmation */}
+      <Modal
+        opened={deleteModalOpened}
+        onClose={closeDeleteModal}
+        title="Confirm Deletion"
+        centered
+      >
+        <div className="modal-form">
+          <Text>
+            Are you sure you want to delete this item? This action cannot be
+            undone.
+          </Text>
+          <div className="modal-actions">
+            <Button variant="subtle" onClick={closeDeleteModal}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmDelete} color="red">
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </div>
   );
 }
 

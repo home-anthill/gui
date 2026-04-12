@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import {
   useGetHomesQuery,
   useLazyGetHomesQuery,
@@ -32,28 +30,20 @@ export function useHomes() {
   const loading =
     homesLoading || deleteHomeLoading || addHomeLoading || updateHomeLoading;
 
-  const deleteHome = useCallback(
-    (id: string) => deleteHomeMutation(id),
-    [deleteHomeMutation]
-  );
+  const deleteHome = (id: string) => deleteHomeMutation(id);
 
-  const addHome = useCallback(
-    // pass a fixed rooms: [], because you cannot add rooms with this api
-    (name: string, location: string) =>
-      addHomeMutation({ name, location, rooms: [] }),
-    [addHomeMutation]
-  );
+  // pass a fixed rooms: [], because you cannot add rooms with this api
+  const addHome = (name: string, location: string) =>
+    addHomeMutation({ name, location, rooms: [] });
 
-  const updateHome = useCallback(
-    (id: string, name: string, location: string) =>
-      updateHomeMutation({ id, name, location }),
-    [updateHomeMutation]
-  );
+  const updateHome = (id: string, name: string, location: string) =>
+    updateHomeMutation({ id, name, location });
 
   return {
     // homes query
     homes,
     loading,
+    homesLoading,
     homesError,
     // homes lazy query
     trigger,
