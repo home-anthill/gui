@@ -5,6 +5,7 @@ import DeviceDetail from './devicedetails';
 import { useHomes } from '../../hooks/useHomes';
 import { useDevices } from '../../hooks/useDevices';
 import { useValues } from '../../hooks/useValues';
+import { useOnline } from '../../hooks/useOnline';
 import * as ReactRouter from 'react-router';
 import {
   mockDevice,
@@ -13,11 +14,13 @@ import {
   mockRoomWithDevices,
   mockDeviceWithValues,
   makeFeatureValue,
+  mockOnlineNow,
 } from '../../test-fixtures';
 
 vi.mock('../../hooks/useHomes');
 vi.mock('../../hooks/useDevices');
 vi.mock('../../hooks/useValues');
+vi.mock('../../hooks/useOnline');
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();
   return { ...actual, useNavigate: vi.fn() };
@@ -56,9 +59,15 @@ const baseValues = {
   deviceWithValuesError: undefined,
   setValues: vi.fn(),
   trigger: vi.fn(),
-  lazyDeviceWithValues: undefined,
+  lazyDeviceWithValues: mockDeviceWithValues,
   lazyDeviceWithValuesLoading: false,
   lazyDeviceWithValuesError: undefined,
+};
+
+const baseOnline = {
+  online: mockOnlineNow,
+  loading: false,
+  onlineError: undefined,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -91,6 +100,7 @@ describe('DeviceDetail', () => {
     vi.mocked(useHomes).mockReturnValue(baseHomes);
     vi.mocked(useDevices).mockReturnValue(baseDevices);
     vi.mocked(useValues).mockReturnValue(baseValues);
+    vi.mocked(useOnline).mockReturnValue(baseOnline);
   });
 
   it('shows a loader while values are loading', () => {

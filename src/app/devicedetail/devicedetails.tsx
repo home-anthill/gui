@@ -193,6 +193,30 @@ export function DeviceDetail() {
         withBorder
         mb="xl"
       >
+        <div className={styles['device-header-actions']}>
+          <Tooltip label="Settings">
+            <ActionIcon
+              variant="light"
+              color="orange"
+              size="lg"
+              onClick={handleOpenSettings}
+              aria-label="Device settings"
+            >
+              <IconSettings size={20} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Delete device">
+            <ActionIcon
+              variant="light"
+              color="red"
+              size="lg"
+              onClick={deleteHandlers.open}
+              aria-label="Delete device"
+            >
+              <IconTrash size={20} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+        </div>
         <div className={styles['device-header-inner']}>
           <div className={styles['device-header-icon']}>
             <IconDevices
@@ -224,30 +248,6 @@ export function DeviceDetail() {
               )}
             </div>
           </div>
-          <div className={styles['device-header-actions']}>
-            <Tooltip label="Settings">
-              <ActionIcon
-                variant="light"
-                color="orange"
-                size="lg"
-                onClick={handleOpenSettings}
-                aria-label="Device settings"
-              >
-                <IconSettings size={20} stroke={1.5} />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label="Delete device">
-              <ActionIcon
-                variant="light"
-                color="red"
-                size="lg"
-                onClick={deleteHandlers.open}
-                aria-label="Delete device"
-              >
-                <IconTrash size={20} stroke={1.5} />
-              </ActionIcon>
-            </Tooltip>
-          </div>
         </div>
       </Paper>
 
@@ -257,6 +257,7 @@ export function DeviceDetail() {
         )}
       />
       <Online
+        deviceId={device.id}
         features={featureValues.filter(
           (f: FeatureValue) => f.type === 'sensor' && f.name === 'online',
         )}

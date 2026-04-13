@@ -1,15 +1,46 @@
-import { Title, Paper, Text } from '@mantine/core';
+import { Title, Paper, Text, Loader } from '@mantine/core';
 import { IconActivityHeartbeat, IconBolt } from '@tabler/icons-react';
+
 import { FeatureValue } from '../../../models/value';
 import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
+import { useOnline } from '../../../hooks/useOnline';
+
 import styles from './online.module.scss';
 
 interface OnlineProps {
+  deviceId: string;
   features: FeatureValue[];
 }
 
-export function Online({ features }: OnlineProps) {
-  if (features.length === 0) return null;
+const OFFLINE_THRESHOLD_MS = 60 * 1000;
+
+function isOffline(modifiedAtISO: string, currentTimeISO: string): boolean {
+  const modDate = new Date(modifiedAtISO);
+  const currentDate = new Date(currentTimeISO);
+  return modDate.getTime() < currentDate.getTime() - OFFLINE_THRESHOLD_MS;
+}
+
+export function Online({ deviceId, features }: OnlineProps) {
+  const { online, loading, onlineError } = useOnline(deviceId);
+
+  const statusText =
+    online && isOffline(online.modifiedAt, online.currentTime)
+      ? 'Offline'
+      : 'Online';
+  const statusColor =
+    online && isOffline(online.modifiedAt, online.currentTime)
+      ? '#fd2121'
+      : '#40c057';
+
+  if (onlineError || features.length === 0) return null;
+
+  if (loading) {
+    return (
+      <div className="page-loading">
+        <Loader color="orange" size="lg" />
+      </div>
+    );
+  }
 
   return (
     <section className={styles['detail-section']}>
@@ -18,15 +49,12 @@ export function Online({ features }: OnlineProps) {
           <IconActivityHeartbeat size={16} stroke={1.5} />
         </div>
         <Title order={2} size="h3" c="orange">
-          Presence
+          Power Outage
         </Title>
       </div>
 
       <div className={styles['features-grid']}>
         {features.map((feature) => {
-          const statusText = feature.value ? 'Present' : 'Absent';
-          const statusColor = feature.value ? '#40c057' : '#fa5252';
-
           return (
             <Paper
               key={feature.featureUuid}
@@ -42,16 +70,17 @@ export function Online({ features }: OnlineProps) {
                   <h4>{feature.name}</h4>
                 </div>
               </div>
-              <div
-                className={styles['sensor-card-value']}
-                style={{ color: statusColor }}
-              >
-                <span className={styles['value-text']}>{statusText}</span>
+              <div className={styles['sensor-card-value']}>
+                <span
+                  className={styles['value-text']}
+                  style={{ color: statusColor }}
+                >
+                  {statusText}
+                </span>
               </div>
               <div className={styles['sensor-card-footer']}>
                 <Text size="xs" c="dimmed">
-                  Updated{' '}
-                  {getPrettyDateFromUnixEpoch(feature.modifiedAt)}
+                  Updated {getPrettyDateFromUnixEpoch(feature.modifiedAt)}
                 </Text>
               </div>
             </Paper>

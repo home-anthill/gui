@@ -59,11 +59,28 @@ describe('Sensor', () => {
 
   it('renders a card for each feature', () => {
     const features = [
-      makeFeatureValue({ featureUuid: 'f1', name: 'temperature', value: 20, unit: '°C' }),
-      makeFeatureValue({ featureUuid: 'f2', name: 'humidity', value: 50, unit: '%' }),
+      makeFeatureValue({
+        featureUuid: 'f1',
+        name: 'temperature',
+        value: 20,
+        unit: '°C',
+      }),
+      makeFeatureValue({
+        featureUuid: 'f2',
+        name: 'humidity',
+        value: 50,
+        unit: '%',
+      }),
+      makeFeatureValue({
+        featureUuid: 'f3',
+        name: 'light',
+        value: 1200,
+        unit: 'lux',
+      }),
     ];
     render(<Sensor features={features} />);
     expect(screen.getByText('temperature')).toBeInTheDocument();
     expect(screen.getByText('humidity')).toBeInTheDocument();
+    expect(screen.getByText('light')).toBeInTheDocument();
   });
 });

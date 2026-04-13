@@ -7,8 +7,20 @@
 
   // ─── Header card ──────────────────────────────────────────────────────────
   .device-header {
+    display: flex;
+    flex-direction: column;
     background: linear-gradient(135deg, $bg-surface 0%, $bg-surface-2 100%);
     border-color: $border;
+
+    .device-header-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      align-self: flex-start;
+      justify-content: right;
+      width: 100%;
+      margin-bottom: 15px;
+    }
 
     &-inner {
       display: flex;
@@ -21,6 +33,11 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+
+        // Show on smartphones
+        @media (max-width: 767px) {
+          display: none;
+        }
       }
 
       .device-header-info {
@@ -41,13 +58,6 @@
             color: $accent;
           }
         }
-      }
-
-      .device-header-actions {
-        display: flex;
-        gap: 0.5rem;
-        flex-shrink: 0;
-        align-self: flex-start;
       }
     }
   }

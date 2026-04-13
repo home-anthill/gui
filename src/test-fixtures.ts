@@ -138,13 +138,14 @@ export const mockProfile: Profile = {
 // ─── Online ───────────────────────────────────────────────────────────────────
 
 export const mockOnlineNow: Online = {
-  createdAt: '2024-06-01T12:00:00.000Z',
+  // easy condition to be sure that it's considered as online
+  createdAt: new Date().toISOString(),
   modifiedAt: new Date().toISOString(),
   currentTime: new Date().toISOString(),
 };
 
 export const mockOnlineOffline: Online = {
-  createdAt: '2024-06-01T12:00:00.000Z',
-  modifiedAt: '2024-01-01T00:00:00.000Z',
+  createdAt: '2026-01-05T21:43:41.082+02:00',
+  modifiedAt: '2026-04-05T21:48:14.113+02:00',
   currentTime: new Date().toISOString(),
 };
