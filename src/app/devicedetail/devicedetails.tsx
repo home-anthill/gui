@@ -286,12 +286,13 @@ export function DeviceDetail() {
 
       <section className={styles['delete-section']}>
         <Button
-          className={styles['delete-button']}
+          className={styles['delete-button'] ?? ''}
           leftSection={<IconTrash size={18} stroke={1.5} />}
           onClick={deleteHandlers.open}
           color="red"
           variant="light"
           loading={isSending}
+          aria-label="Delete device"
         >
           Delete device
         </Button>
