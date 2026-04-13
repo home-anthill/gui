@@ -22,6 +22,8 @@ import {
 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
+import { logError } from '../../utils/logger';
+
 import { useProfile } from '../../hooks/useProfile';
 import { ProfileTokenResponse } from '../../models/profile';
 import { removeToken } from '../../auth/auth-utils';
@@ -38,7 +40,7 @@ export function Profile() {
 
   async function regenerateApiToken() {
     if (!profile) {
-      console.error('Cannot regenerate API Token, Profile not found!');
+      toast.error('Cannot regenerate API Token, Profile not found!');
       return;
     }
     try {
@@ -49,7 +51,7 @@ export function Profile() {
       setIsModalOpen(false);
       toast.success('API Token regenerated successfully');
     } catch (err) {
-      console.error('Cannot re-generate API Token', err);
+      logError('Cannot re-generate API Token', err);
     }
   }
 

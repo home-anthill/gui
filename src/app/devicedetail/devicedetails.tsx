@@ -25,8 +25,9 @@ import {
 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
+import { logError } from '../../utils/logger';
+
 import { Device, HomeWithDevices, RoomWithDevices } from '../../models/device';
-import { FeatureValue } from '../../models/value';
 import { useValues } from '../../hooks/useValues';
 import { useHomes } from '../../hooks/useHomes';
 import { useDevices } from '../../hooks/useDevices';
@@ -59,14 +60,18 @@ export function DeviceDetail() {
   const [localOverrides, setLocalOverrides] = useState<Record<string, number>>(
     {},
   );
-  const featureValues = useMemo(
-    () =>
-      (deviceWithValues?.features ?? []).map((f) => ({
+  const { sensorFeatures, onlineFeatures, controllerFeatures } =
+    useMemo(() => {
+      const all = (deviceWithValues?.features ?? []).map((f) => ({
         ...f,
         value: localOverrides[f.featureUuid] ?? f.value,
-      })),
-    [deviceWithValues, localOverrides],
-  );
+      }));
+      return {
+        sensorFeatures: all.filter((f) => f.type === 'sensor' && f.name !== 'online'),
+        onlineFeatures: all.filter((f) => f.type === 'sensor' && f.name === 'online'),
+        controllerFeatures: all.filter((f) => f.type === 'controller'),
+      };
+    }, [deviceWithValues, localOverrides]);
 
   const [settingsOpened, settingsHandlers] = useDisclosure(false);
   const [deleteOpened, deleteHandlers] = useDisclosure(false);
@@ -119,20 +124,16 @@ export function DeviceDetail() {
 
   const handleSendControls = async () => {
     try {
-      const controllerFeatures = featureValues.filter(
-        (f: FeatureValue) => f.type === 'controller',
-      );
       await setValues(device.id, controllerFeatures).unwrap();
       setLocalOverrides({});
       toast.success('Commands sent successfully');
     } catch (err) {
-      console.error('handleSendControls - cannot set device values', err);
-      toast.error('Cannot send commands');
+      logError('Cannot send commands', err);
     }
   };
 
   const handleOpenSettings = () => {
-    setDeviceName(device.name ? device.name : device.mac);
+    setDeviceName(device.name || device.mac);
     setSelectedHome(home?.id ?? null);
     setSelectedRoom(room?.id ?? null);
     settingsHandlers.open();
@@ -151,15 +152,14 @@ export function DeviceDetail() {
       await assignDeviceHomeRoom(
         device.id,
         deviceName.trim(),
-        selectedHome ?? undefined,
-        selectedRoom ?? undefined,
+        selectedHome,
+        selectedRoom,
       );
       toast.success('Settings saved');
       settingsHandlers.close();
       navigate('/');
     } catch (err) {
-      console.error('handleSaveSettings - cannot save device settings', err);
-      toast.error('Cannot save settings');
+      logError('Cannot save settings', err);
     }
   };
 
@@ -169,8 +169,7 @@ export function DeviceDetail() {
       toast.success('Device deleted');
       navigate('/');
     } catch (err) {
-      console.error('handleDeleteDevice - cannot delete device', err);
-      toast.error('Cannot delete device');
+      logError('Cannot delete device', err);
     }
   };
 
@@ -204,7 +203,7 @@ export function DeviceDetail() {
           <div className={styles['device-header-info']}>
             <div className={styles['device-header-title']}>
               <Title order={1} size="h2" c="white">
-                {device.name ? device.name : device.mac}
+                {device.name ?? device.mac}
               </Title>
             </div>
           </div>
@@ -261,21 +260,10 @@ export function DeviceDetail() {
         </div>
       </Paper>
 
-      <Sensor
-        features={featureValues.filter(
-          (f: FeatureValue) => f.type === 'sensor' && f.name !== 'online',
-        )}
-      />
-      <Online
-        deviceId={device.id}
-        features={featureValues.filter(
-          (f: FeatureValue) => f.type === 'sensor' && f.name === 'online',
-        )}
-      />
+      <Sensor features={sensorFeatures} />
+      <Online deviceId={device.id} features={onlineFeatures} />
       <ControllerFeature
-        features={featureValues.filter(
-          (f: FeatureValue) => f.type === 'controller',
-        )}
+        features={controllerFeatures}
         lastSent={device.modifiedAt}
         onChangeValue={handleControlChange}
         onSend={handleSendControls}

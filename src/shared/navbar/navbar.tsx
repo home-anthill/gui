@@ -45,12 +45,10 @@ export function Navbar() {
                 aria-label="Open navigation"
               />
             )}
-            <div
+            <button
+              type="button"
               className={styles['app-header-brand']}
               onClick={() => handleNavigate('/')}
-              role="link"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && handleNavigate('/')}
               aria-label="Home Anthill – go to devices"
             >
               <img
@@ -61,7 +59,7 @@ export function Navbar() {
               <span className={styles['app-header-brand-name']}>
                 Home Anthill
               </span>
-            </div>
+            </button>
           </div>
 
           {/* Center: nav links (desktop only) */}
@@ -71,27 +69,25 @@ export function Navbar() {
               aria-label="Main navigation"
             >
               {NAV_ITEMS.map(({ label, icon: Icon, path }) => (
-                <div
+                <button
                   key={path}
+                  type="button"
                   className={`${styles['app-header-nav-link']}${isActive(path) ? ` ${styles.active}` : ''}`}
                   onClick={() => handleNavigate(path)}
-                  role="link"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && handleNavigate(path)}
                   aria-current={isActive(path) ? 'page' : undefined}
                 >
                   <Icon size={18} stroke={1.5} />
                   <Text size="sm" fw={500}>
                     {label}
                   </Text>
-                </div>
+                </button>
               ))}
             </nav>
           )}
 
           {/* Right: profile avatar */}
           <Avatar
-            className={styles['app-header-profile'] ?? ''}
+            className={styles['app-header-profile']}
             size="sm"
             radius="xl"
             color="orange"
@@ -122,7 +118,7 @@ export function Navbar() {
         }
         size="xs"
         padding="md"
-        classNames={{ content: styles['app-drawer'] ?? '' }}
+        classNames={{ content: styles['app-drawer'] }}
       >
         <nav
           className={styles['app-drawer-menu']}
@@ -135,21 +131,17 @@ export function Navbar() {
               leftSection={<Icon size={20} stroke={1.5} />}
               active={isActive(path)}
               onClick={() => handleNavigate(path)}
-              className={styles['app-drawer-item'] ?? ''}
+              className={styles['app-drawer-item']}
               aria-current={isActive(path) ? 'page' : undefined}
             />
           ))}
         </nav>
 
         {/* Profile summary at bottom of drawer */}
-        <div
+        <button
+          type="button"
           className={styles['app-drawer-profile']}
           onClick={() => handleNavigate('/profile')}
-          role="link"
-          tabIndex={0}
-          onKeyDown={(e) =>
-            e.key === 'Enter' && handleNavigate('/profile')
-          }
           aria-label="Go to profile"
         >
           <Avatar
@@ -167,7 +159,7 @@ export function Navbar() {
               {profile?.github?.email}
             </Text>
           </div>
-        </div>
+        </button>
       </Drawer>
     </>
   );

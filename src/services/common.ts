@@ -26,8 +26,14 @@ const refreshBaseQuery = fetchBaseQuery({
   credentials: 'include',
 });
 
-// Serialize concurrent 401 responses so only one refresh request is made
+// Serialize concurrent 401 responses so only one refresh request is made.
+// Module-level so the single in-flight promise is shared across all RTK Query calls.
 let refreshPromise: Promise<boolean> | null = null;
+
+/** Reset the shared refresh promise. Call in test teardown to prevent cross-test leakage. */
+export function _resetRefreshPromise(): void {
+  refreshPromise = null;
+}
 
 async function refreshAccessToken(
   api: BaseQueryApi,

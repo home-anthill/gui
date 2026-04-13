@@ -14,7 +14,6 @@ import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
 
 import styles from './sensor.module.scss';
 
-
 export const airQualityLabels = ['Poor', 'Low', 'Good', 'Excellent'] as const;
 export const airQualityColors = [
   '#fa5252',
@@ -23,7 +22,10 @@ export const airQualityColors = [
   '#40c057',
 ] as const;
 
-const sensorIcons: Record<string, React.ComponentType<{ size?: number; stroke?: number }>> = {
+const sensorIcons: Record<
+  string,
+  React.ComponentType<{ size?: number; stroke?: number }>
+> = {
   temperature: IconThermometer,
   humidity: IconDroplet,
   airpressure: IconGauge,
@@ -32,14 +34,20 @@ const sensorIcons: Record<string, React.ComponentType<{ size?: number; stroke?: 
   airquality: IconLeaf,
 };
 
-function formatSensorValue(feature: FeatureValue): { text: string; color?: string } {
+function formatSensorValue(feature: FeatureValue): {
+  text: string;
+  color?: string;
+} {
   if (feature.name === 'airquality') {
     const val = feature.value as number;
     if (val < 0 || val > airQualityLabels.length - 1) {
       console.warn(`Air quality value out of range: ${val}`);
       return { text: 'Unknown', color: airQualityColors[0] };
     }
-    return { text: `${airQualityLabels[val]} (${val})`, color: airQualityColors[val] ?? '' };
+    return {
+      text: `${airQualityLabels[val]} (${val})`,
+      color: airQualityColors[val] ?? airQualityColors[0],
+    };
   }
   if (feature.name === 'motion') {
     return {
@@ -48,7 +56,7 @@ function formatSensorValue(feature: FeatureValue): { text: string; color?: strin
     };
   }
   const num = (feature.value as number).toFixed(
-    feature.name === 'temperature' ? 1 : 0
+    feature.name === 'temperature' ? 1 : 0,
   );
   return { text: num };
 }
@@ -66,7 +74,9 @@ export function Sensor({ features }: SensorProps) {
         <div className={styles['section-icon']}>
           <IconActivityHeartbeat size={16} stroke={1.5} />
         </div>
-        <Title order={2} size="h3" c="orange">Sensors</Title>
+        <Title order={2} size="h3" c="orange">
+          Sensors
+        </Title>
       </div>
 
       <div className={styles['features-grid']}>

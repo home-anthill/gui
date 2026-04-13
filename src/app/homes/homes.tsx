@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus, IconBuilding, IconAlertCircle } from '@tabler/icons-react';
-import { toast } from 'sonner';
+import { logError } from '../../utils/logger';
 
 import { useHomes } from '../../hooks/useHomes';
 import { HomeAccordion } from './home/home';
@@ -79,8 +79,7 @@ export function Homes() {
       }
       closeHomeModal();
     } catch (err) {
-      console.error('handleSaveHome - cannot save home', err);
-      toast.error('Cannot save home');
+      logError('Cannot save home', err);
     }
   };
 
@@ -115,8 +114,7 @@ export function Homes() {
       }
       closeRoomModal();
     } catch (err) {
-      console.error('handleSaveRoom - cannot save room', err);
-      toast.error('Cannot save room');
+      logError('Cannot save room', err);
     }
   };
 
@@ -125,7 +123,7 @@ export function Homes() {
     homeId: string,
     roomId?: string,
   ) => {
-    setDeleteTarget({ type, homeId, ...(roomId !== undefined ? { roomId } : {}) });
+    setDeleteTarget({ type, homeId, roomId });
     openDeleteModal();
   }, [openDeleteModal]);
 
@@ -151,8 +149,7 @@ export function Homes() {
       closeDeleteModal();
       setDeleteTarget(null);
     } catch (err) {
-      console.error('handleConfirmDelete - cannot delete', err);
-      toast.error('Cannot delete item');
+      logError('Cannot delete item', err);
     }
   };
 

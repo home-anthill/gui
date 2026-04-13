@@ -28,8 +28,6 @@ npx vitest run -t "test name pattern"
 
 **Build output**: Both `npm run build` and `npm run build:prod` output to `dist/home-anthill/`. The `build` command then copies this to `../api-server/public/` for serving as static assets; `build:prod` skips the copy.
 
-**Testing**: Vitest with jsdom environment, React Testing Library, and MSW for API mocking. Tests match `src/**/*.{test,spec}.{ts,tsx}`.
-
 ## Architecture
 
 ### Directory Structure
@@ -55,16 +53,18 @@ src/
 ├── mocks/                    # MSW handlers (handlers.ts, server.ts)
 ├── models/                   # TypeScript interfaces (Home, Device, Profile, Auth, Value, Online)
 ├── services/                 # RTK Query endpoint definitions (homes, devices, rooms, values, profile, online)
-├── shared/                   # Shared UI components (navbar, ErrorBoundary)
+├── shared/                   # Shared UI components (navbar, ErrorBoundary, NotFound)
 ├── styles/                   # Global stylesheets (global.scss, _variables.scss)
 ├── theme/                    # Mantine theme config (theme.ts)
-├── utils/                    # Pure utilities (dateUtils: format Unix epoch / date strings)
+├── utils/                    # Pure utilities:
+│   ├── dateUtils.ts          #   format Unix epoch ms / ISO date strings for display
+│   └── logger.ts             #   logError(message, err) — console.error + toast.error combined
 ├── assets/                   # Static assets (logo.svg)
 ├── store.ts                  # Redux store + RTK Query setup
 ├── test-setup.ts             # Vitest + MSW lifecycle setup
 ├── test-utils.tsx            # Custom render() with MantineProvider + MemoryRouter
 ├── test-store.tsx            # makeTestStore() + renderHookWithStore() for RTK Query hook tests
-└── test-fixtures.ts          # Mock data (mockHome, mockDevice, mockProfile, etc.)
+└── test-fixtures.ts          # Mock data (mockHome, mockDevice, mockProfile, mockOnlineNow, etc.)
 ```
 
 ### Route Hierarchy
@@ -95,7 +95,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 
 **Key RTK Query details:**
 - Base query adds the JWT `Authorization: Bearer <token>` header and implements automatic token refresh on 401
-- On **401**: calls `POST /api/token/refresh` (browser sends the `refresh_token` HttpOnly cookie automatically), stores the new access token from the JSON response `{ token }`, then retries the original request. Concurrent 401s share a single in-flight refresh via a serialised promise.
+- On **401**: calls `POST /api/token/refresh` (browser sends the `refresh_token` HttpOnly cookie automatically), stores the new access token from the JSON response `{ token }`, then retries the original request. Concurrent 401s share a single in-flight refresh via a module-level serialized promise (`refreshPromise`). Call `_resetRefreshPromise()` (exported from `common.ts`) in test teardown to prevent cross-test leakage.
 - On **403** or refresh failure: removes the access token from `localStorage` and redirects to `/`
 - Cache TTL is 60 seconds (`keepUnusedDataFor: 60`)
 - Tag-based cache invalidation: mutations specify `invalidatesTags` to refetch related data
@@ -110,6 +110,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 2. `AuthProvider` (wraps entire app via `AuthLayout`) provides `login`/`logout`/`isLogged` via `AuthContext`
 3. `ProtectedLayout` wraps authenticated routes — redirects to `/login` if `localStorage` has no token
 4. When the access token expires the RTK Query base query transparently calls `POST /api/token/refresh`, stores the new token, and retries — no user interaction required. If refresh also fails the user is logged out.
+5. `PostLogin` uses a `useRef<boolean>` guard to ensure the token extraction + `login()` call runs exactly once, even under React StrictMode double-invocation.
 
 ## Tech Stack & Code Style
 
@@ -121,6 +122,13 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 - Vite (via Nx 22), ESLint 9 (flat config), TypeScript 5.9
 - **TypeScript strict mode enabled** — all code must be type-safe
 - **Code formatting**: Prettier (single quotes) via ESLint; run `npm run lint` before committing
+
+### Code Style Rules
+
+- **Error reporting**: always use `logError(message, err)` from `src/utils/logger.ts` in catch blocks — it calls both `console.error` and `toast.error`. Use `toast.error` directly only for validation errors that have no associated exception.
+- **CSS module lookups**: never write `className={styles['foo'] ?? ''}`. CSS module keys are always defined when the SCSS file is properly imported; the `?? ''` fallback is dead code.
+- **Interactive navigation elements**: use `<button type="button">` (not `<div role="link">`) for clickable elements that trigger `navigate()`. Buttons receive keyboard focus and fire `onClick` on Enter/Space natively.
+- **One-shot effects**: when a `useEffect` must run exactly once (e.g., OAuth callback handling), add a `useRef<boolean>(false)` guard rather than using an empty dep array, so StrictMode double-invocation is handled correctly.
 
 ## Common Development Patterns
 
@@ -135,6 +143,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 2. Create or extend `src/services/<domain>.ts` using `commonApi.injectEndpoints()`
 3. Define queries/mutations with `builder.query()` / `builder.mutation()` and appropriate `invalidatesTags`
 4. Export the auto-generated hook; optionally wrap in a custom hook in `src/hooks/`
+5. Add a matching MSW handler to `src/mocks/handlers.ts`
 
 **Theme:**
 - Mantine theme is configured in `src/theme/theme.ts` (orange primary, custom dark palette, spacing/radius)
@@ -147,12 +156,20 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 
 ## Testing
 
-Tests use **Vitest** with **React Testing Library**, **MSW** for HTTP mocking, and **jsdom** environment. Test files coexist with source files: `src/**/*.{test,spec}.tsx`.
+Tests use **Vitest** with **React Testing Library**, **MSW** for HTTP mocking, and **jsdom** environment. Test files coexist with source files: `src/**/*.{test,spec}.{ts,tsx}`.
+
+### Test File Naming
+
+| Pattern | Purpose |
+|---------|---------|
+| `*.test.tsx` | Component tests — render + assert DOM |
+| `*.msw.test.tsx` / `*.msw.test.ts` | RTK Query hook tests backed by MSW; use `renderHookWithStore()` |
 
 ### Test Setup
 - `src/test-setup.ts` — Vitest lifecycle (MSW server start/reset/stop), localStorage mock
-- `src/test-utils.tsx` — Custom `render()` wrapper that provides `MantineProvider` (dark theme) and `MemoryRouter`
-- `src/test-fixtures.ts` — Mock data objects (`mockHome`, `mockDevice`, `mockProfile`, `mockOnlineNow`)
+- `src/test-utils.tsx` — Custom `render()` wrapper that provides `MantineProvider` (dark theme) and `MemoryRouter`; accepts optional `routerProps` for initial route
+- `src/test-store.tsx` — `makeTestStore()` creates an isolated Redux store; `renderHookWithStore()` wraps a hook in that store
+- `src/test-fixtures.ts` — Mock data: `mockHome`, `mockDevice`, `mockDevice2`, `mockProfile`, `mockOnlineNow`, `mockOnlineOffline`, `mockDeviceWithValues`, `makeFeatureValue(overrides?)` (factory)
 - `src/mocks/server.ts` — MSW server instance
 - `src/mocks/handlers.ts` — MSW HTTP request handlers for all API endpoints
 
@@ -170,19 +187,30 @@ Tests use **Vitest** with **React Testing Library**, **MSW** for HTTP mocking, a
   describe('Login', () => {
     it('renders login button', () => {
       render(<Login />);
-      expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
     });
   });
   ```
 
-**Hook tests (e.g., useHomes, useDevices):**
-- Use `renderHookWithStore()` from `src/test-store.tsx` — wraps the hook in a fresh Redux store with RTK Query middleware so each test is isolated
-- MSW mocks API responses automatically; wrap async assertions in `waitFor()`
-- Override handlers per-test: `server.use(http.get('/api/path', () => ...))`
+**Hook / RTK Query tests (`.msw.test.tsx`):**
+- Use `renderHookWithStore()` from `src/test-store.tsx` — each call creates a fresh isolated Redux store
+- MSW global handlers respond by default; override per-test with `server.use(http.get(...))` — MSW resets between tests automatically via `afterEach` in `test-setup.ts`
+- Example:
+  ```typescript
+  import { renderHookWithStore } from '../test-store';
+  import { useHomes } from './useHomes';
+
+  it('fetches homes', async () => {
+    const { result } = renderHookWithStore(() => useHomes());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.homes).toHaveLength(1);
+  });
+  ```
 
 ### Mocking & Fixtures
-- Mock data is centralized in `src/test-fixtures.ts`
+- Mock data is centralized in `src/test-fixtures.ts`; use `makeFeatureValue(overrides)` to create `FeatureValue` instances with only the fields you need to change
 - MSW handlers in `src/mocks/handlers.ts` cover all API endpoints (homes, devices, rooms, values, profile, online, token refresh)
+- `mockOnlineOffline` has a `modifiedAt` far in the past and `currentTime` set to `Date.now()`, making `isOffline()` return `true`
 
 ## CI/CD
 

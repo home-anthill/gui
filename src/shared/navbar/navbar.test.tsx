@@ -46,8 +46,8 @@ describe('Navbar', () => {
   it('renders desktop navigation links', () => {
     render(<Navbar />);
     // Use exact names to avoid matching the brand link's aria-label
-    expect(screen.getByRole('link', { name: 'Devices' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Homes' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Devices' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Homes' })).toBeInTheDocument();
   });
 
   it('renders the profile avatar with accessible label', () => {
@@ -60,7 +60,7 @@ describe('Navbar', () => {
   it('navigates to /homes when the Homes link is clicked', async () => {
     const { default: userEvent } = await import('@testing-library/user-event');
     render(<Navbar />);
-    await userEvent.setup().click(screen.getByRole('link', { name: 'Homes' }));
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Homes' }));
     expect(mockNavigate).toHaveBeenCalledWith('/homes');
   });
 

@@ -2,7 +2,7 @@ import { Title, Paper, Text, Loader } from '@mantine/core';
 import { IconActivityHeartbeat, IconBolt } from '@tabler/icons-react';
 
 import { FeatureValue } from '../../../models/value';
-import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
+import { getPrettyDateFromDateString } from '../../../utils/dateUtils';
 import { useOnline } from '../../../hooks/useOnline';
 
 import styles from './online.module.scss';
@@ -23,14 +23,9 @@ function isOffline(modifiedAtISO: string, currentTimeISO: string): boolean {
 export function Online({ deviceId, features }: OnlineProps) {
   const { online, loading, onlineError } = useOnline(deviceId);
 
-  const statusText =
-    online && isOffline(online.modifiedAt, online.currentTime)
-      ? 'Offline'
-      : 'Online';
-  const statusColor =
-    online && isOffline(online.modifiedAt, online.currentTime)
-      ? '#fd2121'
-      : '#40c057';
+  const offline = online ? isOffline(online.modifiedAt, online.currentTime) : false;
+  const statusText = offline ? 'Offline' : 'Online';
+  const statusColor = offline ? '#fd2121' : '#40c057';
 
   if (onlineError || features.length === 0) return null;
 
@@ -82,9 +77,7 @@ export function Online({ deviceId, features }: OnlineProps) {
                 {online && online.modifiedAt && (
                   <Text size="xs" c="dimmed">
                     Updated{' '}
-                    {getPrettyDateFromUnixEpoch(
-                      new Date(online.modifiedAt).getTime(),
-                    )}
+                    {getPrettyDateFromDateString(online.modifiedAt)}
                   </Text>
                 )}
               </div>

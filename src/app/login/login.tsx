@@ -45,9 +45,7 @@ export function Login() {
   const navigate = useNavigate();
 
   function onLogin() {
-    if (window && window.location && window.location.href) {
-      window.location.href = '/api/login';
-    }
+    window.location.href = '/api/login';
   }
 
   useEffect(() => {

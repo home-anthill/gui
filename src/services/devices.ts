@@ -43,24 +43,15 @@ export const devicesApi = commonApi.injectEndpoints({
                   ...room,
                   devices: [],
                 };
-                // get all devices in this room removing duplicates
-                // and mapping these as device object instead of an id string
-                // and replace the array of device IDs with full device objects
-                roomObj.devices = room.devices
-                  // remove duplicated
-                  .filter(
-                    (v1: string, i: number, array: string[]) =>
-                      array.findIndex((v2: string) => v2 === v1) === i
-                  )
-                  // map device id to its full device object
-                  .map((deviceId: string) =>
-                    response.find(
-                      (device: Device) => device && device.id === deviceId
-                    )
-                  )
-                  // remove undefined devices (it happens when the find above fails.
-                  // the reason is that you have a broken db with bad references across collections
-                  .filter((device: Device | undefined) => device) as Device[];
+                // deduplicate device IDs, resolve to full Device objects, drop missing refs
+                roomObj.devices = [...new Set(room.devices)].reduce<Device[]>(
+                  (acc, deviceId) => {
+                    const device = response.find((d) => d && d.id === deviceId);
+                    if (device) acc.push(device);
+                    return acc;
+                  },
+                  [],
+                );
                 // add this room to the list of rooms of the current home
                 roomsObjs.push(roomObj);
               }
@@ -116,17 +107,10 @@ export const devicesApi = commonApi.injectEndpoints({
 });
 
 function getUnassignedDevices(homes: Home[], devices: Device[]): Device[] {
-  const rooms: Room[] = homes
-    .filter((home: Home) => home?.rooms?.length > 0)
-    .map((home: Home) => home.rooms)
-    .flat();
-  const devicesIds: string[] = rooms
-    .filter((room: Room) => room?.devices?.length > 0)
-    .map((room: Room) => room.devices)
-    .flat();
-  return devices.filter(
-    (device: Device) => device && !devicesIds.includes(device.id)
+  const assignedIds = new Set(
+    homes.flatMap((home) => (home?.rooms ?? []).flatMap((room) => room?.devices ?? [])),
   );
+  return devices.filter((device) => device && !assignedIds.has(device.id));
 }
 
 // Export hooks for usage in functional components, which are
