@@ -79,9 +79,14 @@ export function Online({ deviceId, features }: OnlineProps) {
                 </span>
               </div>
               <div className={styles['sensor-card-footer']}>
-                <Text size="xs" c="dimmed">
-                  Updated {getPrettyDateFromUnixEpoch(feature.modifiedAt)}
-                </Text>
+                {online && online.modifiedAt && (
+                  <Text size="xs" c="dimmed">
+                    Updated{' '}
+                    {getPrettyDateFromUnixEpoch(
+                      new Date(online.modifiedAt).getTime(),
+                    )}
+                  </Text>
+                )}
               </div>
             </Paper>
           );

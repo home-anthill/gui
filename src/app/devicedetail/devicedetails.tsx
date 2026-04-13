@@ -13,6 +13,7 @@ import {
   ActionIcon,
   Tooltip,
   TextInput,
+  Divider,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -188,35 +189,10 @@ export function DeviceDetail() {
       {/* Header */}
       <Paper
         className={styles['device-header'] ?? ''}
-        p="xl"
         radius="md"
         withBorder
         mb="xl"
       >
-        <div className={styles['device-header-actions']}>
-          <Tooltip label="Settings">
-            <ActionIcon
-              variant="light"
-              color="orange"
-              size="lg"
-              onClick={handleOpenSettings}
-              aria-label="Device settings"
-            >
-              <IconSettings size={20} stroke={1.5} />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label="Delete device">
-            <ActionIcon
-              variant="light"
-              color="red"
-              size="lg"
-              onClick={deleteHandlers.open}
-              aria-label="Delete device"
-            >
-              <IconTrash size={20} stroke={1.5} />
-            </ActionIcon>
-          </Tooltip>
-        </div>
         <div className={styles['device-header-inner']}>
           <div className={styles['device-header-icon']}>
             <IconDevices
@@ -231,23 +207,57 @@ export function DeviceDetail() {
                 {device.name ? device.name : device.mac}
               </Title>
             </div>
-            <div className={styles['device-header-details']}>
-              <Text c="dimmed" size="sm">
-                <span className={styles['detail-label']}>Model:</span>{' '}
-                {device.model}
-              </Text>
-              <Text c="dimmed" size="sm">
-                <span className={styles['detail-label']}>MAC:</span>{' '}
-                {device.mac}
-              </Text>
-              {room && (
-                <Text c="dimmed" size="sm">
-                  <span className={styles['detail-label']}>Location:</span>{' '}
-                  {home?.name} • {room.name}
-                </Text>
-              )}
-            </div>
           </div>
+          <Tooltip label="Settings">
+            <ActionIcon
+              variant="light"
+              color="orange"
+              size="lg"
+              onClick={handleOpenSettings}
+              aria-label="Device settings"
+            >
+              <IconSettings size={20} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+        </div>
+
+        <Divider
+          style={{ width: '100%', marginTop: '1rem', marginBottom: '1rem' }}
+        />
+
+        <div className={styles['device-header-details']}>
+          <div className={styles['device-header-text-element']}>
+            <Text c="dimmed" size="sm">
+              <span className={styles['detail-label']}>Model</span>
+            </Text>
+            <Text c="dimmed" size="sm">
+              <span className={styles['detail-text']}>{device.model}</span>
+            </Text>
+          </div>
+          <Divider orientation="vertical" />
+          <div className={styles['device-header-text-element']}>
+            <Text c="dimmed" size="sm">
+              <span className={styles['detail-label']}>MAC address</span>
+            </Text>
+            <Text c="dimmed" size="sm">
+              <span className={styles['detail-text']}>{device.mac}</span>
+            </Text>
+          </div>
+          {room && (
+            <>
+              <Divider orientation="vertical" />
+              <div className={styles['device-header-text-element']}>
+                <Text c="dimmed" size="sm">
+                  <span className={styles['detail-label']}>Location</span>
+                </Text>
+                <Text c="dimmed" size="sm">
+                  <span className={styles['detail-text']}>
+                    {home?.name} - {room.name}
+                  </span>
+                </Text>
+              </div>
+            </>
+          )}
         </div>
       </Paper>
 
@@ -271,6 +281,21 @@ export function DeviceDetail() {
         onSend={handleSendControls}
         isSending={isSending}
       />
+
+      <Divider style={{ width: '100%', marginTop: '2rem' }} />
+
+      <section className={styles['delete-section']}>
+        <Button
+          className={styles['delete-button']}
+          leftSection={<IconTrash size={18} stroke={1.5} />}
+          onClick={deleteHandlers.open}
+          color="red"
+          variant="light"
+          loading={isSending}
+        >
+          Delete device
+        </Button>
+      </section>
 
       {/* Settings Modal */}
       <Modal

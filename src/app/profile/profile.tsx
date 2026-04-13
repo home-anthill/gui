@@ -156,7 +156,7 @@ export function Profile() {
             </Button>
 
             <Text size="xs" c="dimmed" mt="xs">
-              Use this token to authenticate API requests
+              Use this API token in firmwares
             </Text>
           </div>
 
