@@ -26,7 +26,7 @@ function customRender(ui: ReactElement, options: CustomRenderOptions = {}) {
   const { routerProps, ...renderOptions } = options;
   return render(ui, {
     wrapper: ({ children }) => (
-      <AllProviders routerProps={routerProps}>{children}</AllProviders>
+      <AllProviders {...(routerProps !== undefined ? { routerProps } : {})}>{children}</AllProviders>
     ),
     ...renderOptions,
   });

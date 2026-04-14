@@ -123,7 +123,7 @@ export function Homes() {
     homeId: string,
     roomId?: string,
   ) => {
-    setDeleteTarget({ type, homeId, roomId });
+    setDeleteTarget({ type, homeId, ...(roomId !== undefined ? { roomId } : {}) });
     openDeleteModal();
   }, [openDeleteModal]);
 
