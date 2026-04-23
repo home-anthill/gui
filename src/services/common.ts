@@ -45,7 +45,7 @@ async function refreshAccessToken(
   async function doRefresh(): Promise<boolean> {
     try {
       const result = await refreshBaseQuery(
-        { url: 'token/refresh', method: 'POST' },
+        { url: 'oauth/refresh', method: 'POST' },
         api,
         extraOptions,
       );

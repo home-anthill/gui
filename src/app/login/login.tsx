@@ -45,7 +45,7 @@ export function Login() {
   const navigate = useNavigate();
 
   function onLogin() {
-    window.location.href = '/api/login';
+    window.location.href = '/api/oauth/login';
   }
 
   useEffect(() => {

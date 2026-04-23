@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '../../test-utils';
 import Profile from './profile';
 import { useProfile } from '../../hooks/useProfile';
 import { mockProfile } from '../../test-fixtures';
+import { setToken } from '../../auth/auth-utils';
 
 vi.mock('../../hooks/useProfile');
 
@@ -12,6 +13,7 @@ const baseProfile = {
   loading: false,
   profileError: undefined,
   newProfileToken: vi.fn(),
+  logout: vi.fn(),
 };
 
 describe('Profile', () => {
@@ -60,6 +62,25 @@ describe('Profile', () => {
     );
     await waitFor(() => {
       expect(mockToken).toHaveBeenCalledWith('p1');
+    });
+  });
+
+  it('calls the server logout and removes the local token', async () => {
+    const mockLogout = vi.fn().mockReturnValue({
+      unwrap: vi.fn().mockResolvedValue(undefined),
+    });
+    vi.mocked(useProfile).mockReturnValue({
+      ...baseProfile,
+      logout: mockLogout,
+    });
+    setToken('test-jwt-token');
+
+    render(<Profile />);
+    await userEvent.click(screen.getByRole('button', { name: /logout/i }));
+
+    await waitFor(() => {
+      expect(mockLogout).toHaveBeenCalledOnce();
+      expect(localStorage.getItem('token')).toBeNull();
     });
   });
 });

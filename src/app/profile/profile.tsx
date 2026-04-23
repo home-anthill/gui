@@ -33,7 +33,7 @@ import styles from './profile.module.scss';
 const MASKED_TOKEN = '********-****-****-****-************';
 
 export function Profile() {
-  const { profile, newProfileToken } = useProfile();
+  const { profile, newProfileToken, logout } = useProfile();
   const navigate = useNavigate();
   const [apiToken, setApiToken] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,11 +55,17 @@ export function Profile() {
     }
   }
 
-  const handleLogout = () => {
-    removeToken();
-    toast.info('Logged out');
-    navigate('/login');
-  };
+  async function handleLogout() {
+    try {
+      await logout().unwrap();
+    } catch (err) {
+      logError('Cannot logout on server-side', err);
+    } finally {
+      removeToken();
+      toast.info('Logged out');
+      navigate('/login');
+    }
+  }
 
   return (
     <div className={styles['profile-page']}>

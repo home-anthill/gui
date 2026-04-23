@@ -44,7 +44,7 @@ describe('base query auth (MSW)', () => {
         // Second call after refresh uses the new token
         return HttpResponse.json([]);
       }),
-      http.post('/api/token/refresh', () =>
+      http.post('/api/oauth/refresh', () =>
         HttpResponse.json({ token: 'refreshed-token' }),
       ),
     );

@@ -15,6 +15,13 @@ export const profileApi = commonApi.injectEndpoints({
         method: 'POST',
         body: {}
       })
+    }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: 'oauth/logout',
+        method: 'POST',
+        credentials: 'include',
+      })
     })
   })
 })
@@ -23,5 +30,6 @@ export const profileApi = commonApi.injectEndpoints({
 // auto-generated based on the defined endpoints
 export const {
   useGetProfileQuery,
-  useNewProfileTokenMutation
+  useNewProfileTokenMutation,
+  useLogoutMutation
 } = profileApi

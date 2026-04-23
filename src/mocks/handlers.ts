@@ -66,8 +66,9 @@ export const handlers = [
   // ── Online ───────────────────────────────────────────────────────────────
   http.get('/api/online/:id', () => HttpResponse.json(mockOnlineNow)),
 
-  // ── Token refresh ────────────────────────────────────────────────────────
-  http.post('/api/token/refresh', () =>
+  // ── OAuth ────────────────────────────────────────────────────────────────
+  http.post('/api/oauth/refresh', () =>
     HttpResponse.json({ token: 'refreshed-token' }),
   ),
+  http.post('/api/oauth/logout', () => new HttpResponse(null, { status: 204 })),
 ];
