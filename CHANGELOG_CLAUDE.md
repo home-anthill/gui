@@ -42,7 +42,11 @@ The access token delivered by the OAuth2 callback is read from the URL **fragmen
 
 ### Automatic access-token refresh
 **File:** `src/services/common.ts`
-`baseQueryWithReauth` implements a transparent refresh flow: on **401** it calls `POST /api/token/refresh` with `credentials: 'include'`, stores the new access token from `{ token }`, then retries the original request. On **403** or refresh failure the access token is removed and the user is redirected to `/`. Concurrent 401s are serialised via a module-level `Promise<boolean> | null` mutex (`refreshPromise`). Call `_resetRefreshPromise()` in test teardown to prevent cross-test leakage.
+`baseQueryWithReauth` implements a transparent refresh flow: on **401** it calls `POST /api/oauth/refresh` with `credentials: 'include'`, stores the new access token from `{ token }`, then retries the original request. On **403** or refresh failure the access token is removed and the user is redirected to `/`. Concurrent 401s are serialised via a module-level `Promise<boolean> | null` mutex (`refreshPromise`). Call `_resetRefreshPromise()` in test teardown to prevent cross-test leakage.
+
+### Server-side logout
+**Files:** `src/services/profile.ts`, `src/hooks/useProfile.tsx`, `src/app/profile/profile.tsx`
+Profile logout now calls `POST /api/oauth/logout` with `credentials: 'include'` before clearing the local access token and navigating to `/login`. The local cleanup still runs if the server-side logout request fails, so the user is not trapped in an authenticated view.
 
 ### API token visibility control
 **File:** `src/app/profile/profile.tsx`
@@ -117,6 +121,10 @@ Replaced MUI `ThemeProvider`/`createTheme` with Mantine `MantineProvider` (using
 ### Tests for shared and page components
 **Files:** `src/app/devices/devices.test.tsx`, `src/app/devices/devicecard/deviceCard.test.tsx`, `src/app/homes/home/home.test.tsx`, `src/shared/navbar/navbar.test.tsx`, `src/shared/errorboundary/ErrorBoundary.test.tsx`, `src/shared/notfound/notfoundpage.test.tsx`
 Coverage for: loading/error/empty/data states, navigation calls, modal interactions, click handlers, context integration.
+
+### Tests for profile logout
+**File:** `src/app/profile/profile.test.tsx`
+Added coverage for the server-side logout flow. The test verifies that clicking Logout calls the profile logout mutation and removes the local access token.
 
 ---
 

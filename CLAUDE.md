@@ -95,7 +95,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 
 **Key RTK Query details:**
 - Base query adds the JWT `Authorization: Bearer <token>` header and implements automatic token refresh on 401
-- On **401**: calls `POST /api/token/refresh` (browser sends the `refresh_token` HttpOnly cookie automatically), stores the new access token from the JSON response `{ token }`, then retries the original request. Concurrent 401s share a single in-flight refresh via a module-level serialized promise (`refreshPromise`). Call `_resetRefreshPromise()` (exported from `common.ts`) in test teardown to prevent cross-test leakage.
+- On **401**: calls `POST /api/oauth/refresh` (browser sends the `refresh_token` HttpOnly cookie automatically), stores the new access token from the JSON response `{ token }`, then retries the original request. Concurrent 401s share a single in-flight refresh via a module-level serialized promise (`refreshPromise`). Call `_resetRefreshPromise()` (exported from `common.ts`) in test teardown to prevent cross-test leakage.
 - On **403** or refresh failure: removes the access token from `localStorage` and redirects to `/`
 - Cache TTL is 60 seconds (`keepUnusedDataFor: 60`)
 - Tag-based cache invalidation: mutations specify `invalidatesTags` to refetch related data
@@ -109,8 +109,9 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 1. GitHub OAuth2 → redirect to `/postlogin` with access token in **URL fragment** (`#token=<jwt>`) → parsed via `new URLSearchParams(location.hash.slice(1)).get('token')` → stored in `localStorage` via `auth-utils.tsx`. The `refresh_token` HttpOnly cookie is set by the server and managed automatically by the browser.
 2. `AuthProvider` (wraps entire app via `AuthLayout`) provides `login`/`logout`/`isLogged` via `AuthContext`
 3. `ProtectedLayout` wraps authenticated routes — redirects to `/login` if `localStorage` has no token
-4. When the access token expires the RTK Query base query transparently calls `POST /api/token/refresh`, stores the new token, and retries — no user interaction required. If refresh also fails the user is logged out.
-5. `PostLogin` uses a `useRef<boolean>` guard to ensure the token extraction + `login()` call runs exactly once, even under React StrictMode double-invocation.
+4. When the access token expires the RTK Query base query transparently calls `POST /api/oauth/refresh`, stores the new token, and retries — no user interaction required. If refresh also fails the user is logged out.
+5. Profile logout calls `POST /api/oauth/logout` with `credentials: 'include'` to clear the server-side refresh cookie, then clears the local access token and navigates to `/login`. Local cleanup still runs if the server-side logout request fails.
+6. `PostLogin` uses a `useRef<boolean>` guard to ensure the token extraction + `login()` call runs exactly once, even under React StrictMode double-invocation.
 
 ## Tech Stack & Code Style
 
