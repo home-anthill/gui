@@ -136,7 +136,6 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
 
 interface ControllerProps {
   features: FeatureValue[];
-  lastSent: string;
   onChangeValue: (featureId: string, value: number) => void;
   onSend: () => void;
   isSending: boolean;
@@ -144,7 +143,6 @@ interface ControllerProps {
 
 export function ControllerFeature({
   features,
-  lastSent,
   onChangeValue,
   onSend,
   isSending,
@@ -195,17 +193,6 @@ export function ControllerFeature({
             <ControlInput feature={feature} onChangeValue={onChangeValue} />
           </Paper>
         ))}
-
-        {lastSent && (
-          <Paper className={styles['info-card'] ?? ''} p="md" radius="md" withBorder>
-            <div className={styles['info-card-row']}>
-              <Text size="xs" c="dimmed" tt="uppercase" fw={600}>
-                Last command sent
-              </Text>
-              <Text size="sm">{getPrettyDateFromDateString(lastSent)}</Text>
-            </div>
-          </Paper>
-        )}
       </div>
     </section>
   );
