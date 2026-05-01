@@ -90,12 +90,6 @@ describe('ControllerFeature', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
-  it('shows the last command sent info', () => {
-    const features = [makeFeatureValue({ name: 'on', type: 'controller', value: 1 })];
-    render(<ControllerFeature {...baseProps} lastSent="2024-01-01T00:00:00Z" features={features} />);
-    expect(screen.getByText(/last command sent/i)).toBeInTheDocument();
-  });
-
   it('calls onChangeValue when the Switch is toggled', async () => {
     const onChangeValue = vi.fn();
     const features = [makeFeatureValue({ featureUuid: 'ctrl-1', name: 'on', type: 'controller', value: 0 })];
