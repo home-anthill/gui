@@ -1,11 +1,17 @@
+import { skipToken } from '@reduxjs/toolkit/query/react';
+
 import { useGetOnlineQuery } from '../services/online';
 
-export function useOnline(id: string) {
+interface UseOnlineOptions {
+  skip?: boolean;
+}
+
+export function useOnline(id: string, options: UseOnlineOptions = {}) {
   const {
     data: online,
     isLoading: onlineLoading,
     error: onlineError
-  } = useGetOnlineQuery(id);
+  } = useGetOnlineQuery(options.skip ? skipToken : id);
 
   const loading = onlineLoading;
 

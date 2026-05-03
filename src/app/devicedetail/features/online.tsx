@@ -21,7 +21,9 @@ function isOffline(modifiedAtISO: string, currentTimeISO: string): boolean {
 }
 
 export function Online({ deviceId, features }: OnlineProps) {
-  const { online, loading, onlineError } = useOnline(deviceId);
+  const { online, loading, onlineError } = useOnline(deviceId, {
+    skip: features.length === 0,
+  });
 
   const offline = online ? isOffline(online.modifiedAt, online.currentTime) : false;
   const statusText = offline ? 'Offline' : 'Online';

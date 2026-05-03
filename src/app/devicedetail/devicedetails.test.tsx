@@ -130,6 +130,11 @@ describe('DeviceDetail', () => {
     expect(screen.getByText('Sensor-X')).toBeInTheDocument();
   });
 
+  it('does not request online status for devices without an online sensor', () => {
+    renderWithDevice();
+    expect(useOnline).toHaveBeenCalledWith('d1', { skip: true });
+  });
+
   it('renders the room and home as a location', () => {
     renderWithDevice();
     expect(screen.getByText(/living room/i)).toBeInTheDocument();

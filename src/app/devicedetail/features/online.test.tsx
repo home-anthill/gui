@@ -50,6 +50,12 @@ describe('Online', () => {
     expect(
       screen.queryByRole('heading', { name: /online/i }),
     ).not.toBeInTheDocument();
+    expect(useOnline).toHaveBeenCalledWith(deviceId, { skip: true });
+  });
+
+  it('loads online status when an online feature exists', () => {
+    render(<Online deviceId={deviceId} features={[onlineFeature]} />);
+    expect(useOnline).toHaveBeenCalledWith(deviceId, { skip: false });
   });
 
   it('renders the Online heading', () => {
