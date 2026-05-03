@@ -113,7 +113,12 @@ export function Devices() {
               </div>
               <div className={styles['devices-grid']}>
                 {room.devices.map((device) => (
-                  <DeviceCard key={device.id} device={device} home={home} room={room} />
+                  <DeviceCard
+                    key={device.id}
+                    device={device}
+                    home={home}
+                    room={room}
+                  />
                 ))}
               </div>
             </div>
@@ -122,7 +127,9 @@ export function Devices() {
       ))}
 
       {homeDevices.homeDevices.length === 0 && (
-        <p className={styles['empty-message']}>No devices found</p>
+        <p className={styles['empty-message']}>
+          No devices found assigned to homes
+        </p>
       )}
     </div>
   );
