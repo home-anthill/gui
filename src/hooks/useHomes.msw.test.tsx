@@ -10,8 +10,8 @@ describe('useHomes (MSW)', () => {
     const { result } = renderHookWithStore(() => useHomes());
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.homes).toHaveLength(1);
-    expect(result.current.homes[0].id).toBe(mockHome.id);
-    expect(result.current.homes[0].name).toBe(mockHome.name);
+    expect(result.current.homes[0]?.id).toBe(mockHome.id);
+    expect(result.current.homes[0]?.name).toBe(mockHome.name);
   });
 
   it('adds a home via POST /api/homes', async () => {

@@ -30,6 +30,7 @@ const baseProfile = {
   loading: false,
   profileError: undefined,
   newProfileToken: vi.fn(),
+  logout: vi.fn(),
 };
 
 describe('Navbar', () => {

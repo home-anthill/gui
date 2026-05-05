@@ -10,9 +10,9 @@ describe('useProfile (MSW)', () => {
     const { result } = renderHookWithStore(() => useProfile());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(result.current.profile.id).toBe(mockProfile.id);
-    expect(result.current.profile.github.login).toBe(mockProfile.github.login);
-    expect(result.current.profile.github.name).toBe(mockProfile.github.name);
+    expect(result.current.profile?.id).toBe(mockProfile.id);
+    expect(result.current.profile?.github.login).toBe(mockProfile.github.login);
+    expect(result.current.profile?.github.name).toBe(mockProfile.github.name);
   });
 
   it('generates a new API token via POST /api/profiles/:id/tokens', async () => {

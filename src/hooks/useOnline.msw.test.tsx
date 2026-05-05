@@ -10,8 +10,8 @@ describe('useOnline (MSW)', () => {
     const { result } = renderHookWithStore(() => useOnline('d1'));
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(result.current.online.modifiedAt).toBe(mockOnlineNow.modifiedAt);
-    expect(result.current.online.currentTime).toBe(mockOnlineNow.currentTime);
+    expect(result.current.online?.modifiedAt).toBe(mockOnlineNow.modifiedAt);
+    expect(result.current.online?.currentTime).toBe(mockOnlineNow.currentTime);
   });
 
   it('returns onlineError when GET /api/online/:id fails', async () => {

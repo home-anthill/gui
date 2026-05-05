@@ -13,10 +13,10 @@ describe('useDevices (MSW)', () => {
     // mockHome has room r1 with device 'd1' (mockDevice)
     // mockDevice2 ('d2') is unassigned
     expect(result.current.homeDevices.homeDevices).toHaveLength(1);
-    expect(result.current.homeDevices.homeDevices[0].id).toBe('h1');
-    const room = result.current.homeDevices.homeDevices[0].rooms[0];
-    expect(room.devices).toHaveLength(1);
-    expect(room.devices[0].id).toBe(mockDevice.id);
+    expect(result.current.homeDevices.homeDevices[0]?.id).toBe('h1');
+    const room = result.current.homeDevices.homeDevices[0]?.rooms[0];
+    expect(room?.devices).toHaveLength(1);
+    expect(room?.devices[0]?.id).toBe(mockDevice.id);
   });
 
   it('puts unassigned devices (not referenced by any room) in unassignedDevices', async () => {
@@ -24,7 +24,7 @@ describe('useDevices (MSW)', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(result.current.homeDevices.unassignedDevices).toHaveLength(1);
-    expect(result.current.homeDevices.unassignedDevices[0].id).toBe(
+    expect(result.current.homeDevices.unassignedDevices[0]?.id).toBe(
       mockDevice2.id,
     );
   });

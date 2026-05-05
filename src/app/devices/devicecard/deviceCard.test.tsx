@@ -30,7 +30,7 @@ describe('DeviceCard', () => {
 
   it('navigates to device detail without home/room when clicked', async () => {
     render(<DeviceCard device={mockDevice} />);
-    await userEvent.click(screen.getAllByText('AA:BB:CC:DD:EE:FF')[0]);
+    await userEvent.click(screen.getAllByText('AA:BB:CC:DD:EE:FF')[0]!);
     expect(mockNavigate).toHaveBeenCalledWith('/devices/d1', {
       state: { device: mockDevice },
     });
@@ -44,7 +44,7 @@ describe('DeviceCard', () => {
         room={mockRoomWithDevices}
       />,
     );
-    await userEvent.click(screen.getAllByText('AA:BB:CC:DD:EE:FF')[0]);
+    await userEvent.click(screen.getAllByText('AA:BB:CC:DD:EE:FF')[0]!);
     expect(mockNavigate).toHaveBeenCalledWith('/devices/d1', {
       state: { device: mockDevice, home: mockHomeWithDevices, room: mockRoomWithDevices },
     });
