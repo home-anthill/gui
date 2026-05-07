@@ -69,12 +69,16 @@ export function Sensor({ features }: SensorProps) {
   if (features.length === 0) return null;
 
   return (
-    <section className={styles['detail-section']}>
-      <div className={styles['section-header']}>
-        <div className={styles['section-icon']}>
-          <IconActivityHeartbeat size={16} stroke={1.5} />
+    <section className={styles['sensor-section']}>
+      <div className={styles['sensor-section-header']}>
+        <div className={styles['sensor-section-icon']}>
+          <IconActivityHeartbeat size={22} stroke={1.5} />
         </div>
-        <Title order={2} size="h3" c="orange">
+        <Title
+          order={2}
+          size="h3"
+          className={styles['sensor-section-text'] ?? ''}
+        >
           Sensors
         </Title>
       </div>

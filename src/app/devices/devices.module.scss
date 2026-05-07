@@ -1,28 +1,26 @@
 @use '../../styles/variables' as *;
 
-.home-page {
+.devices {
   padding: 2rem 1rem;
-  max-width: 1400px;
+  max-width: 1000px;
   margin: 0 auto;
 
-  .page-header {
+  .devices-header {
     margin-bottom: 2rem;
-  }
 
-  // ─── Unassigned devices section ───────────────────────────────────────────
-  section.device-section {
-    margin-bottom: 3rem;
-
-    .section-title {
-      margin-bottom: 1rem;
+    .devices-header-title {
+      color: $text-primary;
+    }
+    .devices-header-subtitle {
+      color: $text-dimmed;
     }
   }
 
-  // ─── Home block ───────────────────────────────────────────────────────────
-  section.home-section {
-    margin-bottom: 3.5rem;
+  // ─── Unassigned devices section ───────────────────────────────────────────
+  .devices-section {
+    margin-bottom: 3rem;
 
-    .home-title {
+    .devices-title {
       display: flex;
       align-items: center;
       gap: 0.625rem;
@@ -30,21 +28,55 @@
       padding-bottom: 0.75rem;
       border-bottom: 1px solid $border;
 
-      &-icon {
+      .devices-title-icon {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
+        width: 38px;
+        height: 38px;
         border-radius: 8px;
-        background: rgba($accent, 0.12);
-        color: $accent;
+        background: $surface;
+        color: $white;
         flex-shrink: 0;
+      }
+
+      .devices-title-text {
+        color: $text-primary;
+      }
+    }
+  }
+
+  // ─── Home block ───────────────────────────────────────────────────────────
+  .home-section {
+    margin-bottom: 3.5rem;
+
+    .homedevices-title {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid $border;
+
+      .homedevices-title-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: $surface;
+        color: $white;
+        flex-shrink: 0;
+      }
+
+      .homedevices-title-text {
+        color: $text-primary;
       }
     }
 
-    // ─── Room block ─────────────────────────────────────────────────────────
-    .room-block {
+    // ─── Room section ─────────────────────────────────────────────────────────
+    .room-section {
       margin-bottom: 2rem;
 
       &:last-child {
@@ -58,16 +90,20 @@
         margin-bottom: 0.875rem;
         margin-left: 0.25rem;
 
-        &-icon {
+        .room-title-icon {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 24px;
-          height: 24px;
+          width: 32px;
+          height: 32px;
           border-radius: 6px;
           background: rgba($accent, 0.08);
           color: $accent;
           flex-shrink: 0;
+        }
+
+        .room-title-text {
+          color: $accent;
         }
       }
     }

@@ -65,12 +65,7 @@ export function Login() {
               alt="Home Anthill"
               className={styles['login-brand-icon']}
             />
-            <Text
-              size="xl"
-              fw={700}
-              c="orange"
-              className={styles['login-brand-name'] ?? ''}
-            >
+            <Text className={styles['login-brand-name'] ?? ''}>
               Home Anthill
             </Text>
           </div>
@@ -108,31 +103,33 @@ export function Login() {
 
       {/* ── Right: login card ── */}
       <div className={styles['login-panel']}>
-        <Paper className={styles['login-card'] ?? ''} p="xl" radius="md" withBorder>
+        <Paper
+          className={styles['login-card'] ?? ''}
+          p="xl"
+          radius="md"
+          withBorder
+        >
           <div className={styles['login-header']}>
             <img
               src={loginBrandLogo}
               alt="Home Anthill"
               className={styles['login-card-icon']}
             />
-            <Text
-              size="xl"
-              fw={700}
-              c="orange"
-              className={styles['login-card-title'] ?? ''}
-            >
+            <Text className={styles['login-card-title'] ?? ''}>
               Home Anthill
             </Text>
             <Text
               size="sm"
-              c="dimmed"
               mt={4}
-              style={{ textAlign: 'center' }}
               className={styles['login-card-subtitle'] ?? ''}
             >
               Your smart ecosystem, all under control.
             </Text>
-            <Text size="sm" c="dimmed" mt="xs" style={{ textAlign: 'center' }}>
+            <Text
+              size="sm"
+              mt="xs"
+              className={styles['login-card-body'] ?? ''}
+            >
               Log in to manage your home IoT system
             </Text>
           </div>
@@ -141,14 +138,13 @@ export function Login() {
             leftSection={<IconBrandGithub size={20} />}
             fullWidth
             size="lg"
-            color="orange"
             mt="xl"
             onClick={onLogin}
           >
             Sign in with GitHub
           </Button>
 
-          <Text size="xs" c="dimmed" style={{ textAlign: 'center' }} mt="md">
+          <Text size="xs" mt="md" className={styles['login-card-footer'] ?? ''}>
             No account? Just use your GitHub credentials.
           </Text>
         </Paper>

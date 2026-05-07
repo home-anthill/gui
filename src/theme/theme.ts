@@ -1,34 +1,42 @@
 import { createTheme, MantineColorsTuple } from '@mantine/core';
 
+// If you want to change this array,
+// please align also SCSS vars in _variables.scss
 const orange: MantineColorsTuple = [
-  '#fff4e6',
-  '#ffe8cc',
-  '#ffd8a8',
-  '#ffc078',
-  '#ffa94d',
-  '#ff922b',
-  '#fd7e14',
-  '#f76707',
-  '#e8590c',
-  '#d9480f',
+  '#FFF4E6',
+  '#FFE8CC',
+  '#FFD8A8',
+  '#FFC078',
+  '#FFA94D',
+  '#FF922B',
+  '#FD7E14',
+  '#F76707',
+  '#D8590C',
+  '#D9480F',
+];
+
+// If you want to change this array,
+// please align also SCSS vars in _variables.scss
+const dark: MantineColorsTuple = [
+  '#C1C2C5',
+  '#A6A7AB',
+  '#909296',
+  '#5c5f66',
+  '#373A40',
+  '#2C2E33',
+  '#25262B',
+  '#1A1B1E',
+  '#141517',
+  '#0A0A0A',
 ];
 
 export const theme = createTheme({
+  autoContrast: true,
+  luminanceThreshold: 0.38,
   primaryColor: 'orange',
   colors: {
     orange,
-    dark: [
-      '#C1C2C5',
-      '#A6A7AB',
-      '#909296',
-      '#5c5f66',
-      '#373A40',
-      '#2C2E33',
-      '#25262b',
-      '#1A1B1E',
-      '#141517',
-      '#101113',
-    ],
+    dark,
   },
   black: '#0a0a0a',
   white: '#ffffff',

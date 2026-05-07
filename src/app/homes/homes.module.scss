@@ -1,22 +1,29 @@
 @use '../../styles/variables' as *;
 
-.homes-page {
+.homes {
   padding: 2rem 1rem;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
 
-  &-header {
+  .homes-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
     margin-bottom: 2rem;
     flex-wrap: wrap;
+
+    .homes-header-title {
+      color: $text-primary;
+    }
+    .homes-header-subtitle {
+      color: $text-dimmed;
+    }
   }
 
   // ─── Empty state ───────────────────────────────────────────────────────────
   .empty-state {
-    background-color: $bg-surface;
+    background-color: $background;
     border-color: $border;
 
     .empty-state-inner {
@@ -25,18 +32,23 @@
       align-items: center;
       gap: 1rem;
       padding: 2rem 1rem;
+
+      .empty-state-value {
+        text-align: center;
+        color: $text-secondary;
+      }
     }
   }
 
   // ─── Accordion ─────────────────────────────────────────────────────────────
   .homes-accordion {
     .home-item {
-      background-color: $bg-surface;
+      background-color: $background;
       border-color: $border;
       transition: border-color 0.2s ease;
 
       &:hover {
-        border-color: rgba($accent, 0.3);
+        border-color: $accent;
       }
 
       // Accordion.Control content
@@ -75,7 +87,7 @@
           gap: 0.5rem;
 
           .room-item {
-            background: linear-gradient(135deg, rgba($accent, 0.04), rgba($accent-alt, 0.02));
+            background: linear-gradient(135deg, rgba($accent, 0.04), rgba($accent, 0.02));
             border-color: rgba($accent, 0.15) !important;
             transition: all 0.2s ease;
             position: relative;
@@ -89,14 +101,13 @@
               top: 0;
               bottom: 0;
               width: 4px;
-              background: linear-gradient(180deg, $accent, $accent-alt);
+              background: $accent;
               opacity: 0.6;
               z-index: 1;
             }
 
             &:hover {
-              background: linear-gradient(135deg, rgba($accent, 0.08), rgba($accent-alt, 0.04));
-              border-color: rgba($accent, 0.35) !important;
+              background: $accent;
               transform: translateX(2px);
 
               &::before {

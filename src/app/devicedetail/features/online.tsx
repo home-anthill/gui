@@ -40,13 +40,17 @@ export function Online({ deviceId, features }: OnlineProps) {
   }
 
   return (
-    <section className={styles['detail-section']}>
-      <div className={styles['section-header']}>
-        <div className={styles['section-icon']}>
-          <IconActivityHeartbeat size={16} stroke={1.5} />
+    <section className={styles['sensor-section']}>
+      <div className={styles['sensor-section-header']}>
+        <div className={styles['sensor-section-icon']}>
+          <IconActivityHeartbeat size={22} stroke={1.5} />
         </div>
-        <Title order={2} size="h3" c="orange">
-          Power Outage
+        <Title
+          order={2}
+          size="h3"
+          className={styles['sensor-section-text'] ?? ''}
+        >
+          Sensors
         </Title>
       </div>
 
@@ -78,8 +82,7 @@ export function Online({ deviceId, features }: OnlineProps) {
               <div className={styles['sensor-card-footer']}>
                 {online && online.modifiedAt && (
                   <Text size="xs" c="dimmed">
-                    Updated{' '}
-                    {getPrettyDateFromDateString(online.modifiedAt)}
+                    Updated {getPrettyDateFromDateString(online.modifiedAt)}
                   </Text>
                 )}
               </div>

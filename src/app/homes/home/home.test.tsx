@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Accordion } from '@mantine/core';
 import { render, screen } from '../../../test-utils';
-import { HomeAccordion } from './home';
+import { HomeItem } from './home';
 import { HomesActionsContext } from '../HomesActionsContext';
 import { mockHome, mockHomeNoRooms } from '../../../test-fixtures';
 
@@ -18,7 +18,7 @@ function renderHomeAccordion(home: typeof mockHome) {
   return render(
     <HomesActionsContext.Provider value={mockActions}>
       <Accordion>
-        <HomeAccordion home={home} />
+        <HomeItem home={home} />
       </Accordion>
     </HomesActionsContext.Provider>,
   );

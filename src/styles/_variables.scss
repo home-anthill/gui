@@ -3,33 +3,48 @@
 // Import in every SCSS file with:  @use '…/styles/variables' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 
+// -- Brand / Primary color (orange) ───────────────────────────────────────────
+// If you want to change this list of colors,
+// please align also Mantine theme array in theme.ts
+$orange-0: #D9480F;
+$orange-1: #D8590C;
+$orange-2: #F76707;
+$orange-3: #FD7E14;
+$orange-4: #FF922B;
+$orange-5: #FFA94D;
+$orange-6: #FFC078;
+$orange-7: #FFD8A8;
+$orange-8: #FFE8CC;
+$orange-9: #FFF4E6;
+
+$primary: $orange-2;
+$accent: $orange-4;
+
 // ── Backgrounds ──────────────────────────────────────────────────────────────
-$bg-base:        #0a0a0a;   // page / body background
-$bg-dark:        #0d0d0f;   // darker panel (login right column)
-$bg-deep:        #111214;   // login gradient midpoint
-$bg-surface:     #141517;   // cards, header, elevated surface
-$bg-surface-dim: #161719;   // login gradient end
-$bg-surface-2:   #1a1b1e;   // scrollbar track, secondary surface
-$bg-elevated:    #18191c;   // device-card gradient start
+// If you want to change this list of colors,
+// please align also Mantine theme array in theme.ts
+$dark-0: #0A0A0A;
+$dark-1: #141517;
+$dark-2: #1A1B1E;
+$dark-3: #25262B;
+$dark-4: #2C2E33;
+$dark-5: #373A40;
+$dark-6: #5C5F66;
+$dark-7: #909296;
+$dark-8: #A6A7AB;
+$dark-9: #C1C2C5;
+
+$background: $dark-0;
+$surface: $dark-2;
+$white: #E8E9EB;
 
 // ── Borders ───────────────────────────────────────────────────────────────────
-$border-subtle:  #1e1f23;   // very faint separator
-$border:         #25262b;   // standard border
-$border-card:    #2c2e33;   // device-card outline
+$border-subtle: $dark-2;
+$border: $dark-4;
+$border-card: $dark-5;
 
 // ── Text ─────────────────────────────────────────────────────────────────────
-$white:          #ffffff;
-$black:          #000000;
-$text-primary:   #e8e9eb;   // headings / prominent text
-$text-secondary: #c1c2c5;   // body, nav, label text
-$text-muted:     #909296;   // units, subtitles
-$text-dim:       #6b6e76;   // descriptions, hints
-$text-dimmer:    #5c5f66;   // fine print, scrollbar hover
-$text-dimmest:   #4c4f56;   // barely visible (mac address)
-
-// ── Scrollbar ─────────────────────────────────────────────────────────────────
-$scrollbar-thumb: #373a40;
-
-// ── Brand / Accent (orange) ───────────────────────────────────────────────────
-$accent:     #ff922b;   // primary orange
-$accent-alt: #fd7e14;   // secondary orange (gradient end)
+$text-primary: $white;
+$text-secondary: $dark-9;
+$text-muted: $dark-8;
+$text-dimmed: $dark-6;

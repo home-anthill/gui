@@ -1,6 +1,6 @@
 @use '../../styles/variables' as *;
 
-.device-detail-page {
+.device-detail {
   padding: 2rem 1rem;
   max-width: 900px;
   margin: 0 auto;
@@ -9,11 +9,11 @@
   .device-header {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, $bg-surface 0%, $bg-surface-2 100%);
+    background: $surface;
     border-color: $border;
     padding: 20px;
 
-    &-inner {
+    .device-header-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -24,6 +24,7 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+        color: $accent;
 
         @media (max-width: 767px) {
           display: none;
@@ -33,6 +34,10 @@
       .device-header-info {
         flex: 1;
         min-width: 0;
+
+        .device-header-title {
+          color: $accent;
+        }
       }
     }
   }
@@ -58,7 +63,7 @@
 
       .detail-label {
         font-weight: 600;
-        color: $accent;
+        color: $text-primary;
       }
 
       .detail-text {

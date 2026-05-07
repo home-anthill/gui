@@ -7,7 +7,7 @@ header.app-header {
   top: 0;
   z-index: 200;
   height: 60px;
-  background-color: $bg-surface;
+  background-color: $surface;
   border-bottom: 1px solid $border;
 
   .app-header-inner {
@@ -100,7 +100,7 @@ header.app-header {
 // ─── Mobile drawer ─────────────────────────────────────────────────────────────
 
 .app-drawer {
-  background-color: $bg-surface !important;
+  background-color: $background !important;
 
   .app-drawer-title {
     display: flex;

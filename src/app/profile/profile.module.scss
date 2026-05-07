@@ -5,15 +5,23 @@
   max-width: 600px;
   margin: 0 auto;
 
-  &-heading {
+  .profile-page-heading {
     margin-bottom: 2rem;
+
+    .profile-page-title {
+      color: $text-primary
+    }
+
+    .profile-page-subtitle {
+      color: $text-dimmed
+    }
   }
 
   .profile-card {
-    background-color: $bg-surface;
+    background-color: $surface;
     border-color: $border;
 
-    &-inner {
+    .profile-card-inner {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -26,6 +34,14 @@
         gap: 0.25rem;
         width: 100%;
         text-align: center;
+
+        .profile-card-name-title {
+          color: $text-primary
+        }
+
+        .profile-card-name-subtitle {
+          color: $text-secondary
+        }
       }
 
       .profile-card-section {
@@ -34,13 +50,21 @@
         gap: 0.5rem;
         width: 100%;
 
+        .profile-token-title {
+          color: $text-primary;
+        }
+
+        .profile-token-subtitle {
+          color: $text-dimmed;
+        }
+
         .token-display-row {
           display: flex;
           align-items: center;
           gap: 0.5rem;
           width: 100%;
           padding: 0.5rem 0.75rem;
-          background-color: $bg-base;
+          background-color: $background;
           border: 1px solid $border;
           border-radius: 6px;
           min-height: 2.25rem;
@@ -51,6 +75,14 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             letter-spacing: 0.04em;
+            font-family: monospace;
+            text-align: center;
+            color: $text-primary;
+
+            // data attributes to apply 'dimmed' condition
+            &[data-dimmed] {
+              color: $text-dimmed
+            }
           }
         }
       }

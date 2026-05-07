@@ -70,29 +70,44 @@ export function Profile() {
   return (
     <div className={styles['profile-page']}>
       <div className={styles['profile-page-heading']}>
-        <Title order={1} c="white">
+        <Title order={1} className={styles['profile-page-title'] ?? ''}>
           Profile
         </Title>
-        <Text c="dimmed" size="sm" mt="xs">
+        <Text
+          size="sm"
+          mt="xs"
+          className={styles['profile-page-subtitle'] ?? ''}
+        >
           Manage your account
         </Text>
       </div>
 
-      <Paper className={styles['profile-card'] ?? ''} p="xl" radius="md" withBorder>
+      <Paper
+        className={styles['profile-card'] ?? ''}
+        p="xl"
+        radius="md"
+        withBorder
+      >
         <div className={styles['profile-card-inner']}>
           <Avatar
             size={120}
             radius="xl"
-            color="orange"
             alt="profile icon"
             src={profile?.github?.avatarURL ?? ''}
           ></Avatar>
 
           <div className={styles['profile-card-name']}>
-            <Text size="xl" fw={600} c="white">
+            <Text
+              size="xl"
+              fw={600}
+              className={styles['profile-card-name-title'] ?? ''}
+            >
               {profile?.github?.name}
             </Text>
-            <Text size="sm" c="dimmed">
+            <Text
+              size="sm"
+              className={styles['profile-card-name-subtitle'] ?? ''}
+            >
               {profile?.github?.email}
             </Text>
           </div>
@@ -100,8 +115,20 @@ export function Profile() {
           <Divider style={{ width: '100%' }} />
 
           <div className={styles['profile-card-section']}>
-            <Text size="lg" fw={600} mb="xs">
+            <Text
+              size="lg"
+              fw={600}
+              className={styles['profile-token-title'] ?? ''}
+            >
               API Token
+            </Text>
+
+            <Text
+              size="xs"
+              mb="xs"
+              className={styles['profile-token-subtitle'] ?? ''}
+            >
+              Use this API token in firmwares
             </Text>
 
             {/* Token display row — always visible */}
@@ -109,8 +136,8 @@ export function Profile() {
               <Text
                 size="sm"
                 className={styles['token-display-text'] ?? ''}
-                style={{ fontFamily: 'monospace', textAlign: 'center' }}
-                c={apiToken ? 'white' : 'dimmed'}
+                // dynamically add data-dimmend based on apiToken to apply a custom scss class
+                data-dimmed={!apiToken ? true : undefined}
               >
                 {apiToken ?? MASKED_TOKEN}
               </Text>
@@ -121,7 +148,7 @@ export function Profile() {
                     {({ copied, copy }) => (
                       <Tooltip label={copied ? 'Copied!' : 'Copy token'}>
                         <ActionIcon
-                          color={copied ? 'teal' : 'orange'}
+                          color="gray"
                           variant="subtle"
                           onClick={copy}
                           size="sm"
@@ -155,17 +182,11 @@ export function Profile() {
             <Button
               leftSection={<IconKey size={18} />}
               onClick={() => setIsModalOpen(true)}
-              color="orange"
-              variant="light"
               fullWidth
               mt="xs"
             >
               Regenerate API Token
             </Button>
-
-            <Text size="xs" c="dimmed" mt="xs">
-              Use this API token in firmwares
-            </Text>
           </div>
 
           <Divider style={{ width: '100%' }} />
@@ -173,8 +194,7 @@ export function Profile() {
           <Button
             leftSection={<IconLogout size={18} />}
             onClick={handleLogout}
-            color="red"
-            variant="light"
+            color="red.9"
             fullWidth
           >
             Logout
@@ -186,15 +206,9 @@ export function Profile() {
         opened={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <IconAlertTriangle
-              size={24}
-              color="var(--mantine-color-orange-5)"
-            />
-            <Text fw={600} size="lg">
-              Critical Operation Warning
-            </Text>
-          </div>
+          <Text fw={600} size="lg">
+            Critical Operation Warning
+          </Text>
         }
         centered
         size="md"
@@ -208,8 +222,8 @@ export function Profile() {
           <strong>manually reprogram each device</strong> one by one with the
           new token to restore connectivity.
         </Text>
-        <Text size="sm" mb="xl" c="orange" fw={500}>
-          Are you sure you want to proceed?
+        <Text size="sm" mb="xl">
+          <strong>Are you sure you want to proceed?</strong>
         </Text>
 
         <div
@@ -228,9 +242,7 @@ export function Profile() {
           </Button>
           <Button
             variant="filled"
-            color="orange"
             onClick={regenerateApiToken}
-            leftSection={<IconKey size={18} />}
           >
             Confirm & Regenerate
           </Button>

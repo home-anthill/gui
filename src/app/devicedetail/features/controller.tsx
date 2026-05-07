@@ -136,7 +136,6 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
 
 interface ControllerProps {
   features: FeatureValue[];
-  lastSent: string;
   onChangeValue: (featureId: string, value: number) => void;
   onSend: () => void;
   isSending: boolean;
@@ -144,7 +143,6 @@ interface ControllerProps {
 
 export function ControllerFeature({
   features,
-  lastSent,
   onChangeValue,
   onSend,
   isSending,
@@ -165,11 +163,6 @@ export function ControllerFeature({
           </Title>
         </div>
         <div className={styles['section-header-actions']}>
-          {lastSent && (
-            <Text size="xs" c="dimmed">
-              Last sent {getPrettyDateFromDateString(lastSent)}
-            </Text>
-          )}
           <Button
             leftSection={<IconSend size={18} />}
             onClick={onSend}

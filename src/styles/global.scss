@@ -14,32 +14,12 @@ body {
 }
 
 body {
-  background-color: $bg-base;
-  color: $white;
+  background-color: $background;
+  color: $text-primary;
 }
 
 #root {
   height: 100%;
-}
-
-// ─── Custom scrollbar ───────────────────────────────────────────────────────
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: $bg-surface-2;
-}
-
-::-webkit-scrollbar-thumb {
-  background: $scrollbar-thumb;
-  border-radius: 4px;
-
-  &:hover {
-    background: $text-dimmer;
-  }
 }
 
 // ─── Accessibility ──────────────────────────────────────────────────────────

@@ -109,7 +109,7 @@ function DeviceCard({ device, home, room }: DeviceCardProps) {
               return IconComponent ? (
                 <Tooltip key={feature.uuid} label={label} withArrow>
                   <div className={styles['device-card-feat-icon']}>
-                    <IconComponent size={15} stroke={1.8} />
+                    <IconComponent size={26} stroke={1.6} />
                   </div>
                 </Tooltip>
               ) : null;
@@ -117,7 +117,7 @@ function DeviceCard({ device, home, room }: DeviceCardProps) {
             {onlineFeatures.map((feature) => (
               <Tooltip key={feature.uuid} label={feature.name} withArrow>
                 <div className={styles['device-card-feat-icon']}>
-                  <IconBolt size={15} stroke={1.8} />
+                  <IconBolt size={26} stroke={1.8} />
                 </div>
               </Tooltip>
             ))}

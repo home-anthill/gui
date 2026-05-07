@@ -60,18 +60,21 @@ export function DeviceDetail() {
   const [localOverrides, setLocalOverrides] = useState<Record<string, number>>(
     {},
   );
-  const { sensorFeatures, onlineFeatures, controllerFeatures } =
-    useMemo(() => {
-      const all = (deviceWithValues?.features ?? []).map((f) => ({
-        ...f,
-        value: localOverrides[f.featureUuid] ?? f.value,
-      }));
-      return {
-        sensorFeatures: all.filter((f) => f.type === 'sensor' && f.name !== 'online'),
-        onlineFeatures: all.filter((f) => f.type === 'sensor' && f.name === 'online'),
-        controllerFeatures: all.filter((f) => f.type === 'controller'),
-      };
-    }, [deviceWithValues, localOverrides]);
+  const { sensorFeatures, onlineFeatures, controllerFeatures } = useMemo(() => {
+    const all = (deviceWithValues?.features ?? []).map((f) => ({
+      ...f,
+      value: localOverrides[f.featureUuid] ?? f.value,
+    }));
+    return {
+      sensorFeatures: all.filter(
+        (f) => f.type === 'sensor' && f.name !== 'online',
+      ),
+      onlineFeatures: all.filter(
+        (f) => f.type === 'sensor' && f.name === 'online',
+      ),
+      controllerFeatures: all.filter((f) => f.type === 'controller'),
+    };
+  }, [deviceWithValues, localOverrides]);
 
   const [settingsOpened, settingsHandlers] = useDisclosure(false);
   const [deleteOpened, deleteHandlers] = useDisclosure(false);
@@ -102,7 +105,7 @@ export function DeviceDetail() {
 
   if (deviceWithValuesError || !device) {
     return (
-      <div className={styles['device-detail-page']}>
+      <div className={styles['device-detail']}>
         <Alert
           icon={<IconAlertCircle size={18} />}
           color="red"
@@ -111,7 +114,7 @@ export function DeviceDetail() {
         >
           The requested device does not exist or is not reachable.
         </Alert>
-        <Button onClick={() => navigate('/')} variant="light" color="orange">
+        <Button onClick={() => navigate('/')}>
           Back to Devices
         </Button>
       </div>
@@ -174,7 +177,7 @@ export function DeviceDetail() {
   };
 
   return (
-    <div className={styles['device-detail-page']}>
+    <div className={styles['device-detail']}>
       <Button
         leftSection={<IconArrowLeft size={18} />}
         variant="subtle"
@@ -195,14 +198,13 @@ export function DeviceDetail() {
         <div className={styles['device-header-inner']}>
           <div className={styles['device-header-icon']}>
             <IconDevices
-              size={64}
+              size={48}
               stroke={1.5}
-              color="var(--mantine-color-orange-6)"
             />
           </div>
           <div className={styles['device-header-info']}>
             <div className={styles['device-header-title']}>
-              <Title order={1} size="h2" c="white">
+              <Title order={1} size="h2">
                 {device.name ?? device.mac}
               </Title>
             </div>
@@ -210,7 +212,7 @@ export function DeviceDetail() {
           <Tooltip label="Settings">
             <ActionIcon
               variant="light"
-              color="orange"
+              color="rgba(37, 38, 43, 1)"
               size="lg"
               onClick={handleOpenSettings}
               aria-label="Device settings"
@@ -264,7 +266,6 @@ export function DeviceDetail() {
       <Online deviceId={device.id} features={onlineFeatures} />
       <ControllerFeature
         features={controllerFeatures}
-        lastSent={device.modifiedAt}
         onChangeValue={handleControlChange}
         onSend={handleSendControls}
         isSending={isSending}
@@ -278,7 +279,6 @@ export function DeviceDetail() {
           leftSection={<IconTrash size={18} stroke={1.5} />}
           onClick={deleteHandlers.open}
           color="red"
-          variant="light"
           loading={isSending}
           aria-label="Delete device"
         >
@@ -328,7 +328,11 @@ export function DeviceDetail() {
           )}
 
           <div className="modal-actions">
-            <Button variant="subtle" onClick={settingsHandlers.close}>
+            <Button
+              variant="light"
+              color="gray"
+              onClick={settingsHandlers.close}
+            >
               Cancel
             </Button>
             <Button
@@ -357,8 +361,14 @@ export function DeviceDetail() {
           <strong>Important:</strong> Make sure to power off the device first to
           prevent it from automatically re-registering as an unassigned device.
         </Text>
-        <div className="modal-actions">
-          <Button variant="subtle" onClick={deleteHandlers.close}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.75rem',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Button variant="light" color="gray" onClick={deleteHandlers.close}>
             Cancel
           </Button>
           <Button onClick={handleDeleteDevice} color="red">

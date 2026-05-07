@@ -4,7 +4,7 @@
   min-height: 100vh;
   display: flex;
   align-items: stretch;
-  background: $bg-base;
+  background: $dark-0;
 
   // ─── Brand panel (left) ──────────────────────────────────────────────────
   .login-brand {
@@ -13,7 +13,7 @@
     align-items: center;
     justify-content: center;
     padding: 3rem 4rem;
-    background: linear-gradient(145deg, $bg-dark 0%, $bg-deep 60%, $bg-surface-dim 100%);
+    background: linear-gradient(145deg, $dark-0 0%, $dark-1 60%, $dark-2 100%);
     border-right: 1px solid $border-subtle;
     position: relative;
     overflow: hidden;
@@ -85,7 +85,7 @@
       .login-brand-desc {
         font-size: 0.92rem;
         line-height: 1.75;
-        color: $text-dim;
+        color: $text-dimmed;
         margin: 0 0 2.5rem;
       }
 
@@ -110,8 +110,8 @@
             width: 36px;
             height: 36px;
             border-radius: 9px;
-            background: rgba($accent, 0.1);
-            border: 1px solid rgba($accent, 0.2);
+            background: $background;
+            border: 1px solid $accent;
             color: $accent;
             flex-shrink: 0;
             margin-top: 1px;
@@ -130,7 +130,7 @@
 
             span {
               font-size: 0.8rem;
-              color: $text-dimmer;
+              color: $text-dimmed;
               line-height: 1.5;
             }
           }
@@ -146,12 +146,12 @@
     align-items: center;
     justify-content: flex-start;
     padding: 2rem 2.5rem;
-    background: $bg-dark;
+    background: $dark-0;
 
     .login-card {
       width: 100%;
       max-width: 360px;
-      background: $bg-surface;
+      background: $dark-1;
       border-color: $border;
 
       .login-header {
@@ -175,6 +175,10 @@
         .login-card-title {
           // Hide icon by default (desktop and tablet)
           display: none;
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: $accent;
+          letter-spacing: 0.02em;
 
           // Show on smartphones
           @media (max-width: 767px) {
@@ -186,12 +190,23 @@
         .login-card-subtitle {
           // Hide icon by default (desktop and tablet)
           display: none;
+          text-align: center;
 
           // Show on smartphones
           @media (max-width: 767px) {
             display: block;
           }
         }
+
+        .login-card-body {
+          color: $text-primary;
+          text-align: center;
+        }
+      }
+
+      .login-card-footer {
+        color: $text-dimmed;
+        text-align: center;
       }
     }
   }
@@ -208,7 +223,7 @@
       flex: 1;
       padding: 2rem 1.25rem;
       justify-content: center;
-      background: $bg-base;
+      background: $dark-0;
 
       .login-card {
         max-width: 420px;

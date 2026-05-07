@@ -16,7 +16,7 @@ import { IconPlus, IconBuilding, IconAlertCircle } from '@tabler/icons-react';
 import { logError } from '../../utils/logger';
 
 import { useHomes } from '../../hooks/useHomes';
-import { HomeAccordion } from './home/home';
+import { HomeItem } from './home/home';
 import { HomesActionsContext } from './HomesActionsContext';
 import { useRooms } from '../../hooks/useRooms';
 
@@ -189,39 +189,40 @@ export function Homes() {
   }
 
   return (
-    <div className={styles['homes-page']}>
-      <div className={styles['homes-page-header']}>
+    <div className={styles['homes']}>
+      <div className={styles['homes-header']}>
         <div>
-          <Title order={1} c="white">
+          <Title order={1} className={styles['homes-header-title'] ?? ''}>
             Homes
           </Title>
-          <Text c="dimmed" size="sm" mt="xs">
+          <Text size="sm" mt="xs" className={styles['homes-header-subtitle'] ?? ''}>
             Manage your homes and rooms
           </Text>
         </div>
         <Button
           leftSection={<IconPlus size={18} />}
           onClick={() => handleOpenHomeModal()}
-          color="orange"
         >
           Add Home
         </Button>
       </div>
 
       {homes.length === 0 ? (
-        <Paper p="xl" radius="md" withBorder className={styles['empty-state'] ?? ''}>
+        <Paper
+          p="xl"
+          radius="md"
+          withBorder
+          className={styles['empty-state'] ?? ''}
+        >
           <div className={styles['empty-state-inner']}>
-            <IconBuilding size={48} stroke={1.5} color="#5c5f66" />
-            <Text c="dimmed" size="lg" ta="center">
+            <IconBuilding
+              size={48}
+              stroke={1.5}
+              className={styles['empty-state-value'] ?? ''}
+            />
+            <Text size="lg" className={styles['empty-state-value'] ?? ''}>
               No homes configured
             </Text>
-            <Button
-              onClick={() => handleOpenHomeModal()}
-              color="orange"
-              variant="light"
-            >
-              Add your first home
-            </Button>
           </div>
         </Paper>
       ) : (
@@ -232,7 +233,7 @@ export function Homes() {
             className={styles['homes-accordion'] ?? ''}
           >
             {homes.map((home) => (
-              <HomeAccordion key={home.id} home={home} />
+              <HomeItem key={home.id} home={home} />
             ))}
           </Accordion>
         </HomesActionsContext.Provider>
@@ -261,18 +262,12 @@ export function Homes() {
             required
           />
           <div className="modal-actions">
-            <Button
-              variant="subtle"
-              onClick={closeHomeModal}
-              // disabled={isSavingHome}
-            >
+            <Button variant="light" color="gray" onClick={closeHomeModal}>
               Cancel
             </Button>
             <Button
               onClick={handleSaveHome}
-              color="orange"
               disabled={!homeName || !homeLocation}
-              // loading={isSavingHome}
             >
               Save
             </Button>
@@ -305,18 +300,13 @@ export function Homes() {
             required
           />
           <div className="modal-actions">
-            <Button
-              variant="subtle"
-              onClick={closeRoomModal}
-              // disabled={isSavingRoom}
-            >
+            <Button variant="light" color="gray" onClick={closeRoomModal}>
               Cancel
             </Button>
             <Button
               onClick={handleSaveRoom}
               color="orange"
               disabled={!roomName || roomFloor === ''}
-              // loading={isSavingRoom}
             >
               Save
             </Button>
@@ -337,10 +327,10 @@ export function Homes() {
             undone.
           </Text>
           <div className="modal-actions">
-            <Button variant="subtle" onClick={closeDeleteModal}>
+            <Button variant="light" color="gray" onClick={closeDeleteModal}>
               Cancel
             </Button>
-            <Button onClick={handleConfirmDelete} color="red">
+            <Button onClick={handleConfirmDelete} color="red.9">
               Delete
             </Button>
           </div>
