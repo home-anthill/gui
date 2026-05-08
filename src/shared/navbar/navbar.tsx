@@ -87,15 +87,13 @@ export function Navbar() {
 
           {/* Right: profile avatar */}
           <Avatar
-            className={styles['app-header-profile']!}
+            className={styles['app-header-profile'] ?? ''}
             size="sm"
             radius="xl"
             color="orange"
             onClick={() => handleNavigate('/profile')}
             tabIndex={0}
-            onKeyDown={(e) =>
-              e.key === 'Enter' && handleNavigate('/profile')
-            }
+            onKeyDown={(e) => e.key === 'Enter' && handleNavigate('/profile')}
             aria-label={`Profile – ${profile?.github?.name}`}
             title={`${profile?.github?.name}\n${profile?.github?.email}`}
             alt="profile"
@@ -118,7 +116,7 @@ export function Navbar() {
         }
         size="xs"
         padding="md"
-        classNames={{ content: styles['app-drawer']! }}
+        classNames={{ content: styles['app-drawer'] ?? '' }}
       >
         <nav
           className={styles['app-drawer-menu']}
@@ -131,7 +129,7 @@ export function Navbar() {
               leftSection={<Icon size={20} stroke={1.5} />}
               active={isActive(path)}
               onClick={() => handleNavigate(path)}
-              className={styles['app-drawer-item']!}
+              className={styles['app-drawer-item'] ?? ''}
               aria-current={isActive(path) ? 'page' : undefined}
             />
           ))}

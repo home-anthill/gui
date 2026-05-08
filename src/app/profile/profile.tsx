@@ -13,7 +13,6 @@ import {
   Modal,
 } from '@mantine/core';
 import {
-  IconAlertTriangle,
   IconCheck,
   IconCopy,
   IconEyeOff,

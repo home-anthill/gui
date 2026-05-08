@@ -10,7 +10,7 @@ import {
 import { IconToggleLeft, IconSend } from '@tabler/icons-react';
 
 import { FeatureValue } from '../../../models/value';
-import { getPrettyDateFromDateString, getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
+import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
 
 import styles from './controller.module.scss';
 

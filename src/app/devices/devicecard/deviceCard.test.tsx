@@ -30,6 +30,7 @@ describe('DeviceCard', () => {
 
   it('navigates to device detail without home/room when clicked', async () => {
     render(<DeviceCard device={mockDevice} />);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await userEvent.click(screen.getAllByText('AA:BB:CC:DD:EE:FF')[0]!);
     expect(mockNavigate).toHaveBeenCalledWith('/devices/d1', {
       state: { device: mockDevice },
@@ -44,6 +45,7 @@ describe('DeviceCard', () => {
         room={mockRoomWithDevices}
       />,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await userEvent.click(screen.getAllByText('AA:BB:CC:DD:EE:FF')[0]!);
     expect(mockNavigate).toHaveBeenCalledWith('/devices/d1', {
       state: { device: mockDevice, home: mockHomeWithDevices, room: mockRoomWithDevices },
