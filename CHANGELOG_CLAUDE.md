@@ -36,6 +36,10 @@ Every page and component now has a colocated `.module.scss` file for scoped styl
 
 ## Features
 
+### Unknown online status fallback
+**File:** `src/app/devicedetail/features/online.tsx`
+The online feature card now remains visible when `/api/online/:id` fails or Redis has no online state yet. Missing online data renders a neutral `Unknown` status with "Status not available" instead of hiding the card.
+
 ### Token extracted from URL fragment
 **File:** `src/app/postlogin/postLogin.tsx`
 The access token delivered by the OAuth2 callback is read from the URL **fragment** (`#token=<jwt>`) instead of the query string. Fragment parameters never leave the browser and do not appear in server access logs. Implementation: `new URLSearchParams(location.hash.slice(1)).get('token')`. When no token is found the component redirects to `/`.

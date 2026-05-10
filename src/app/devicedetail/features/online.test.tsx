@@ -85,4 +85,29 @@ describe('Online', () => {
     render(<Online deviceId={deviceId} features={[onlineFeature]} />);
     expect(screen.getByText('Offline')).toBeInTheDocument();
   });
+
+  it('shows "Unknown" when online value API fails', () => {
+    vi.mocked(useOnline).mockReturnValue({
+      ...baseOnline,
+      online: undefined,
+      onlineError: { status: 500, data: { error: 'Cannot get online' } },
+    });
+
+    render(<Online deviceId={deviceId} features={[onlineFeature]} />);
+
+    expect(screen.getByText('online')).toBeInTheDocument();
+    expect(screen.getByText('Unknown')).toBeInTheDocument();
+    expect(screen.getByText('Status not available')).toBeInTheDocument();
+  });
+
+  it('shows "Unknown" when online data is missing', () => {
+    vi.mocked(useOnline).mockReturnValue({
+      ...baseOnline,
+      online: undefined,
+    });
+
+    render(<Online deviceId={deviceId} features={[onlineFeature]} />);
+
+    expect(screen.getByText('Unknown')).toBeInTheDocument();
+  });
 });

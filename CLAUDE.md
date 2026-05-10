@@ -127,6 +127,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 ### Code Style Rules
 
 - **Error reporting**: always use `logError(message, err)` from `src/utils/logger.ts` in catch blocks — it calls both `console.error` and `toast.error`. Use `toast.error` directly only for validation errors that have no associated exception.
+- **Online feature rendering**: `src/app/devicedetail/features/online.tsx` must render the card when an online feature exists even if `/api/online/:id` fails or Redis has no state yet. Missing online data maps to neutral `Unknown`, not to a hidden card.
 - **CSS module lookups**: never write `className={styles['foo'] ?? ''}`. CSS module keys are always defined when the SCSS file is properly imported; the `?? ''` fallback is dead code.
 - **Interactive navigation elements**: use `<button type="button">` (not `<div role="link">`) for clickable elements that trigger `navigate()`. Buttons receive keyboard focus and fire `onClick` on Enter/Space natively.
 - **One-shot effects**: when a `useEffect` must run exactly once (e.g., OAuth callback handling), add a `useRef<boolean>(false)` guard rather than using an empty dep array, so StrictMode double-invocation is handled correctly.
