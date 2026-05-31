@@ -46,19 +46,20 @@ export const airQualityColors = [
  * formatByStep(12.3456, 0.5);    => "12.3"
  * formatByStep(12.3456, 0.1);    => "12.3"
  * formatByStep(12.3456, 0.01);   => "12.35"
- * formatByStep(12.3456, 0.001);  => "12.346"
- * formatByStep(12.3456, 0.005);  => "12.346"
+ * formatByStep(12.3456, 0.001);  => "12.35"
+ * formatByStep(12.3456, 0.005);  => "12.35"
  *
  * How it works:
  * Math.ceil(-Math.log10(step))
- * converts the step size into the number of decimal digits needed:
+ * converts the step size into the number of decimal digits needed.
+ * Smaller steps are capped at 2 decimals:
  *   5      -> 0 decimals
  *   1      -> 0 decimals
  *   0.5    -> 1 decimal
  *   0.1    -> 1 decimal
  *   0.01   -> 2 decimals
- *   0.005  -> 3 decimals
- *   0.001  -> 3 decimals
+ *   0.005  -> 2 decimals
+ *   0.001  -> 2 decimals
  * @param value
  * @param step
  */
@@ -66,8 +67,8 @@ function formatByStep(value: number, step?: number): string {
   if (!Number.isFinite(value)) {
     throw new Error('value must be a finite number');
   }
-  const decimals = step === undefined ? 0 : Math.max(0, Math.ceil(-Math.log10(step)));
-  return value.toFixed(decimals);
+  const decimals = step === undefined ? 2 : Math.max(0, Math.ceil(-Math.log10(step)));
+  return value.toFixed(Math.min(decimals, 2));
 }
 
 function formatSensorValue(feature: FeatureValue): {

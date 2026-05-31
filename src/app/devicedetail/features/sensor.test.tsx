@@ -19,16 +19,31 @@ describe('Sensor', () => {
     expect(screen.getByText('temperature')).toBeInTheDocument();
   });
 
-  it('formats temperature with one decimal and shows the unit', () => {
+  it('formats temperature with two decimals and shows the unit', () => {
     render(<Sensor features={[makeFeatureValue({ name: 'temperature', value: 22.5, unit: '°C' })]} />);
-    expect(screen.getByText('22.5')).toBeInTheDocument();
+    expect(screen.getByText('22.50')).toBeInTheDocument();
     expect(screen.getByText('°C')).toBeInTheDocument();
   });
 
-  it('formats humidity as an integer', () => {
+  it('formats humidity with two decimals', () => {
     render(<Sensor features={[makeFeatureValue({ name: 'humidity', value: 65.7, unit: '%' })]} />);
-    expect(screen.getByText('66')).toBeInTheDocument();
+    expect(screen.getByText('65.70')).toBeInTheDocument();
     expect(screen.getByText('%')).toBeInTheDocument();
+  });
+
+  it('formats values with two decimals when the feature step is smaller than 0.01', () => {
+    render(
+      <Sensor
+        features={[
+          makeFeatureValue({
+            name: 'temperature',
+            value: 12.3456,
+            spec: { format: 'float', step: 0.001 },
+          }),
+        ]}
+      />,
+    );
+    expect(screen.getByText('12.35')).toBeInTheDocument();
   });
 
   it('shows "Detected" for motion when value is truthy', () => {

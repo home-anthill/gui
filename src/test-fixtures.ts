@@ -52,6 +52,7 @@ export const mockDevice: Device = {
       unit: '°C',
       order: 1,
       enable: true,
+      spec: { format: 'float', step: 0.01 },
     },
   ],
 };
@@ -97,6 +98,7 @@ export const makeFeatureValue = (
   unit: '°C',
   order: 1,
   enable: true,
+  spec: { format: 'float', step: 0.01 },
   value: 22.5,
   createdAt: 1705318245000,
   modifiedAt: 1705318245000,
