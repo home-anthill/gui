@@ -21,6 +21,7 @@ GitHub releases [HERE](https://github.com/home-anthill/gui/releases)
 
 Versions:
 
+- ??/06/2026 - 5.0.0
 - 28/05/2026 - 4.0.0
 - 15/03/2026 - 3.1.0
 - 25/12/2025 - 3.0.0
