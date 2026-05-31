@@ -14,26 +14,6 @@ import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
 
 import styles from './controller.module.scss';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const MODES = [
-  { value: '1', label: 'Cool' },
-  { value: '2', label: 'Auto' },
-  { value: '3', label: 'Heat' },
-  { value: '4', label: 'Fan' },
-  { value: '5', label: 'Dry' },
-];
-
-const FAN_SPEEDS = [
-  { value: '1', label: 'Min' },
-  { value: '2', label: 'Med' },
-  { value: '3', label: 'Max' },
-  { value: '4', label: 'Auto' },
-  { value: '5', label: 'Auto0' },
-];
-
-// ─── ControlInput ─────────────────────────────────────────────────────────────
-
 interface ControlInputProps {
   feature: FeatureValue;
   onChangeValue: (featureId: string, value: number) => void;
@@ -46,10 +26,7 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
         <Switch
           checked={feature.value === 1}
           onChange={(e) =>
-            onChangeValue(
-              feature.featureUuid,
-              e.currentTarget.checked ? 1 : 0,
-            )
+            onChangeValue(feature.featureUuid, e.currentTarget.checked ? 1 : 0)
           }
           color="orange"
           size="md"
@@ -61,21 +38,23 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
       return (
         <div className={styles['slider-wrapper']}>
           <div className={styles['slider-labels']}>
-            <Text size="sm" c="dimmed">17</Text>
-            <Text fw={600} c="orange">{feature.value}°C</Text>
-            <Text size="sm" c="dimmed">30</Text>
+            <Text size="sm" c="dimmed">
+              {feature.spec.min?.toString() ?? '17'}
+            </Text>
+            <Text fw={600} c="orange">
+              {feature.value}°C
+            </Text>
+            <Text size="sm" c="dimmed">
+              {feature.spec.max?.toString() ?? '30'}
+            </Text>
           </div>
           <Slider
             value={feature.value as number}
             onChange={(value) => onChangeValue(feature.featureUuid, value)}
-            min={17}
-            max={30}
-            step={1}
+            min={feature.spec.min ?? 17}
+            max={feature.spec.max ?? 30}
+            step={feature.spec.step ?? 1}
             color="orange"
-            marks={[
-              { value: 17, label: '17' },
-              { value: 30, label: '30' },
-            ]}
           />
         </div>
       );
@@ -84,21 +63,23 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
       return (
         <div className={styles['slider-wrapper']}>
           <div className={styles['slider-labels']}>
-            <Text size="sm" c="dimmed">0</Text>
-            <Text fw={600} c="orange">{feature.value}</Text>
-            <Text size="sm" c="dimmed">10</Text>
+            <Text size="sm" c="dimmed">
+              {feature.spec.min?.toString() ?? '0'}
+            </Text>
+            <Text fw={600} c="orange">
+              {feature.value}
+            </Text>
+            <Text size="sm" c="dimmed">
+              {feature.spec.max?.toString() ?? '10'}
+            </Text>
           </div>
           <Slider
             value={feature.value as number}
             onChange={(value) => onChangeValue(feature.featureUuid, value)}
-            min={0}
-            max={10}
-            step={1}
+            min={feature.spec.min ?? 0}
+            max={feature.spec.max ?? 10}
+            step={feature.spec.step ?? 1}
             color="orange"
-            marks={[
-              { value: 0, label: '0' },
-              { value: 10, label: '10' },
-            ]}
           />
         </div>
       );
@@ -110,7 +91,12 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
           onChange={(value) =>
             value && onChangeValue(feature.featureUuid, Number(value))
           }
-          data={MODES}
+          data={
+            feature.spec.list?.map((l) => ({
+              value: l.value.toString(),
+              label: l.text,
+            })) ?? []
+          }
           placeholder="Select mode"
         />
       );
@@ -122,7 +108,12 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
           onChange={(value) =>
             value && onChangeValue(feature.featureUuid, Number(value))
           }
-          data={FAN_SPEEDS}
+          data={
+            feature.spec.list?.map((l) => ({
+              value: l.value.toString(),
+              label: l.text,
+            })) ?? []
+          }
           placeholder="Select fan speed"
         />
       );

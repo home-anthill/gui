@@ -1,5 +1,7 @@
 import { Home, Room } from './home';
 
+export type Format = 'bool' | 'int' | 'float' | 'list';
+
 export interface Device {
   id: string;
   name: string;
@@ -19,6 +21,20 @@ export interface Feature {
   unit: string;
   order: number;
   enable: boolean;
+  spec: Spec;
+}
+
+export interface Spec {
+  format: Format;
+  min?: number;
+  max?: number;
+  step?: number;
+  list?: SpecListItem[];
+}
+
+export interface SpecListItem {
+  value: number;
+  text: string;
 }
 
 export interface HomeWithDevices extends Omit<Home, "rooms"> {

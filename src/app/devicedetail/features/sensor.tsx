@@ -1,3 +1,4 @@
+import { ComponentType } from 'react';
 import { Title, Paper, Text } from '@mantine/core';
 import {
   IconActivityHeartbeat,
@@ -14,17 +15,13 @@ import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
 
 import styles from './sensor.module.scss';
 
-export const airQualityLabels = ['Poor', 'Low', 'Good', 'Excellent'] as const;
-export const airQualityColors = [
-  '#fa5252',
-  '#fab005',
-  '#94d82d',
-  '#40c057',
-] as const;
+interface SensorProps {
+  features: FeatureValue[];
+}
 
 const sensorIcons: Record<
   string,
-  React.ComponentType<{ size?: number; stroke?: number }>
+  ComponentType<{ size?: number; stroke?: number }>
 > = {
   temperature: IconThermometer,
   humidity: IconDroplet,
@@ -34,19 +31,57 @@ const sensorIcons: Record<
   airquality: IconLeaf,
 };
 
+export const airQualityLabels = ['Poor', 'Low', 'Good', 'Excellent'] as const;
+export const airQualityColors = [
+  '#fa5252',
+  '#fab005',
+  '#94d82d',
+  '#40c057',
+] as const;
+
+/**
+ * Format a float value into a string rounding with s specific precision defined by step.
+ * formatByStep(12.3456, 5);      => "12"
+ * formatByStep(12.3456, 1);      => "12"
+ * formatByStep(12.3456, 0.5);    => "12.3"
+ * formatByStep(12.3456, 0.1);    => "12.3"
+ * formatByStep(12.3456, 0.01);   => "12.35"
+ * formatByStep(12.3456, 0.001);  => "12.346"
+ * formatByStep(12.3456, 0.005);  => "12.346"
+ *
+ * How it works:
+ * Math.ceil(-Math.log10(step))
+ * converts the step size into the number of decimal digits needed:
+ *   5      -> 0 decimals
+ *   1      -> 0 decimals
+ *   0.5    -> 1 decimal
+ *   0.1    -> 1 decimal
+ *   0.01   -> 2 decimals
+ *   0.005  -> 3 decimals
+ *   0.001  -> 3 decimals
+ * @param value
+ * @param step
+ */
+function formatByStep(value: number, step?: number): string {
+  if (!Number.isFinite(value)) {
+    throw new Error('value must be a finite number');
+  }
+  const decimals = step === undefined ? 0 : Math.max(0, Math.ceil(-Math.log10(step)));
+  return value.toFixed(decimals);
+}
+
 function formatSensorValue(feature: FeatureValue): {
   text: string;
   color?: string;
 } {
   if (feature.name === 'airquality') {
-    const val = feature.value as number;
-    if (val < 0 || val > airQualityLabels.length - 1) {
-      console.warn(`Air quality value out of range: ${val}`);
+    if (feature.value < 0 || feature.value > airQualityLabels.length - 1) {
+      console.error(`Air quality value out of range: ${feature.value}`);
       return { text: 'Unknown', color: airQualityColors[0] };
     }
     return {
-      text: `${airQualityLabels[val]} (${val})`,
-      color: airQualityColors[val] ?? airQualityColors[0],
+      text: `${airQualityLabels[feature.value]} (${feature.value})`,
+      color: airQualityColors[feature.value] ?? airQualityColors[0],
     };
   }
   if (feature.name === 'motion') {
@@ -55,19 +90,11 @@ function formatSensorValue(feature: FeatureValue): {
       color: feature.value ? '#fa5252' : '#40c057',
     };
   }
-  const num = (feature.value as number).toFixed(
-    feature.name === 'temperature' ? 1 : 0,
-  );
-  return { text: num };
-}
-
-interface SensorProps {
-  features: FeatureValue[];
+  return { text: formatByStep(feature.value, feature.spec.step) };
 }
 
 export function Sensor({ features }: SensorProps) {
   if (features.length === 0) return null;
-
   return (
     <section className={styles['sensor-section']}>
       <div className={styles['sensor-section-header']}>
