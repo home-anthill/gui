@@ -6,6 +6,7 @@ import { useHomes } from '../../hooks/useHomes';
 import { useDevices } from '../../hooks/useDevices';
 import { useValues } from '../../hooks/useValues';
 import { useOnline } from '../../hooks/useOnline';
+import { toast } from 'sonner';
 import * as ReactRouter from 'react-router';
 import {
   mockDevice,
@@ -21,6 +22,12 @@ vi.mock('../../hooks/useHomes');
 vi.mock('../../hooks/useDevices');
 vi.mock('../../hooks/useValues');
 vi.mock('../../hooks/useOnline');
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();
   return { ...actual, useNavigate: vi.fn() };
@@ -221,6 +228,80 @@ describe('DeviceDetail', () => {
     expect(sw).not.toBeChecked();
     await userEvent.click(sw);
     expect(sw).toBeChecked();
+  });
+
+  it('sends controller commands, clears local changes, and shows a success toast', async () => {
+    const setValues = vi.fn().mockReturnValue({
+      unwrap: vi.fn().mockResolvedValue(undefined),
+    });
+    vi.mocked(useValues).mockReturnValue({
+      ...baseValues,
+      setValues,
+      deviceWithValues: {
+        ...mockDeviceWithValues,
+        features: [
+          makeFeatureValue({
+            featureUuid: 'ctrl-1',
+            name: 'on',
+            type: 'controller',
+            value: 0,
+          }),
+        ],
+      },
+    });
+    renderWithDevice();
+
+    await userEvent.click(screen.getByRole('switch'));
+    expect(screen.getByRole('switch')).toBeChecked();
+    await userEvent.click(screen.getByRole('button', { name: /send commands/i }));
+
+    await waitFor(() => {
+      expect(setValues).toHaveBeenCalledWith(
+        'd1',
+        expect.arrayContaining([
+          expect.objectContaining({
+            featureUuid: 'ctrl-1',
+            value: 1,
+          }),
+        ]),
+      );
+    });
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith('Commands sent successfully');
+    });
+    expect(screen.getByRole('switch')).not.toBeChecked();
+  });
+
+  it('logs an error when sending controller commands fails', async () => {
+    const error = new Error('send failed');
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const setValues = vi.fn().mockReturnValue({
+      unwrap: vi.fn().mockRejectedValue(error),
+    });
+    vi.mocked(useValues).mockReturnValue({
+      ...baseValues,
+      setValues,
+      deviceWithValues: {
+        ...mockDeviceWithValues,
+        features: [
+          makeFeatureValue({
+            featureUuid: 'ctrl-1',
+            name: 'on',
+            type: 'controller',
+            value: 0,
+          }),
+        ],
+      },
+    });
+    renderWithDevice();
+
+    await userEvent.click(screen.getByRole('button', { name: /send commands/i }));
+
+    await waitFor(() => {
+      expect(consoleError).toHaveBeenCalledWith('Cannot send commands', error);
+      expect(toast.error).toHaveBeenCalledWith('Cannot send commands');
+    });
+    consoleError.mockRestore();
   });
 
   it('calls assignDeviceHomeRoom and navigates when settings are saved (handleSaveSettings)', async () => {
