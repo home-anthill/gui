@@ -1,7 +1,7 @@
 import { Avatar, Burger, Text, NavLink, Drawer } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { useNavigate, useLocation } from 'react-router';
-import { IconDevices, IconHome2 } from '@tabler/icons-react';
+import { IconBell, IconDevices, IconHome2 } from '@tabler/icons-react';
 
 import { useProfile } from '../../hooks/useProfile';
 import appIcon from '../../assets/logo.svg';
@@ -85,20 +85,32 @@ export function Navbar() {
             </nav>
           )}
 
-          {/* Right: profile avatar */}
-          <Avatar
-            className={styles['app-header-profile'] ?? ''}
-            size="sm"
-            radius="xl"
-            color="orange"
-            onClick={() => handleNavigate('/profile')}
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && handleNavigate('/profile')}
-            aria-label={`Profile – ${profile?.github?.name}`}
-            title={`${profile?.github?.name}\n${profile?.github?.email}`}
-            alt="profile"
-            src={profile?.github?.avatarURL ?? ''}
-          ></Avatar>
+          {/* Right: notifications + profile avatar */}
+          <div className={styles['app-header-actions']}>
+            <button
+              type="button"
+              className={`${styles['app-header-icon-button']}${isActive('/notifications') ? ` ${styles.active}` : ''}`}
+              onClick={() => handleNavigate('/notifications')}
+              aria-label="Notifications"
+              aria-current={isActive('/notifications') ? 'page' : undefined}
+              title="Notifications"
+            >
+              <IconBell size={20} stroke={1.5} />
+            </button>
+            <Avatar
+              className={styles['app-header-profile'] ?? ''}
+              size="sm"
+              radius="xl"
+              color="orange"
+              onClick={() => handleNavigate('/profile')}
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && handleNavigate('/profile')}
+              aria-label={`Profile – ${profile?.github?.name}`}
+              title={`${profile?.github?.name}\n${profile?.github?.email}`}
+              alt="profile"
+              src={profile?.github?.avatarURL ?? ''}
+            ></Avatar>
+          </div>
         </div>
       </header>
 

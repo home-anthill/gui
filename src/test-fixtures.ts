@@ -3,6 +3,7 @@ import { Device, HomeWithDevices, RoomWithDevices } from './models/device';
 import { DeviceWithValuesResponse, FeatureValue } from './models/value';
 import { Profile } from './models/profile';
 import { Online } from './models/online';
+import { NotificationsResponse } from './models/notification';
 
 // ─── Homes ───────────────────────────────────────────────────────────────────
 
@@ -150,4 +151,34 @@ export const mockOnlineOffline: Online = {
   createdAt: '2026-01-05T21:43:41.082+02:00',
   modifiedAt: '2026-04-05T21:48:14.113+02:00',
   currentTime: new Date().toISOString(),
+};
+
+// ─── Notifications ───────────────────────────────────────────────────────────
+
+export const mockNotificationsResponse: NotificationsResponse = {
+  notifications: [
+    {
+      id: 'notification-new',
+      sentAt: 1705318245000,
+      title: 'home anthill',
+      body: 'Device is offline',
+      deviceCount: 1,
+      devices: [{ ...mockDevice, name: 'Kitchen sensor' }],
+      provider: 'fcm',
+      providerMessageId: 'projects/home-anthill/messages/message-new',
+    },
+    {
+      id: 'notification-old',
+      sentAt: 1705318000000,
+      title: 'home anthill',
+      body: '2 devices are offline',
+      deviceCount: 2,
+      devices: [
+        { ...mockDevice, name: 'Kitchen sensor' },
+        { ...mockDevice2, name: 'Hall thermostat' },
+      ],
+      provider: 'fcm',
+      providerMessageId: 'projects/home-anthill/messages/message-old',
+    },
+  ],
 };

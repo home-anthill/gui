@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import {
   Title,
   Text,
@@ -41,17 +41,59 @@ import styles from './devicedetail.module.scss';
 
 export function DeviceDetail() {
   const { state } = useLocation();
-  const device: Device | undefined = state?.device;
-  const home: HomeWithDevices | undefined = state?.home;
-  const room: RoomWithDevices | undefined = state?.room;
+  const routeParams = useParams();
+  const stateDevice: Device | undefined = state?.device;
+  const stateHome: HomeWithDevices | undefined = state?.home;
+  const stateRoom: RoomWithDevices | undefined = state?.room;
+  const deviceId = stateDevice?.id ?? routeParams.id;
   const navigate = useNavigate();
 
   const { homes } = useHomes();
 
-  const { assignDeviceHomeRoom, deleteDevice } = useDevices();
+  const {
+    homeDevices,
+    loading: devicesLoading,
+    assignDeviceHomeRoom,
+    deleteDevice,
+  } = useDevices();
+
+  const { device, home, room } = useMemo(() => {
+    const unassignedDevice = homeDevices.unassignedDevices.find(
+      (candidate) => candidate.id === deviceId,
+    );
+    if (unassignedDevice) {
+      return {
+        device: unassignedDevice,
+        home: undefined,
+        room: undefined,
+      };
+    }
+
+    for (const candidateHome of homeDevices.homeDevices) {
+      for (const candidateRoom of candidateHome.rooms) {
+        const candidateDevice = candidateRoom.devices.find(
+          (candidate) => candidate.id === deviceId,
+        );
+        if (candidateDevice) {
+          return {
+            device: candidateDevice,
+            home: candidateHome,
+            room: candidateRoom,
+          };
+        }
+      }
+    }
+
+    return {
+      device: stateDevice,
+      home: stateHome,
+      room: stateRoom,
+    };
+  }, [deviceId, homeDevices, stateDevice, stateHome, stateRoom]);
+
   const {
     deviceWithValues,
-    loading,
+    loading: valuesLoading,
     deviceWithValuesError,
     setValues,
     isSending,
@@ -95,7 +137,7 @@ export function DeviceDetail() {
     [homes, selectedHome],
   );
 
-  if (loading) {
+  if (devicesLoading || valuesLoading) {
     return (
       <div className="page-loading">
         <Loader color="orange" size="lg" />

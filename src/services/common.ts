@@ -115,6 +115,7 @@ export const commonApi = createApi({
     'Values',
     'Profile',
     'Online',
+    'Notifications',
   ],
   endpoints: (_) => ({}),
 });

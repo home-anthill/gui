@@ -5,6 +5,8 @@
 ### Features
 
 - add device feature spec support
+- add online feature notification silence toggle
+- add notifications history
 
 ### Tests
 

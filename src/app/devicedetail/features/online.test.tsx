@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 
 import { render, screen } from '../../../test-utils';
 import { Online } from './online';
@@ -8,8 +9,10 @@ import {
   mockOnlineOffline,
 } from '../../../test-fixtures';
 import { useOnline } from '../../../hooks/useOnline';
+import { useFeatureNotification } from '../../../hooks/useFeatureNotification';
 
 vi.mock('../../../hooks/useOnline');
+vi.mock('../../../hooks/useFeatureNotification');
 
 const deviceId = '68ed0fd57c3ae0cbcae56274';
 
@@ -33,13 +36,23 @@ const baseOnline = {
 };
 
 describe('Online', () => {
+  const updateFeatureNotification = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useOnline).mockReturnValue(baseOnline);
+    updateFeatureNotification.mockReturnValue({
+      unwrap: vi.fn().mockResolvedValue({ message: 'feature notification updated' }),
+    });
+    vi.mocked(useFeatureNotification).mockReturnValue({
+      updateFeatureNotification,
+      updating: false,
+    });
   });
 
   it('shows a loader while values are loading', () => {
     vi.mocked(useOnline).mockReturnValue({ ...baseOnline, loading: true });
+    render(<Online deviceId={deviceId} features={[onlineFeature]} />);
     expect(
       screen.queryByRole('heading', { name: /online/i }),
     ).not.toBeInTheDocument();
@@ -109,5 +122,32 @@ describe('Online', () => {
     render(<Online deviceId={deviceId} features={[onlineFeature]} />);
 
     expect(screen.getByText('Unknown')).toBeInTheDocument();
+  });
+
+  it('renders notification silence from the feature preference', () => {
+    render(
+      <Online
+        deviceId={deviceId}
+        features={[{ ...onlineFeature, notificationSilenced: true }]}
+      />,
+    );
+
+    expect(
+      screen.getByRole('button', { name: /enable notifications/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('updates notification silence when toggled', async () => {
+    render(<Online deviceId={deviceId} features={[onlineFeature]} />);
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /silence notifications/i }),
+    );
+
+    expect(updateFeatureNotification).toHaveBeenCalledWith(
+      deviceId,
+      onlineFeature.featureUuid,
+      true,
+    );
   });
 });

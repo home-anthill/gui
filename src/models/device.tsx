@@ -22,6 +22,7 @@ export interface Feature {
   order: number;
   enable: boolean;
   spec: Spec;
+  notificationSilenced?: boolean;
 }
 
 export interface Spec {
@@ -53,6 +54,12 @@ export interface AssignDeviceRequest {
   name: string;
   homeId: string;
   roomId: string;
+}
+
+export interface UpdateFeatureNotificationRequest {
+  deviceId: string;
+  featureUuid: string;
+  notificationSilenced: boolean;
 }
 
 export interface DevicesResponse {

@@ -1,0 +1,109 @@
+@use '../../styles/variables' as *;
+
+.notifications-page {
+  padding: 2rem 1rem;
+  max-width: 920px;
+  margin: 0 auto;
+
+  .notifications-header {
+    margin-bottom: 2rem;
+
+    .notifications-header-title {
+      color: $text-primary;
+    }
+
+    .notifications-header-subtitle {
+      color: $text-dimmed;
+    }
+  }
+
+  .notifications-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid $border;
+  }
+
+  .notification-row {
+    display: grid;
+    grid-template-columns: 2rem 2rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid $border;
+  }
+
+  .notification-number {
+    color: $text-dimmed;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: rgba($accent, 0.1);
+    color: $accent;
+  }
+
+  .notification-content {
+    min-width: 0;
+  }
+
+  .notification-main {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .notification-description {
+    color: $text-primary;
+    overflow-wrap: anywhere;
+  }
+
+  .notification-date {
+    color: $text-dimmed;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .notification-devices {
+    color: $text-secondary;
+    margin-top: 0.25rem;
+    overflow-wrap: anywhere;
+  }
+
+  p.empty-message {
+    color: var(--mantine-color-dimmed);
+    text-align: center;
+    padding: 3rem 0;
+  }
+}
+
+.page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+@media (max-width: 640px) {
+  .notifications-page {
+    .notification-row {
+      grid-template-columns: 1.5rem 2rem minmax(0, 1fr);
+      gap: 0.625rem;
+    }
+
+    .notification-main {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+}

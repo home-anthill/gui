@@ -5,6 +5,7 @@ import {
   mockDevice2,
   mockProfile,
   mockOnlineNow,
+  mockNotificationsResponse,
 } from '../test-fixtures';
 
 // Raw Value[] as returned by GET /api/devices/:id/values
@@ -65,6 +66,11 @@ export const handlers = [
 
   // ── Online ───────────────────────────────────────────────────────────────
   http.get('/api/online/:id', () => HttpResponse.json(mockOnlineNow)),
+
+  // ── Notifications ───────────────────────────────────────────────────────
+  http.get('/api/notifications', () =>
+    HttpResponse.json(mockNotificationsResponse),
+  ),
 
   // ── OAuth ────────────────────────────────────────────────────────────────
   http.post('/api/oauth/refresh', () =>

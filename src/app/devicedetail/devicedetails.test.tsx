@@ -6,6 +6,7 @@ import { useHomes } from '../../hooks/useHomes';
 import { useDevices } from '../../hooks/useDevices';
 import { useValues } from '../../hooks/useValues';
 import { useOnline } from '../../hooks/useOnline';
+import { useFeatureNotification } from '../../hooks/useFeatureNotification';
 import { toast } from 'sonner';
 import * as ReactRouter from 'react-router';
 import {
@@ -22,6 +23,7 @@ vi.mock('../../hooks/useHomes');
 vi.mock('../../hooks/useDevices');
 vi.mock('../../hooks/useValues');
 vi.mock('../../hooks/useOnline');
+vi.mock('../../hooks/useFeatureNotification');
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -77,6 +79,11 @@ const baseOnline = {
   onlineError: undefined,
 };
 
+const baseFeatureNotification = {
+  updateFeatureNotification: vi.fn(),
+  updating: false,
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function renderWithDevice() {
@@ -108,6 +115,7 @@ describe('DeviceDetail', () => {
     vi.mocked(useDevices).mockReturnValue(baseDevices);
     vi.mocked(useValues).mockReturnValue(baseValues);
     vi.mocked(useOnline).mockReturnValue(baseOnline);
+    vi.mocked(useFeatureNotification).mockReturnValue(baseFeatureNotification);
   });
 
   it('shows a loader while values are loading', () => {

@@ -71,4 +71,11 @@ describe('Navbar', () => {
     await userEvent.setup().click(screen.getByRole('img', { name: /profile/i }));
     expect(mockNavigate).toHaveBeenCalledWith('/profile');
   });
+
+  it('navigates to /notifications when the notification icon is clicked', async () => {
+    const { default: userEvent } = await import('@testing-library/user-event');
+    render(<Navbar />);
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Notifications' }));
+    expect(mockNavigate).toHaveBeenCalledWith('/notifications');
+  });
 });

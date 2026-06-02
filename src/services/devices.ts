@@ -6,6 +6,7 @@ import {
   HomeWithDevices,
   RoomWithDevices,
   AssignDeviceRequest,
+  UpdateFeatureNotificationRequest,
 } from '../models/device';
 import { Home, Room } from '../models/home';
 
@@ -103,6 +104,24 @@ export const devicesApi = commonApi.injectEndpoints({
         { type: 'Devices', id: 'LIST' },
       ],
     }),
+    updateFeatureNotification: builder.mutation<
+      { message: string },
+      UpdateFeatureNotificationRequest
+    >({
+      query(data: UpdateFeatureNotificationRequest) {
+        const { deviceId, featureUuid, notificationSilenced } = data;
+        return {
+          url: `devices/${deviceId}/features/${featureUuid}/notifications`,
+          method: 'PUT',
+          body: { notificationSilenced },
+        };
+      },
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Devices', id: arg.deviceId },
+        { type: 'Devices', id: 'LIST' },
+        { type: 'Values', id: arg.deviceId },
+      ],
+    }),
   }),
 });
 
@@ -119,4 +138,5 @@ export const {
   useGetDevicesQuery,
   useAssignDeviceMutation,
   useDeleteDeviceMutation,
+  useUpdateFeatureNotificationMutation,
 } = devicesApi;

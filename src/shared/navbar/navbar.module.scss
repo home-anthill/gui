@@ -83,15 +83,44 @@ header.app-header {
       }
     }
 
-    // ── Right: profile avatar ───────────────────────────────────────────────
-    .app-header-profile {
-      cursor: pointer;
-      transition: opacity 0.18s ease, transform 0.18s ease;
+    // ── Right: notifications + profile avatar ───────────────────────────────
+    .app-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
       flex-shrink: 0;
 
-      &:hover {
-        opacity: 0.85;
-        transform: scale(1.06);
+      .app-header-icon-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: none;
+        color: $text-secondary;
+        cursor: pointer;
+        transition: color 0.18s ease, background-color 0.18s ease,
+          border-color 0.18s ease;
+
+        &:hover,
+        &.active {
+          color: $accent;
+          background-color: rgba($accent, 0.1);
+          border-color: rgba($accent, 0.18);
+        }
+      }
+
+      .app-header-profile {
+        cursor: pointer;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+        flex-shrink: 0;
+
+        &:hover {
+          opacity: 0.85;
+          transform: scale(1.06);
+        }
       }
     }
   }

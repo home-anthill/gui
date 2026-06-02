@@ -40,6 +40,7 @@ export const valuesApi = commonApi.injectEndpoints({
                 order: feature.order,
                 enable: feature.enable,
                 spec: feature.spec,
+                notificationSilenced: feature.notificationSilenced ?? false,
                 value: 0,
                 createdAt: 0,
                 modifiedAt: 0,
@@ -54,6 +55,7 @@ export const valuesApi = commonApi.injectEndpoints({
               enable: feature.enable,
               value: value.value,
               spec: feature.spec,
+              notificationSilenced: feature.notificationSilenced ?? false,
               createdAt: value.createdAt,
               modifiedAt: value.modifiedAt,
             };

@@ -7,6 +7,7 @@ import Profile from './profile/profile';
 import Homes from './homes/homes';
 import Devices from './devices/devices';
 import DeviceDetail from './devicedetail/devicedetails';
+import Notifications from './notifications/notifications';
 import ProtectedLayout from '../auth/ProtectedLayout';
 import { AuthLayout } from '../auth/AuthLayout';
 import { NotFoundPage } from '../shared/notfound/notfoundpage';
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
           { path: 'devices', Component: Devices },
           { path: 'devices/:id', Component: DeviceDetail },
           { path: 'homes', Component: Homes },
+          { path: 'notifications', Component: Notifications },
           { path: 'profile', Component: Profile },
           {
             path: '*',
