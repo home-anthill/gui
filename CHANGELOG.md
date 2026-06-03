@@ -7,6 +7,7 @@
 - add device feature spec support
 - add online feature notification silence toggle
 - add notifications history
+- add route-level dynamic imports to code-split pages and reduce the production entry bundle
 
 ### Tests
 

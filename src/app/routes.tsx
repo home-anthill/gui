@@ -1,24 +1,26 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import RootLayout from './rootlayout';
-import Login from './login/login';
-import PostLogin from './postlogin/postLogin';
-import Profile from './profile/profile';
-import Homes from './homes/homes';
-import Devices from './devices/devices';
-import DeviceDetail from './devicedetail/devicedetails';
-import Notifications from './notifications/notifications';
 import ProtectedLayout from '../auth/ProtectedLayout';
 import { AuthLayout } from '../auth/AuthLayout';
-import { NotFoundPage } from '../shared/notfound/notfoundpage';
 
 export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
       // --- Public routes ---
-      { path: '/login', Component: Login },
-      { path: '/postlogin', Component: PostLogin },
+      {
+        path: '/login',
+        lazy: async () => ({
+          Component: (await import('./login/login')).default,
+        }),
+      },
+      {
+        path: '/postlogin',
+        lazy: async () => ({
+          Component: (await import('./postlogin/postLogin')).default,
+        }),
+      },
       // --- Protected routes ---
       {
         path: '/',
@@ -28,12 +30,42 @@ export const router = createBrowserRouter([
           </ProtectedLayout>
         ),
         children: [
-          { index: true, Component: Devices }, // match path: 'main/'
-          { path: 'devices', Component: Devices },
-          { path: 'devices/:id', Component: DeviceDetail },
-          { path: 'homes', Component: Homes },
-          { path: 'notifications', Component: Notifications },
-          { path: 'profile', Component: Profile },
+          {
+            index: true,
+            lazy: async () => ({
+              Component: (await import('./devices/devices')).default,
+            }),
+          },
+          {
+            path: 'devices',
+            lazy: async () => ({
+              Component: (await import('./devices/devices')).default,
+            }),
+          },
+          {
+            path: 'devices/:id',
+            lazy: async () => ({
+              Component: (await import('./devicedetail/devicedetails')).default,
+            }),
+          },
+          {
+            path: 'homes',
+            lazy: async () => ({
+              Component: (await import('./homes/homes')).default,
+            }),
+          },
+          {
+            path: 'notifications',
+            lazy: async () => ({
+              Component: (await import('./notifications/notifications')).default,
+            }),
+          },
+          {
+            path: 'profile',
+            lazy: async () => ({
+              Component: (await import('./profile/profile')).default,
+            }),
+          },
           {
             path: '*',
             element: (
@@ -45,7 +77,13 @@ export const router = createBrowserRouter([
         ],
       },
       // --- Global fallback ---
-      { path: '*', Component: NotFoundPage },
+      {
+        path: '*',
+        lazy: async () => ({
+          Component: (await import('../shared/notfound/notfoundpage'))
+            .NotFoundPage,
+        }),
+      },
     ],
   },
 ]);

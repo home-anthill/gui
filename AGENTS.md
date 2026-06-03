@@ -86,6 +86,7 @@ AuthLayout (AuthProvider)
 **Key routing facts:**
 - No `/main` prefix — protected routes are children of `/`
 - `RootLayout` (`src/app/rootlayout.tsx`) is the persistent shell (navbar + Sonner Toaster + `<Outlet>`)
+- Page routes use React Router `lazy` route modules with dynamic `import()` in `src/app/routes.tsx` so Vite can code-split pages and keep the initial bundle below the large-chunk warning threshold.
 - Device settings and feature controls are merged into a single `DeviceDetail` page at `/devices/:id`; there is no separate features route
 - Homes CRUD (add/edit/delete) and room management happen via modals inside the Homes page — no separate edit route
 
@@ -136,7 +137,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 
 **Adding a new page:**
 1. Create `src/app/<pagename>/<pagename>.tsx` and a colocated `.module.scss`
-2. Add the route to `src/app/routes.tsx` (wrap with `ProtectedLayout` if authenticated)
+2. Add the route to `src/app/routes.tsx` as a React Router `lazy` route using dynamic `import()` (wrap with `ProtectedLayout` if authenticated)
 3. Create a custom hook in `src/hooks/` if the page needs data from multiple endpoints
 4. Use `@mantine/core` components; import the dark theme from `src/theme/theme.ts`
 
