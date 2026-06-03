@@ -131,7 +131,7 @@ export function Online({ deviceId, features }: OnlineProps) {
           size="h3"
           className={cssClass('sensor-section-text')}
         >
-          Sensors
+          Online
         </Title>
       </div>
 

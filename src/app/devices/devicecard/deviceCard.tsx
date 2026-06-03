@@ -8,7 +8,6 @@ import {
   IconEye,
   IconSun,
   IconLeaf,
-  IconBolt,
   IconAdjustments,
 } from '@tabler/icons-react';
 import {
@@ -17,6 +16,8 @@ import {
   HomeWithDevices,
   RoomWithDevices,
 } from '../../../models/device';
+import { Online } from '../../../models/online';
+import { useOnline } from '../../../hooks/useOnline';
 import styles from './deviceCard.module.scss';
 
 interface DeviceCardProps {
@@ -46,21 +47,34 @@ const sensorLabels: Record<string, string> = {
   airquality: 'Air quality',
 };
 
+const OFFLINE_THRESHOLD_MS = 60 * 1000;
+
+function isOnline(online: Online | undefined): boolean {
+  if (!online) {
+    return false;
+  }
+
+  const modifiedAt = new Date(online.modifiedAt).getTime();
+  const currentTime = new Date(online.currentTime).getTime();
+
+  return modifiedAt >= currentTime - OFFLINE_THRESHOLD_MS;
+}
+
 function getFeatureSummary(features: Feature[]) {
-  const sensors = features.filter((f): f is Feature => f.type === 'sensor');
-  const hasControllers = features.some((f) => f.type === 'controller');
-  const onlineFeatures = features.filter(
-    (f): f is Feature => f.type === 'sensor' && f.name === 'online',
+  const sensors = features.filter(
+    (f): f is Feature => f.type === 'sensor' && f.name !== 'online',
   );
-  return { sensors, hasControllers, onlineFeatures };
+  const hasControllers = features.some((f) => f.type === 'controller');
+  return { sensors, hasControllers };
 }
 
 function DeviceCard({ device, home, room }: DeviceCardProps) {
   const navigate = useNavigate();
-  const { sensors, hasControllers, onlineFeatures } = getFeatureSummary(
-    device.features,
-  );
-  const hasFeatures = sensors.length > 0 || onlineFeatures.length > 0;
+  const { sensors, hasControllers } = getFeatureSummary(device.features);
+  const { online } = useOnline(device.id);
+  const deviceOnline = isOnline(online);
+  const onlineLabel = deviceOnline ? 'Online' : 'Offline';
+  const hasFeatures = sensors.length > 0;
 
   function showDeviceDetails(): void {
     if (home && room) {
@@ -84,11 +98,25 @@ function DeviceCard({ device, home, room }: DeviceCardProps) {
     >
       {/* Body */}
       <div className={styles['device-card-body']}>
-        {/* Name row + controllable badge */}
         <div className={styles['device-card-title-row']}>
           <Text className={styles['device-card-name'] ?? ''} fw={600} truncate>
             {device.name ? device.name : device.mac}
           </Text>
+          <Tooltip label={onlineLabel} withArrow>
+            <span
+              className={`${styles['device-card-online-dot']} ${
+                deviceOnline
+                  ? styles['device-card-online-dot-online']
+                  : styles['device-card-online-dot-offline']
+              }`}
+              aria-label={onlineLabel}
+              role="status"
+            />
+          </Tooltip>
+        </div>
+
+        <div className={styles['device-card-meta-row']}>
+          <Text className={styles['device-card-mac'] ?? ''}>{device.mac}</Text>
           {hasControllers && (
             <div className={styles['device-card-ctrl-badge']}>
               <IconAdjustments size={10} stroke={2.5} />
@@ -96,9 +124,6 @@ function DeviceCard({ device, home, room }: DeviceCardProps) {
             </div>
           )}
         </div>
-
-        {/* MAC address */}
-        <Text className={styles['device-card-mac'] ?? ''}>{device.mac}</Text>
 
         {/* Feature icons */}
         {hasFeatures && (
@@ -114,13 +139,6 @@ function DeviceCard({ device, home, room }: DeviceCardProps) {
                 </Tooltip>
               ) : null;
             })}
-            {onlineFeatures.map((feature) => (
-              <Tooltip key={feature.uuid} label={feature.name} withArrow>
-                <div className={styles['device-card-feat-icon']}>
-                  <IconBolt size={26} stroke={1.8} />
-                </div>
-              </Tooltip>
-            ))}
           </div>
         )}
       </div>

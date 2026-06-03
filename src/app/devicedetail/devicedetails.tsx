@@ -305,13 +305,13 @@ export function DeviceDetail() {
       </Paper>
 
       <Sensor features={sensorFeatures} />
-      <Online deviceId={device.id} features={onlineFeatures} />
       <ControllerFeature
         features={controllerFeatures}
         onChangeValue={handleControlChange}
         onSend={handleSendControls}
         isSending={isSending}
       />
+      <Online deviceId={device.id} features={onlineFeatures} />
 
       <Divider style={{ width: '100%', marginTop: '2rem' }} />
 

@@ -2,7 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '../../../test-utils';
 import { DeviceCard } from './deviceCard';
-import { mockDevice, mockHomeWithDevices, mockRoomWithDevices } from '../../../test-fixtures';
+import {
+  mockDevice,
+  mockHomeWithDevices,
+  mockOnlineNow,
+  mockOnlineOffline,
+  mockRoomWithDevices,
+} from '../../../test-fixtures';
+import { useOnline } from '../../../hooks/useOnline';
 
 const mockNavigate = vi.hoisted(() => vi.fn());
 vi.mock('react-router', async (importOriginal) => {
@@ -10,9 +17,16 @@ vi.mock('react-router', async (importOriginal) => {
   return { ...actual, useNavigate: () => mockNavigate };
 });
 
+vi.mock('../../../hooks/useOnline');
+
 describe('DeviceCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useOnline).mockReturnValue({
+      online: mockOnlineNow,
+      loading: false,
+      onlineError: undefined,
+    });
   });
 
   it('renders the MAC address when the device has no name', () => {
@@ -26,6 +40,44 @@ describe('DeviceCard', () => {
     render(<DeviceCard device={deviceWithName} />);
     expect(screen.getByText('My Sensor')).toBeInTheDocument();
     expect(screen.getByText('AA:BB:CC:DD:EE:FF')).toBeInTheDocument();
+  });
+
+  it('shows online status from the online API result', () => {
+    render(<DeviceCard device={mockDevice} />);
+    expect(screen.getByLabelText('Online')).toBeInTheDocument();
+  });
+
+  it('shows offline status from an old online API result', () => {
+    vi.mocked(useOnline).mockReturnValue({
+      online: mockOnlineOffline,
+      loading: false,
+      onlineError: undefined,
+    });
+    render(<DeviceCard device={mockDevice} />);
+    expect(screen.getByLabelText('Offline')).toBeInTheDocument();
+  });
+
+  it('places the controller badge on the MAC row', () => {
+    const controlDevice = {
+      ...mockDevice,
+      features: [
+        ...mockDevice.features,
+        {
+          uuid: 'ctrl-1',
+          name: 'on',
+          type: 'controller',
+          unit: '',
+          order: 2,
+          enable: true,
+          spec: { format: 'bool' as const },
+        },
+      ],
+    };
+    render(<DeviceCard device={controlDevice} />);
+    const macMatches = screen.getAllByText('AA:BB:CC:DD:EE:FF');
+    expect(macMatches).toHaveLength(2);
+    const macRow = macMatches[1]?.parentElement ?? null;
+    expect(macRow).toContainElement(screen.getByText('Ctrl'));
   });
 
   it('navigates to device detail without home/room when clicked', async () => {

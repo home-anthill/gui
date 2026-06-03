@@ -216,6 +216,52 @@ describe('DeviceDetail', () => {
     expect(screen.getByRole('heading', { name: /sensors/i })).toBeInTheDocument();
   });
 
+  it('renders feature sections in Sensors, Controls, Online order', () => {
+    vi.mocked(useValues).mockReturnValue({
+      ...baseValues,
+      deviceWithValues: {
+        ...mockDeviceWithValues,
+        features: [
+          makeFeatureValue({
+            featureUuid: 'sensor-1',
+            name: 'temperature',
+            type: 'sensor',
+            value: 22.5,
+          }),
+          makeFeatureValue({
+            featureUuid: 'online-1',
+            name: 'online',
+            type: 'sensor',
+            value: 1,
+          }),
+          makeFeatureValue({
+            featureUuid: 'ctrl-1',
+            name: 'on',
+            type: 'controller',
+            value: 0,
+          }),
+        ],
+      },
+    });
+    renderWithDevice();
+
+    const sensors = screen.getByRole('heading', { name: /^sensors$/i });
+    const controls = screen.getByRole('heading', { name: /^controls$/i });
+    const online = screen.getByRole('heading', {
+      level: 2,
+      name: /^online$/i,
+    });
+
+    expect(
+      sensors.compareDocumentPosition(controls) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      controls.compareDocumentPosition(online) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   it('updates the controller switch when toggled (handleControlChange)', async () => {
     vi.mocked(useValues).mockReturnValue({
       ...baseValues,

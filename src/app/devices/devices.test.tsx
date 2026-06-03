@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../test-utils';
 import Devices from './devices';
 import { useDevices } from '../../hooks/useDevices';
-import { mockDevice, mockHomeWithDevices } from '../../test-fixtures';
+import { useOnline } from '../../hooks/useOnline';
+import { mockDevice, mockHomeWithDevices, mockOnlineNow } from '../../test-fixtures';
 
 vi.mock('../../hooks/useDevices');
+vi.mock('../../hooks/useOnline');
 
 // DeviceCard uses useNavigate from 'react-router'; mock it so tests don't need a real router
 const mockNavigate = vi.hoisted(() => vi.fn());
@@ -24,6 +26,11 @@ const baseDevices = {
 describe('Devices', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useOnline).mockReturnValue({
+      online: mockOnlineNow,
+      loading: false,
+      onlineError: undefined,
+    });
   });
 
   it('renders the Devices heading', () => {

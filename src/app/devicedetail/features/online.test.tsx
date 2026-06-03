@@ -74,7 +74,7 @@ describe('Online', () => {
   it('renders the Online heading', () => {
     render(<Online deviceId={deviceId} features={[onlineFeature]} />);
     expect(
-      screen.getByRole('heading', { name: /online/i }),
+      screen.getByRole('heading', { level: 2, name: /online/i }),
     ).toBeInTheDocument();
   });
 
@@ -86,7 +86,7 @@ describe('Online', () => {
   it('shows "Online" when online value API has modDate >= currentDate - 60 seconds', () => {
     // to have this scenario we use the mocked mockOnlineNow to be sure that it always true
     render(<Online deviceId={deviceId} features={[onlineFeature]} />);
-    expect(screen.getByText('Online')).toBeInTheDocument();
+    expect(screen.getAllByText('Online')).toHaveLength(2);
   });
 
   it('shows "Offline" when online value API has modDate < currentDate - 60 seconds', () => {
