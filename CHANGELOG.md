@@ -8,10 +8,12 @@
 - add online feature notification silence toggle
 - add notifications history
 - add route-level dynamic imports to code-split pages and reduce the production entry bundle
+- add route-level error fallback and one-time Vite preload reload recovery for stale app assets
 
 ### Tests
 
 - improve test coverage
+- add coverage for asset-load error detection and preload reload handling
 
 
 ## 4.0.0

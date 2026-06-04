@@ -6,9 +6,11 @@ import { MantineProvider } from '@mantine/core';
 import { store } from './store';
 import { theme } from './theme/theme';
 import App from './app/app';
+import { installPreloadErrorHandler } from './utils/preloadErrorHandler';
 
 import './styles/global.scss';
 
+installPreloadErrorHandler();
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(

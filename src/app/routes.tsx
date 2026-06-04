@@ -3,10 +3,12 @@ import { createBrowserRouter } from 'react-router-dom';
 import RootLayout from './rootlayout';
 import ProtectedLayout from '../auth/ProtectedLayout';
 import { AuthLayout } from '../auth/AuthLayout';
+import { RouteErrorBoundary } from '../shared/errorboundary/RouteErrorBoundary';
 
 export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       // --- Public routes ---
       {

@@ -58,7 +58,8 @@ src/
 ├── theme/                    # Mantine theme config (theme.ts)
 ├── utils/                    # Pure utilities:
 │   ├── dateUtils.ts          #   format Unix epoch ms / ISO date strings for display
-│   └── logger.ts             #   logError(message, err) — console.error + toast.error combined
+│   ├── logger.ts             #   logError(message, err) — console.error + toast.error combined
+│   └── preloadErrorHandler.ts #  one-time reload recovery for Vite preload/chunk failures
 ├── assets/                   # Static assets (logo.svg)
 ├── store.ts                  # Redux store + RTK Query setup
 ├── test-setup.ts             # Vitest + MSW lifecycle setup
@@ -87,6 +88,7 @@ AuthLayout (AuthProvider)
 - No `/main` prefix — protected routes are children of `/`
 - `RootLayout` (`src/app/rootlayout.tsx`) is the persistent shell (navbar + Sonner Toaster + `<Outlet>`)
 - Page routes use React Router `lazy` route modules with dynamic `import()` in `src/app/routes.tsx` so Vite can code-split pages and keep the initial bundle below the large-chunk warning threshold.
+- The root route defines `errorElement: <RouteErrorBoundary />` so route-loader and lazy-import failures render the shared reload fallback instead of a blank page.
 - Device settings and feature controls are merged into a single `DeviceDetail` page at `/devices/:id`; there is no separate features route
 - Homes CRUD (add/edit/delete) and room management happen via modals inside the Homes page — no separate edit route
 
@@ -132,6 +134,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 - **CSS module lookups**: never write `className={styles['foo'] ?? ''}`. CSS module keys are always defined when the SCSS file is properly imported; the `?? ''` fallback is dead code.
 - **Interactive navigation elements**: use `<button type="button">` (not `<div role="link">`) for clickable elements that trigger `navigate()`. Buttons receive keyboard focus and fire `onClick` on Enter/Space natively.
 - **One-shot effects**: when a `useEffect` must run exactly once (e.g., OAuth callback handling), add a `useRef<boolean>(false)` guard rather than using an empty dep array, so StrictMode double-invocation is handled correctly.
+- **App update recovery**: keep React error-boundary and React Router error fallback UI centralized in `src/shared/errorboundary/ErrorFallback.tsx`. Asset/chunk load failures should use `isAssetLoadError()` for "Update needed" messaging, and `src/utils/preloadErrorHandler.ts` should remain a one-time per-tab reload guard for Vite `vite:preloadError` events.
 
 ## Common Development Patterns
 
@@ -175,6 +178,7 @@ Tests use **Vitest** with **React Testing Library**, **MSW** for HTTP mocking, a
 - `src/test-fixtures.ts` — Mock data: `mockHome`, `mockDevice`, `mockDevice2`, `mockProfile`, `mockOnlineNow`, `mockOnlineOffline`, `mockDeviceWithValues`, `makeFeatureValue(overrides?)` (factory)
 - `src/mocks/server.ts` — MSW server instance
 - `src/mocks/handlers.ts` — MSW HTTP request handlers for all API endpoints
+- `src/shared/errorboundary/error-utils.test.ts` and `src/utils/preloadErrorHandler.test.ts` cover chunk/preload error detection and one-time reload behavior
 
 ### Testing Patterns
 
