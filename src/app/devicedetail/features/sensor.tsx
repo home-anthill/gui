@@ -8,6 +8,11 @@ import {
   IconSun,
   IconEye,
   IconLeaf,
+  IconAlertTriangle,
+  IconFlame,
+  IconSnowflake,
+  IconTemperature,
+  IconZzz,
 } from '@tabler/icons-react';
 
 import { FeatureValue } from '../../../models/value';
@@ -29,6 +34,20 @@ const sensorIcons: Record<
   motion: IconEye,
   light: IconSun,
   airquality: IconLeaf,
+  mode: IconTemperature,
+};
+
+const modeIcons: Record<
+  number,
+  {
+    label: string;
+    icon: ComponentType<{ size?: number; stroke?: number }>;
+  }
+> = {
+  [-1]: { label: 'Error', icon: IconAlertTriangle },
+  0: { label: 'Sleep', icon: IconZzz },
+  1: { label: 'Cold', icon: IconSnowflake },
+  2: { label: 'Heat', icon: IconFlame },
 };
 
 export const airQualityLabels = ['Poor', 'Low', 'Good', 'Excellent'] as const;
@@ -115,6 +134,8 @@ export function Sensor({ features }: SensorProps) {
         {features.map((feature) => {
           const { text, color } = formatSensorValue(feature);
           const IconComp = sensorIcons[feature.name];
+          const mode = feature.name === 'mode' ? modeIcons[feature.value] : undefined;
+          const ModeIcon = mode?.icon;
           return (
             <Paper
               key={feature.featureUuid}
@@ -134,8 +155,18 @@ export function Sensor({ features }: SensorProps) {
                 className={styles['sensor-card-value']}
                 style={color ? { color } : undefined}
               >
-                <span className={styles['value-text']}>{text}</span>
-                {feature.unit && feature.unit !== '-' && (
+                {mode && ModeIcon ? (
+                  <span
+                    className={styles['mode-icon']}
+                    role="img"
+                    aria-label={mode.label}
+                  >
+                    <ModeIcon size={42} stroke={1.8} />
+                  </span>
+                ) : (
+                  <span className={styles['value-text']}>{text}</span>
+                )}
+                {!mode && feature.unit && feature.unit !== '-' && (
                   <span className={styles['value-unit']}>{feature.unit}</span>
                 )}
               </div>

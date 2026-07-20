@@ -104,6 +104,12 @@
           letter-spacing: -0.02em;
         }
 
+        .mode-icon {
+          display: flex;
+          align-items: center;
+          color: $accent;
+        }
+
         .value-unit {
           font-size: 1.125rem;
           font-weight: 500;

@@ -72,6 +72,32 @@ describe('Sensor', () => {
     expect(screen.queryByText('-')).not.toBeInTheDocument();
   });
 
+  it.each([
+    [-1, 'Error'],
+    [0, 'Sleep'],
+    [1, 'Cold'],
+    [2, 'Heat'],
+  ])('renders the mode value %i as a %s icon', (value, label) => {
+    render(
+      <Sensor
+        features={[makeFeatureValue({ name: 'mode', value, unit: '-' })]}
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: label })).toBeInTheDocument();
+    expect(screen.queryByText(String(value))).not.toBeInTheDocument();
+  });
+
+  it('renders a temperature status icon for the thermostat mode sensor', () => {
+    const { container } = render(
+      <Sensor features={[makeFeatureValue({ name: 'mode', value: 1 })]} />,
+    );
+
+    expect(
+      container.querySelector('.tabler-icon-temperature'),
+    ).toBeInTheDocument();
+  });
+
   it('renders a card for each feature', () => {
     const features = [
       makeFeatureValue({
