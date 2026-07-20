@@ -67,7 +67,7 @@ function ControlInput({ feature, onChangeValue }: ControlInputProps) {
               {feature.spec.min?.toString() ?? '0'}
             </Text>
             <Text fw={600} c="orange">
-              {feature.value}
+              {feature.value}°C
             </Text>
             <Text size="sm" c="dimmed">
               {feature.spec.max?.toString() ?? '10'}

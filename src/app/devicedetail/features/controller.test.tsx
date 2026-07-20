@@ -76,6 +76,7 @@ describe('ControllerFeature', () => {
     const features = [makeFeatureValue({ name: 'tolerance', type: 'controller', value: 3 })];
     render(<ControllerFeature {...baseProps} features={features} />);
     expect(screen.getByRole('slider')).toBeInTheDocument();
+    expect(screen.getByText('3°C')).toBeInTheDocument();
   });
 
   it('renders a select for the "mode" feature', () => {
