@@ -9,6 +9,7 @@
 - add notifications history
 - add route-level dynamic imports to code-split pages and reduce the production entry bundle
 - add route-level error fallback and one-time Vite preload reload recovery for stale app assets
+- Added thermostat `mode` sensor feature
 
 ### Tests
 

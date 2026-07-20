@@ -15,7 +15,7 @@ COPY . .
 
 RUN npm run build:prod
 
-FROM dhi.io/nginx:1-alpine3.23
+FROM dhi.io/nginx:1-alpine3.24
 
 WORKDIR /ac
 
