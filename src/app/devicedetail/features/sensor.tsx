@@ -37,8 +37,11 @@ const sensorIcons: Record<
   mode: IconTemperature,
 };
 
+const admittedModeValues = [-1, 0, 1, 2] as const;
+type ModeValue = (typeof admittedModeValues)[number];
+
 const modeIcons: Record<
-  number,
+  ModeValue,
   {
     label: string;
     icon: ComponentType<{ size?: number; stroke?: number }>;
@@ -49,6 +52,10 @@ const modeIcons: Record<
   1: { label: 'Cold', icon: IconSnowflake },
   2: { label: 'Heat', icon: IconFlame },
 };
+
+function isModeValue(value: number): value is ModeValue {
+  return admittedModeValues.some((modeValue) => modeValue === value);
+}
 
 export const airQualityLabels = ['Poor', 'Low', 'Good', 'Excellent'] as const;
 export const airQualityColors = [
@@ -134,7 +141,10 @@ export function Sensor({ features }: SensorProps) {
         {features.map((feature) => {
           const { text, color } = formatSensorValue(feature);
           const IconComp = sensorIcons[feature.name];
-          const mode = feature.name === 'mode' ? modeIcons[feature.value] : undefined;
+          const mode =
+            feature.name === 'mode' && isModeValue(feature.value)
+              ? modeIcons[feature.value]
+              : undefined;
           const ModeIcon = mode?.icon;
           return (
             <Paper

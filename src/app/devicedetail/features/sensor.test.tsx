@@ -73,19 +73,44 @@ describe('Sensor', () => {
   });
 
   it.each([
-    [-1, 'Error'],
-    [0, 'Sleep'],
-    [1, 'Cold'],
-    [2, 'Heat'],
+    [-1.0, 'Error'],
+    [0.0, 'Sleep'],
+    [1.0, 'Cold'],
+    [2.0, 'Heat'],
   ])('renders the mode value %i as a %s icon', (value, label) => {
     render(
       <Sensor
-        features={[makeFeatureValue({ name: 'mode', value, unit: '-' })]}
+        features={[
+          makeFeatureValue({
+            name: 'mode',
+            value,
+            unit: '-',
+            spec: { format: 'float', step: 1.0 },
+          }),
+        ]}
       />,
     );
 
     expect(screen.getByRole('img', { name: label })).toBeInTheDocument();
     expect(screen.queryByText(String(value))).not.toBeInTheDocument();
+  });
+
+  it('does not map a mode value outside the admitted float values to an icon', () => {
+    render(
+      <Sensor
+        features={[
+          makeFeatureValue({
+            name: 'mode',
+            value: 3.0,
+            unit: '-',
+            spec: { format: 'float', step: 1.0 },
+          }),
+        ]}
+      />,
+    );
+
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
 
   it('renders a temperature status icon for the thermostat mode sensor', () => {
