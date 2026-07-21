@@ -1,7 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   root: __dirname,
@@ -9,12 +8,24 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8082',
+        secure: false,
+      },
+    },
   },
   preview: {
     port: 4300,
     host: 'localhost',
   },
-  plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['README.md'])],
+  plugins: [
+    react(),
+    viteStaticCopy({ targets: [{ src: 'README.md', dest: '.' }] }),
+  ],
+  resolve: {
+    tsconfigPaths: true,
+  },
   build: {
     outDir: 'dist/home-anthill',
     emptyOutDir: true,

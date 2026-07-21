@@ -20,6 +20,8 @@
         "buildTargetName": "build",
         "devTargetName": "dev",
         "startTargetName": "start",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
         "watchDepsTargetName": "watch-deps",
         "buildDepsTargetName": "build-deps",
         "typecheckTargetName": "typecheck"
@@ -32,17 +34,9 @@
       }
     },
     {
-      "plugin": "@nx/vite/plugin",
+      "plugin": "@nx/vitest",
       "options": {
-        "buildTargetName": "build",
-        "testTargetName": "test",
-        "serveTargetName": "serve",
-        "devTargetName": "dev",
-        "previewTargetName": "preview",
-        "serveStaticTargetName": "serve-static",
-        "typecheckTargetName": "typecheck",
-        "buildDepsTargetName": "build-deps",
-        "watchDepsTargetName": "watch-deps"
+        "testTargetName": "test"
       }
     }
   ],
@@ -64,5 +58,9 @@
       }
     }
   },
-  "analytics": false
+  "analytics": false,
+  "neverConnectToCloud": true,
+  "migrate": {
+    "agentic": false
+  }
 }

@@ -18,6 +18,28 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+// jsdom does not perform layout and does not provide ResizeObserver. Mantine's
+// Select dropdown uses it through ScrollArea, so install a no-op implementation.
+class ResizeObserverMock implements ResizeObserver {
+  disconnect(): void {
+    return undefined;
+  }
+
+  observe(): void {
+    return undefined;
+  }
+
+  unobserve(): void {
+    return undefined;
+  }
+}
+
+Object.defineProperty(globalThis, 'ResizeObserver', {
+  configurable: true,
+  writable: true,
+  value: ResizeObserverMock,
+});
+
 // jsdom's localStorage may lack a clear() implementation depending on the
 // runner configuration, so we install a complete in-memory Storage mock.
 class LocalStorageMock implements Storage {

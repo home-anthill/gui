@@ -20,7 +20,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitReturns": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedSideEffectImports": false
   },
   "files": [],
   "include": [],
