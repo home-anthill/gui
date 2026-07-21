@@ -10,6 +10,7 @@
 - add route-level dynamic imports to code-split pages and reduce the production entry bundle
 - add route-level error fallback and one-time Vite preload reload recovery for stale app assets
 - Added thermostat `mode` sensor feature
+- Upgrade from `nginx:1-alpine3.23` to `nginx:1-alpine3.24`, it requires changes to `deployer` project
 
 ### Tests
 
