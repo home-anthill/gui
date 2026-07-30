@@ -6,6 +6,7 @@
 
 - add device feature spec support
 - add online feature notification silence toggle
+- add notification silence toggles for motion and thermostat mode alarms
 - add notifications history
 - add route-level dynamic imports to code-split pages and reduce the production entry bundle
 - add route-level error fallback and one-time Vite preload reload recovery for stale app assets

@@ -1,7 +1,9 @@
-import { ComponentType } from 'react';
-import { Title, Paper, Text } from '@mantine/core';
+import { ComponentType, useEffect, useState } from 'react';
+import { ActionIcon, Paper, Text, Title, Tooltip } from '@mantine/core';
 import {
   IconActivityHeartbeat,
+  IconBell,
+  IconBellOff,
   IconDroplet,
   IconGauge,
   IconThermometer,
@@ -14,15 +16,21 @@ import {
   IconTemperature,
   IconZzz,
 } from '@tabler/icons-react';
+import { toast } from 'sonner';
 
 import { FeatureValue } from '../../../models/value';
+import { useFeatureNotification } from '../../../hooks/useFeatureNotification';
 import { getPrettyDateFromUnixEpoch } from '../../../utils/dateUtils';
+import { logError } from '../../../utils/logger';
 
 import styles from './sensor.module.scss';
 
 interface SensorProps {
+  deviceId: string;
   features: FeatureValue[];
 }
+
+const notificationFeatureNames = new Set(['motion', 'mode']);
 
 const sensorIcons: Record<
   string,
@@ -120,8 +128,55 @@ function formatSensorValue(feature: FeatureValue): {
   return { text: formatByStep(feature.value, feature.spec.step) };
 }
 
-export function Sensor({ features }: SensorProps) {
+export function Sensor({ deviceId, features }: SensorProps) {
+  const { updateFeatureNotification, updating } = useFeatureNotification();
+  const [silencedByFeature, setSilencedByFeature] = useState<
+    Record<string, boolean>
+  >({});
+
+  useEffect(() => {
+    setSilencedByFeature(
+      Object.fromEntries(
+        features.map((feature) => [
+          feature.featureUuid,
+          feature.notificationSilenced ?? false,
+        ]),
+      ),
+    );
+  }, [features]);
+
   if (features.length === 0) return null;
+
+  const handleNotificationChange = async (
+    featureUuid: string,
+    notificationSilenced: boolean,
+  ) => {
+    const previous = silencedByFeature[featureUuid] ?? false;
+    setSilencedByFeature((current) => ({
+      ...current,
+      [featureUuid]: notificationSilenced,
+    }));
+
+    try {
+      await updateFeatureNotification(
+        deviceId,
+        featureUuid,
+        notificationSilenced,
+      ).unwrap();
+      toast.success(
+        notificationSilenced
+          ? 'Notifications silenced'
+          : 'Notifications enabled',
+      );
+    } catch (err) {
+      setSilencedByFeature((current) => ({
+        ...current,
+        [featureUuid]: previous,
+      }));
+      logError('Cannot update feature notification', err);
+    }
+  };
+
   return (
     <section className={styles['sensor-section']}>
       <div className={styles['sensor-section-header']}>
@@ -146,6 +201,14 @@ export function Sensor({ features }: SensorProps) {
               ? modeIcons[feature.value]
               : undefined;
           const ModeIcon = mode?.icon;
+          const supportsNotifications = notificationFeatureNames.has(
+            feature.name,
+          );
+          const notificationSilenced =
+            silencedByFeature[feature.featureUuid] ?? false;
+          const notificationLabel = notificationSilenced
+            ? 'Enable notifications'
+            : 'Silence notifications';
           return (
             <Paper
               key={feature.featureUuid}
@@ -160,6 +223,30 @@ export function Sensor({ features }: SensorProps) {
                 <div className={styles['sensor-card-label']}>
                   <h4>{feature.name}</h4>
                 </div>
+                {supportsNotifications && (
+                  <Tooltip label={notificationLabel} withArrow>
+                    <ActionIcon
+                      className={styles['notification-toggle']}
+                      variant="light"
+                      color={notificationSilenced ? 'gray' : 'orange'}
+                      size="lg"
+                      disabled={updating}
+                      aria-label={notificationLabel}
+                      onClick={() =>
+                        handleNotificationChange(
+                          feature.featureUuid,
+                          !notificationSilenced,
+                        )
+                      }
+                    >
+                      {notificationSilenced ? (
+                        <IconBellOff size={20} stroke={1.5} />
+                      ) : (
+                        <IconBell size={20} stroke={1.5} />
+                      )}
+                    </ActionIcon>
+                  </Tooltip>
+                )}
               </div>
               <div
                 className={styles['sensor-card-value']}

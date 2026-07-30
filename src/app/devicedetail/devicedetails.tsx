@@ -304,7 +304,7 @@ export function DeviceDetail() {
         </div>
       </Paper>
 
-      <Sensor features={sensorFeatures} />
+      <Sensor deviceId={device.id} features={sensorFeatures} />
       <ControllerFeature
         features={controllerFeatures}
         onChangeValue={handleControlChange}
