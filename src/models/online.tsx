@@ -1,5 +1,10 @@
+export type OnlineState = 'online' | 'offline' | 'unknown';
+
 export interface Online {
-  createdAt: string;
-  modifiedAt: string;
+  deviceId: string;
+  featureUuid: string;
+  status: OnlineState;
+  createdAt: string | null;
+  modifiedAt: string | null;
   currentTime: string;
 }

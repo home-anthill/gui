@@ -83,14 +83,12 @@ describe('Online', () => {
     expect(screen.getByText('online')).toBeInTheDocument();
   });
 
-  it('shows "Online" when online value API has modDate >= currentDate - 60 seconds', () => {
-    // to have this scenario we use the mocked mockOnlineNow to be sure that it always true
+  it('shows "Online" when the bulk API reports online', () => {
     render(<Online deviceId={deviceId} features={[onlineFeature]} />);
     expect(screen.getAllByText('Online')).toHaveLength(2);
   });
 
-  it('shows "Offline" when online value API has modDate < currentDate - 60 seconds', () => {
-    // to have this scenario we need to mock mockOnlineOffline to be sure that it always false
+  it('shows "Offline" when the bulk API reports offline', () => {
     vi.mocked(useOnline).mockReturnValue({
       ...baseOnline,
       online: mockOnlineOffline,
@@ -122,6 +120,18 @@ describe('Online', () => {
     render(<Online deviceId={deviceId} features={[onlineFeature]} />);
 
     expect(screen.getByText('Unknown')).toBeInTheDocument();
+  });
+
+  it('shows "Unknown" when the bulk API reports unknown', () => {
+    vi.mocked(useOnline).mockReturnValue({
+      ...baseOnline,
+      online: { ...mockOnlineNow, status: 'unknown', modifiedAt: null },
+    });
+
+    render(<Online deviceId={deviceId} features={[onlineFeature]} />);
+
+    expect(screen.getByText('Unknown')).toBeInTheDocument();
+    expect(screen.getByText('Status not available')).toBeInTheDocument();
   });
 
   it('renders notification silence from the feature preference', () => {

@@ -4,6 +4,8 @@
 
 ### Features
 
+- use the profile bulk online-status API for device lists and details, with one shared cached request and no per-device fallback
+- hide disabled features and omit online status dots for devices without an enabled online feature
 - add device feature spec support
 - add online feature notification silence toggle
 - add notification silence toggles for motion and thermostat mode alarms

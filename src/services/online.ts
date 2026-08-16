@@ -3,19 +3,22 @@ import { Online } from '../models/online';
 
 export const onlineApi = commonApi.injectEndpoints({
   endpoints: builder => ({
-    getOnline: builder.query<Online, string>({
-      query(id: string) {
-        return {
-          url: `online/${id}`
-        }
-      },
-      providesTags: ['Online']
-    })
-  })
-})
+    getOnlineStatuses: builder.query<Online[], void>({
+      query: () => ({ url: 'online' }),
+      providesTags: result =>
+        result
+          ? [
+              ...result.map(({ deviceId }) => ({
+                type: 'Online' as const,
+                id: deviceId,
+              })),
+              { type: 'Online' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Online' as const, id: 'LIST' }],
+    }),
+  }),
+});
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const {
-  useGetOnlineQuery,
-} = onlineApi
+export const { useGetOnlineStatusesQuery } = onlineApi;

@@ -262,6 +262,27 @@ describe('DeviceDetail', () => {
     ).toBeTruthy();
   });
 
+  it('does not render disabled feature sections', () => {
+    vi.mocked(useValues).mockReturnValue({
+      ...baseValues,
+      deviceWithValues: {
+        ...mockDeviceWithValues,
+        features: [
+          makeFeatureValue({ name: 'temperature', type: 'sensor', enable: false }),
+          makeFeatureValue({ name: 'on', type: 'controller', enable: false }),
+          makeFeatureValue({ name: 'online', type: 'sensor', enable: false }),
+        ],
+      },
+    });
+
+    renderWithDevice();
+
+    expect(screen.queryByRole('heading', { name: /^sensors$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /^controls$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /^online$/i })).not.toBeInTheDocument();
+    expect(useOnline).toHaveBeenCalledWith('d1', { skip: true });
+  });
+
   it('updates the controller switch when toggled (handleControlChange)', async () => {
     vi.mocked(useValues).mockReturnValue({
       ...baseValues,

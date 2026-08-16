@@ -32,26 +32,19 @@ function cssClass(name: string): string {
   return styles[name] as string;
 }
 
-const OFFLINE_THRESHOLD_MS = 60 * 1000;
 const ONLINE_COLOR = '#40c057';
 const OFFLINE_COLOR = '#fd2121';
 const UNKNOWN_COLOR = '#868e96';
-
-function isOffline(modifiedAtISO: string, currentTimeISO: string): boolean {
-  const modDate = new Date(modifiedAtISO);
-  const currentDate = new Date(currentTimeISO);
-  return modDate.getTime() < currentDate.getTime() - OFFLINE_THRESHOLD_MS;
-}
 
 function getOnlineStatus(online: ReturnType<typeof useOnline>['online']): {
   text: 'Online' | 'Offline' | 'Unknown';
   color: string;
 } {
-  if (!online) {
+  if (!online || online.status === 'unknown') {
     return { text: 'Unknown', color: UNKNOWN_COLOR };
   }
 
-  if (isOffline(online.modifiedAt, online.currentTime)) {
+  if (online.status === 'offline') {
     return { text: 'Offline', color: OFFLINE_COLOR };
   }
 
@@ -189,7 +182,7 @@ export function Online({ deviceId, features }: OnlineProps) {
                 </span>
               </div>
               <div className={cssClass('sensor-card-footer')}>
-                {online && online.modifiedAt ? (
+                {online?.modifiedAt ? (
                   <Text size="xs" c="dimmed">
                     Updated {getPrettyDateFromDateString(online.modifiedAt)}
                   </Text>

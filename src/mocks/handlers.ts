@@ -65,7 +65,7 @@ export const handlers = [
   ),
 
   // ── Online ───────────────────────────────────────────────────────────────
-  http.get('/api/online/:id', () => HttpResponse.json(mockOnlineNow)),
+  http.get('/api/online', () => HttpResponse.json([mockOnlineNow])),
 
   // ── Notifications ───────────────────────────────────────────────────────
   http.get('/api/notifications', () =>

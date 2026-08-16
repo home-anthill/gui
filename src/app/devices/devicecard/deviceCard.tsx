@@ -16,7 +16,6 @@ import {
   HomeWithDevices,
   RoomWithDevices,
 } from '../../../models/device';
-import { Online } from '../../../models/online';
 import { useOnline } from '../../../hooks/useOnline';
 import styles from './deviceCard.module.scss';
 
@@ -47,33 +46,29 @@ const sensorLabels: Record<string, string> = {
   airquality: 'Air quality',
 };
 
-const OFFLINE_THRESHOLD_MS = 60 * 1000;
-
-function isOnline(online: Online | undefined): boolean {
-  if (!online) {
-    return false;
-  }
-
-  const modifiedAt = new Date(online.modifiedAt).getTime();
-  const currentTime = new Date(online.currentTime).getTime();
-
-  return modifiedAt >= currentTime - OFFLINE_THRESHOLD_MS;
-}
-
 function getFeatureSummary(features: Feature[]) {
   const sensors = features.filter(
-    (f): f is Feature => f.type === 'sensor' && f.name !== 'online',
+    (f): f is Feature =>
+      f.enable && f.type === 'sensor' && f.name !== 'online',
   );
-  const hasControllers = features.some((f) => f.type === 'controller');
-  return { sensors, hasControllers };
+  const hasControllers = features.some(
+    (f) => f.enable && f.type === 'controller',
+  );
+  const hasOnline = features.some(
+    (f) => f.enable && f.type === 'sensor' && f.name === 'online',
+  );
+  return { sensors, hasControllers, hasOnline };
 }
 
 function DeviceCard({ device, home, room }: DeviceCardProps) {
   const navigate = useNavigate();
-  const { sensors, hasControllers } = getFeatureSummary(device.features);
-  const { online } = useOnline(device.id);
-  const deviceOnline = isOnline(online);
-  const onlineLabel = deviceOnline ? 'Online' : 'Offline';
+  const { sensors, hasControllers, hasOnline } = getFeatureSummary(
+    device.features,
+  );
+  const { online } = useOnline(device.id, { skip: !hasOnline });
+  const onlineStatus = online?.status ?? 'unknown';
+  const onlineLabel =
+    onlineStatus.charAt(0).toUpperCase() + onlineStatus.slice(1);
   const hasFeatures = sensors.length > 0;
 
   function showDeviceDetails(): void {
@@ -102,17 +97,17 @@ function DeviceCard({ device, home, room }: DeviceCardProps) {
           <Text className={styles['device-card-name'] ?? ''} fw={600} truncate>
             {device.name ? device.name : device.mac}
           </Text>
-          <Tooltip label={onlineLabel} withArrow>
-            <span
-              className={`${styles['device-card-online-dot']} ${
-                deviceOnline
-                  ? styles['device-card-online-dot-online']
-                  : styles['device-card-online-dot-offline']
-              }`}
-              aria-label={onlineLabel}
-              role="status"
-            />
-          </Tooltip>
+          {hasOnline && (
+            <Tooltip label={onlineLabel} withArrow>
+              <span
+                className={`${styles['device-card-online-dot']} ${
+                  styles[`device-card-online-dot-${onlineStatus}`]
+                }`}
+                aria-label={onlineLabel}
+                role="status"
+              />
+            </Tooltip>
+          )}
         </div>
 
         <div className={styles['device-card-meta-row']}>

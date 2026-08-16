@@ -141,13 +141,18 @@ export const mockProfile: Profile = {
 // ─── Online ───────────────────────────────────────────────────────────────────
 
 export const mockOnlineNow: Online = {
-  // easy condition to be sure that it's considered as online
+  deviceId: 'd1',
+  featureUuid: 'online-1',
+  status: 'online',
   createdAt: new Date().toISOString(),
   modifiedAt: new Date().toISOString(),
   currentTime: new Date().toISOString(),
 };
 
 export const mockOnlineOffline: Online = {
+  deviceId: 'd1',
+  featureUuid: 'online-1',
+  status: 'offline',
   createdAt: '2026-01-05T21:43:41.082+02:00',
   modifiedAt: '2026-04-05T21:48:14.113+02:00',
   currentTime: new Date().toISOString(),

@@ -20,6 +20,22 @@ vi.mock('react-router', async (importOriginal) => {
 vi.mock('../../../hooks/useOnline');
 
 describe('DeviceCard', () => {
+  const onlineDevice = {
+    ...mockDevice,
+    features: [
+      ...mockDevice.features,
+      {
+        uuid: 'online-1',
+        name: 'online',
+        type: 'sensor',
+        unit: '-',
+        order: 2,
+        enable: true,
+        spec: { format: 'bool' as const },
+      },
+    ],
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useOnline).mockReturnValue({
@@ -43,18 +59,44 @@ describe('DeviceCard', () => {
   });
 
   it('shows online status from the online API result', () => {
-    render(<DeviceCard device={mockDevice} />);
+    render(<DeviceCard device={onlineDevice} />);
     expect(screen.getByLabelText('Online')).toBeInTheDocument();
   });
 
-  it('shows offline status from an old online API result', () => {
+  it('shows offline status from the bulk API result', () => {
     vi.mocked(useOnline).mockReturnValue({
       online: mockOnlineOffline,
       loading: false,
       onlineError: undefined,
     });
-    render(<DeviceCard device={mockDevice} />);
+    render(<DeviceCard device={onlineDevice} />);
     expect(screen.getByLabelText('Offline')).toBeInTheDocument();
+  });
+
+  it('shows unknown status when the bulk response has no device entry', () => {
+    vi.mocked(useOnline).mockReturnValue({
+      online: undefined,
+      loading: false,
+      onlineError: undefined,
+    });
+    render(<DeviceCard device={onlineDevice} />);
+    expect(screen.getByLabelText('Unknown')).toBeInTheDocument();
+  });
+
+  it('does not show or request status without an enabled online feature', () => {
+    const disabledOnlineDevice = {
+      ...onlineDevice,
+      features: onlineDevice.features.map((feature) =>
+        feature.name === 'online' ? { ...feature, enable: false } : feature,
+      ),
+    };
+
+    render(<DeviceCard device={disabledOnlineDevice} />);
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(useOnline).toHaveBeenCalledWith(disabledOnlineDevice.id, {
+      skip: true,
+    });
   });
 
   it('places the controller badge on the MAC row', () => {
@@ -78,6 +120,28 @@ describe('DeviceCard', () => {
     expect(macMatches).toHaveLength(2);
     const macRow = macMatches[1]?.parentElement ?? null;
     expect(macRow).toContainElement(screen.getByText('Ctrl'));
+  });
+
+  it('does not show a controller badge for a disabled controller feature', () => {
+    const controlDevice = {
+      ...mockDevice,
+      features: [
+        ...mockDevice.features,
+        {
+          uuid: 'ctrl-1',
+          name: 'on',
+          type: 'controller',
+          unit: '',
+          order: 2,
+          enable: false,
+          spec: { format: 'bool' as const },
+        },
+      ],
+    };
+
+    render(<DeviceCard device={controlDevice} />);
+
+    expect(screen.queryByText('Ctrl')).not.toBeInTheDocument();
   });
 
   it('navigates to device detail without home/room when clicked', async () => {

@@ -1,17 +1,13 @@
-import { skipToken } from '@reduxjs/toolkit/query/react';
-
-import { useGetOnlineQuery } from '../services/online';
+import { useGetOnlineStatusesQuery } from '../services/online';
 
 interface UseOnlineOptions {
   skip?: boolean;
 }
 
 export function useOnline(id: string, options: UseOnlineOptions = {}) {
-  const {
-    data: online,
-    isLoading: onlineLoading,
-    error: onlineError
-  } = useGetOnlineQuery(options.skip ? skipToken : id);
+  const { data, isLoading: onlineLoading, error: onlineError } =
+    useGetOnlineStatusesQuery(undefined, { skip: options.skip ?? false });
+  const online = data?.find(status => status.deviceId === id);
 
   const loading = onlineLoading;
 
@@ -19,5 +15,5 @@ export function useOnline(id: string, options: UseOnlineOptions = {}) {
     online,
     loading,
     onlineError,
-  }
+  };
 }

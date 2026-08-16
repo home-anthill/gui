@@ -109,12 +109,14 @@ export function DeviceDetail() {
     }));
     return {
       sensorFeatures: all.filter(
-        (f) => f.type === 'sensor' && f.name !== 'online',
+        (f) => f.enable && f.type === 'sensor' && f.name !== 'online',
       ),
       onlineFeatures: all.filter(
-        (f) => f.type === 'sensor' && f.name === 'online',
+        (f) => f.enable && f.type === 'sensor' && f.name === 'online',
       ),
-      controllerFeatures: all.filter((f) => f.type === 'controller'),
+      controllerFeatures: all.filter(
+        (f) => f.enable && f.type === 'controller',
+      ),
     };
   }, [deviceWithValues, localOverrides]);
 
