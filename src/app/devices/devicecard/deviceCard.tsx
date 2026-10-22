@@ -5,6 +5,10 @@ import {
   IconThermometer,
   IconDroplet,
   IconGauge,
+  IconMountain,
+  IconFlask,
+  IconCloud,
+  IconArrowAutofitHeight,
   IconEye,
   IconSun,
   IconLeaf,
@@ -32,18 +36,32 @@ const sensorIcons: Record<
   temperature: IconThermometer,
   humidity: IconDroplet,
   airpressure: IconGauge,
+  altitude: IconMountain,
+  co2: IconCloud,
+  level: IconArrowAutofitHeight,
+  ph: IconFlask,
   motion: IconEye,
   light: IconSun,
   airquality: IconLeaf,
+  iaq: IconLeaf,
+  voc: IconFlask,
+  eco2: IconCloud,
 };
 
 const sensorLabels: Record<string, string> = {
   temperature: 'Temperature',
   humidity: 'Humidity',
   airpressure: 'Air pressure',
+  altitude: 'Altitude',
+  co2: 'CO₂',
+  level: 'Water level',
+  ph: 'pH',
   motion: 'Motion',
   light: 'Light',
   airquality: 'Air quality',
+  iaq: 'IAQ index',
+  voc: 'VOC equivalent',
+  eco2: 'CO₂ equivalent',
 };
 
 function getFeatureSummary(features: Feature[]) {

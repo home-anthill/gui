@@ -27,6 +27,30 @@ describe('Sensor', () => {
     });
   });
 
+  it.each([
+    ['altitude', -12.5, 'm', 0.5, '-12.5'],
+    ['co2', 850, 'ppm', 1, '850'],
+    ['ph', 7.25, 'pH', 0.01, '7.25'],
+    ['iaq', 75, 'IAQ', 1, '75'],
+    ['voc', 0.753, 'ppm', 0.001, '0.753'],
+    ['eco2', 650, 'ppm', 1, '650'],
+  ])('renders %s with its unit and precision', (name, value, unit, step, expected) => {
+    render(<Sensor deviceId={deviceId} features={[
+      makeFeatureValue({ name, value, unit, spec: { format: 'float', step } }),
+    ]} />);
+    expect(screen.getByText(expected)).toBeInTheDocument();
+    expect(screen.getByText(unit)).toBeInTheDocument();
+  });
+
+  it.each([[0, 'Below threshold'], [1, 'Above threshold']])(
+    'renders water level %s as %s', (value, expected) => {
+      render(<Sensor deviceId={deviceId} features={[
+        makeFeatureValue({ name: 'level', value, unit: '-', spec: { format: 'bool' } }),
+      ]} />);
+      expect(screen.getByText(expected)).toBeInTheDocument();
+    },
+  );
+
   it('renders nothing when features is empty', () => {
     render(<Sensor deviceId={deviceId} features={[]} />);
     expect(screen.queryByRole('heading', { name: /sensors/i })).not.toBeInTheDocument();
@@ -80,7 +104,7 @@ describe('Sensor', () => {
     expect(screen.getByText('None')).toBeInTheDocument();
   });
 
-  it.each(['motion', 'mode'])(
+  it.each(['motion', 'mode', 'level'])(
     'renders the notification control for %s',
     (name) => {
       render(

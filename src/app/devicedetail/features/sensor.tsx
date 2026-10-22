@@ -6,6 +6,10 @@ import {
   IconBellOff,
   IconDroplet,
   IconGauge,
+  IconMountain,
+  IconFlask,
+  IconCloud,
+  IconArrowAutofitHeight,
   IconThermometer,
   IconSun,
   IconEye,
@@ -30,7 +34,7 @@ interface SensorProps {
   features: FeatureValue[];
 }
 
-const notificationFeatureNames = new Set(['motion', 'mode']);
+const notificationFeatureNames = new Set(['motion', 'mode', 'level']);
 
 const sensorIcons: Record<
   string,
@@ -39,9 +43,16 @@ const sensorIcons: Record<
   temperature: IconThermometer,
   humidity: IconDroplet,
   airpressure: IconGauge,
+  altitude: IconMountain,
+  co2: IconCloud,
+  level: IconArrowAutofitHeight,
+  ph: IconFlask,
   motion: IconEye,
   light: IconSun,
   airquality: IconLeaf,
+  iaq: IconLeaf,
+  voc: IconFlask,
+  eco2: IconCloud,
   mode: IconTemperature,
 };
 
@@ -97,12 +108,12 @@ export const airQualityColors = [
  * @param value
  * @param step
  */
-function formatByStep(value: number, step?: number): string {
+function formatByStep(value: number, step?: number, maxDecimals = 2): string {
   if (!Number.isFinite(value)) {
     throw new Error('value must be a finite number');
   }
   const decimals = step === undefined ? 2 : Math.max(0, Math.ceil(-Math.log10(step)));
-  return value.toFixed(Math.min(decimals, 2));
+  return value.toFixed(Math.min(decimals, maxDecimals));
 }
 
 function formatSensorValue(feature: FeatureValue): {
@@ -119,13 +130,16 @@ function formatSensorValue(feature: FeatureValue): {
       color: airQualityColors[feature.value] ?? airQualityColors[0],
     };
   }
+  if (feature.name === 'level') {
+    return { text: feature.value ? 'Above threshold' : 'Below threshold' };
+  }
   if (feature.name === 'motion') {
     return {
       text: feature.value ? 'Detected' : 'None',
       color: feature.value ? '#fa5252' : '#40c057',
     };
   }
-  return { text: formatByStep(feature.value, feature.spec.step) };
+  return { text: formatByStep(feature.value, feature.spec.step, feature.name === 'voc' ? 3 : 2) };
 }
 
 export function Sensor({ deviceId, features }: SensorProps) {

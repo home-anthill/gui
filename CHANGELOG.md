@@ -4,6 +4,7 @@
 
 ### Features
 
+- Added support for `altitude`, `co2`, `level`, and `ph` using the existing sensor patterns. Show feature icons in device lists and readings, with units/precision from metadata and threshold labels for water level.
 - use the profile bulk online-status API for device lists and details, with one shared cached request and no per-device fallback
 - hide disabled features and omit online status dots for devices without an enabled online feature
 - add device feature spec support
@@ -15,6 +16,7 @@
 - Added thermostat `mode` sensor feature
 - Upgrade from `nginx:1-alpine3.23` to `nginx:1-alpine3.24`, it requires changes to `deployer` project
 - Upgrade to NX 23 and Vite 5 + other deps updates
+- Keep credentials and stay on the profile screen when server logout fails, showing a message to check the connection and retry.
 
 ### Tests
 
@@ -101,3 +103,13 @@
 - Used conditional spreads for exact optional properties.
 - Used explicit query skip values where optional booleans were accepted.
 - Kept profile logout local cleanup independent of server request success.
+
+
+## 2026-10-18 — Water-level notifications
+
+- Enable the existing per-feature notification silence control for `level`, alongside motion and thermostat mode.
+
+
+## 2026-10-18 — BME688 air-quality features
+
+- Add IAQ, VOC equivalent, and CO2 equivalent sensor icons/labels using numeric feature metadata rather than legacy airquality categories.

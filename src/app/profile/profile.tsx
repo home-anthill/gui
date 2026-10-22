@@ -57,12 +57,11 @@ export function Profile() {
   async function handleLogout() {
     try {
       await logout().unwrap();
-    } catch (err) {
-      logError('Cannot logout on server-side', err);
-    } finally {
       removeToken();
       toast.info('Logged out');
       navigate('/login');
+    } catch (err) {
+      logError('Logout failed. Please check your connection and try again.', err);
     }
   }
 

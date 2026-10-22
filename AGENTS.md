@@ -113,7 +113,7 @@ All API calls use **RTK Query** via a single base API (`src/services/common.ts` 
 2. `AuthProvider` (wraps entire app via `AuthLayout`) provides `login`/`logout`/`isLogged` via `AuthContext`
 3. `ProtectedLayout` wraps authenticated routes — redirects to `/login` if `localStorage` has no token
 4. When the access token expires the RTK Query base query transparently calls `POST /api/oauth/refresh`, stores the new token, and retries — no user interaction required. If refresh also fails the user is logged out.
-5. Profile logout calls `POST /api/oauth/logout` with `credentials: 'include'` to clear the server-side refresh cookie, then clears the local access token and navigates to `/login`. Local cleanup still runs if the server-side logout request fails.
+5. Profile logout calls `POST /api/oauth/logout` with `credentials: 'include'` to clear the server-side refresh cookie, then clears the local access token and navigates to `/login`. On failure, the profile screen shows a retry message and retains credentials; local cleanup and navigation happen only after successful server logout.
 6. `PostLogin` uses a `useRef<boolean>` guard to ensure the token extraction + `login()` call runs exactly once, even under React StrictMode double-invocation.
 
 ## Tech Stack & Code Style
