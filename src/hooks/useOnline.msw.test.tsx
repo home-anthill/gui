@@ -16,7 +16,7 @@ describe('useOnline (MSW)', () => {
 
   it('returns onlineError when GET /api/online bulk request fails', async () => {
     const { server } = await import('../mocks/server');
-    const { http, HttpResponse } = await import('msw');
+    const { http, HttpResponse } = await import('msw/http');
     server.use(
       http.get('/api/online', () =>
         HttpResponse.json({ error: 'Not Found' }, { status: 404 }),
@@ -29,7 +29,7 @@ describe('useOnline (MSW)', () => {
 
   it('shares one bulk request between device subscribers', async () => {
     const { server } = await import('../mocks/server');
-    const { http, HttpResponse } = await import('msw');
+    const { http, HttpResponse } = await import('msw/http');
     let requests = 0;
     server.use(
       http.get('/api/online', () => {

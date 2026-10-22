@@ -46,7 +46,7 @@ describe('useHomes (MSW)', () => {
 
   it('returns homesError when GET /api/homes fails', async () => {
     const { server } = await import('../mocks/server');
-    const { http, HttpResponse } = await import('msw');
+    const { http, HttpResponse } = await import('msw/http');
     server.use(
       http.get('/api/homes', () =>
         HttpResponse.json({ error: 'Server Error' }, { status: 500 }),

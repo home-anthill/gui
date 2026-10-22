@@ -22,7 +22,11 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "home-anthill:build"
-      }
+      },
+      "readyWhen": {
+        "signal": true
+      },
+      "dependsOn": ["build"]
     }
   }
 }

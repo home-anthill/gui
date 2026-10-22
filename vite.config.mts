@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 
 export default defineConfig({
-  root: __dirname,
+  root: import.meta.dirname,
   cacheDir: './node_modules/.vite/home-anthill',
   server: {
     port: 4200,
@@ -22,6 +23,7 @@ export default defineConfig({
   plugins: [
     react(),
     viteStaticCopy({ targets: [{ src: 'README.md', dest: '.' }] }),
+    nxReadySignal(),
   ],
   resolve: {
     tsconfigPaths: true,

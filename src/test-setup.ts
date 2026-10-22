@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
 import { server } from './mocks/server';
@@ -78,6 +78,6 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 // ── MSW setup ────────────────────────────────────────────────────────────────
-beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+beforeAll(() => server.listen({ onUnhandledFrame: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());

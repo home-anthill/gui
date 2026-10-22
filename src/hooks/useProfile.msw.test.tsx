@@ -27,7 +27,7 @@ describe('useProfile (MSW)', () => {
 
   it('returns profileError when GET /api/profile fails', async () => {
     const { server } = await import('../mocks/server');
-    const { http, HttpResponse } = await import('msw');
+    const { http, HttpResponse } = await import('msw/http');
     server.use(
       http.get('/api/profile', () =>
         HttpResponse.json({ error: 'Unauthorized' }, { status: 401 }),

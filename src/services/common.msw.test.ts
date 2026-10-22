@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 
 import { server } from '../mocks/server';
 import { renderHookWithStore } from '../test-store';
